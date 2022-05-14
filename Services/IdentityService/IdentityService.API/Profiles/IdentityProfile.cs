@@ -17,10 +17,9 @@ namespace IdentityService.API.Profiles
             CreateMap<CreateUserRequest, User>()
                 .ForMember(dest => dest.UserName, opts => opts.MapFrom(s => s.Username));
 
-            CreateMap<User, CreateUserResponse>()
-                .ForMember(dest => dest.Id, opts => opts.MapFrom(s => s.Id))
-                .ForMember(dest => dest.Username, opts => opts.MapFrom(s => s.UserName))
-                .ForMember(dest => dest.Email, opts => opts.MapFrom(s => s.Email));
+            CreateMap<Token, AuthenticateUserResponse>();
+
+            CreateMap<AuthenticateUserRequest, Token>();
         }
     }
 }

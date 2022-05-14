@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Commands
 {
-    public class RegisterUserCommand : IRequest<Token>
+    public class AuthenticateUserCommand : IRequest<Token>
     {
-        public User User { get; set; } = default!;
-        public string Password { get; set; } = default!;
+        public Token Token { get; set; } = default!;
     }
 }

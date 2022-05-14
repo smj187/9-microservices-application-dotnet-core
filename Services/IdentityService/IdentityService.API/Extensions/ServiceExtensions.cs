@@ -21,6 +21,7 @@ namespace IdentityService.API.Extensions
 
             services.Configure<JsonWebTokenSettings>(configuration.GetSection("JsonWebToken"));
 
+
             services.AddDbContext<IdentityContext>(opts =>
             {
                 var str = configuration.GetConnectionString("DefaultConnection");
@@ -123,16 +124,26 @@ namespace IdentityService.API.Extensions
                 {
                     Task.Run(async () =>
                     {
-                        var defaultUser = new User
+                        var admin = new User
                         {
                             UserName = "root",
                             Email = "root@mail.com",
                             CreatedAt = DateTimeOffset.Now
                         };
 
-                        await userManager.CreateAsync(defaultUser, "Pa$$w0rd.");
-                        await userManager.AddToRoleAsync(defaultUser, "Administrator");
-                        await userManager.AddToRoleAsync(defaultUser, "User");
+                        await userManager.CreateAsync(admin, "Pa$$w0rd.");
+                        await userManager.AddToRoleAsync(admin, "Administrator");
+                        await userManager.AddToRoleAsync(admin, "User");
+
+                        var user = new User
+                        {
+                            UserName = "user",
+                            Email = "user@mail.com",
+                            CreatedAt = DateTimeOffset.Now
+                        };
+
+                        await userManager.CreateAsync(user, "Pa$$w0rd.");
+                        await userManager.AddToRoleAsync(user, "User");
                     }).Wait();
                 }
 

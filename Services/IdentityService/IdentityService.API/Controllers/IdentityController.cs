@@ -38,7 +38,7 @@ namespace IdentityService.API.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> RegisterUserAsync([FromBody] CreateUserRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody] CreateUserRequest request)
         {
             var mapped = _mapper.Map<User>(request);
 
@@ -50,8 +50,24 @@ namespace IdentityService.API.Controllers
 
             var data = await _mediator.Send(command);
 
-            var result = _mapper.Map<CreateUserResponse>(data);
+            var result = _mapper.Map<AuthenticateUserResponse>(data);
+            return Ok(result);
+        }
 
+        [HttpPost]
+        [Route("authenticate")]
+        public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticateUserRequest request)
+        {
+            var mapped = _mapper.Map<Token>(request);
+
+            var command = new AuthenticateUserCommand
+            {
+                Token = mapped
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<AuthenticateUserResponse>(data);
             return Ok(result);
         }
     }

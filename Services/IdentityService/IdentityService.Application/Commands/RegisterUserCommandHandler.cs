@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Commands
 {
-    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, User>
+    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Token>
     {
         private readonly IUserService _userService;
 
@@ -21,15 +21,15 @@ namespace IdentityService.Application.Commands
         }
 
 
-        public async Task<User> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<Token> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userService.RegisterAsync(request.User, request.Password);
-            if (user == null)
+            var token = await _userService.RegisterAsync(request.User, request.Password);
+            if (token == null)
             {
                 throw new Exception("TODO: handle something went wrong");
             }
 
-            return user;
+            return token;
         }
     }
 }

@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.API.Contracts.Responses
+namespace IdentityService.API.Contracts.Requests
 {
-    public class CreateUserResponse
+    public class AuthenticateUserRequest
     {
-        public Guid Id { get; set; }
-        public string Username { get; set; } = default!;
         public string Email { get; set; } = default!;
+        public string Password { get; set; } = default!;
     }
 }

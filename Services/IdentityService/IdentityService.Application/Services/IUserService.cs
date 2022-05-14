@@ -9,6 +9,7 @@ namespace IdentityService.Application.Services
 {
     public interface IUserService
     {
-        Task<User> RegisterAsync(User user, string password);
+        Task<Token> RegisterAsync(User user, string password);
+        Task<Token> AuthenticateAsync(Token token);
     }
 }
