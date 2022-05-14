@@ -15,11 +15,14 @@ namespace IdentityService.API.Profiles
         public IdentityProfile()
         {
             CreateMap<CreateUserRequest, User>()
-                .ForMember(dest => dest.UserName, opts => opts.MapFrom(s => s.Username));
+                .ForMember(dest => dest.UserName, opts => opts.MapFrom(s => s.Username))
+                .ForMember(dest => dest.CreatedAt, opts => opts.MapFrom(s => DateTimeOffset.Now));
 
             CreateMap<Token, AuthenticateUserResponse>();
 
             CreateMap<AuthenticateUserRequest, Token>();
+
+            CreateMap<User, UserResponse>();
         }
     }
 }

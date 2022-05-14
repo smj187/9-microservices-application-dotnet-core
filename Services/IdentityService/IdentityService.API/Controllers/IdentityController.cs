@@ -36,6 +36,14 @@ namespace IdentityService.API.Controllers
         public async Task<IActionResult> Secure()
         {
             return Ok("Secure Data");
+        }    
+        
+        [HttpGet]
+        [Authorize(Roles = "Administrator")]
+        [Route("admin")]
+        public async Task<IActionResult> SecureAdministrator()
+        {
+            return Ok("Secure Data Administrator");
         }
 
         [HttpPost]
@@ -47,7 +55,7 @@ namespace IdentityService.API.Controllers
             var command = new RegisterUserCommand
             {
                 User = mapped,
-                Password = request.Password
+                Password = request.Password,
             };
 
             var data = await _mediator.Send(command);
@@ -70,6 +78,38 @@ namespace IdentityService.API.Controllers
             var data = await _mediator.Send(command);
 
             var result = _mapper.Map<AuthenticateUserResponse>(data);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("promote")]
+        public async Task<IActionResult> PromoteAsync([FromBody] PromoteRoleRequest request)
+        {
+            var command = new PromoteRoleCommand
+            {
+                Username = request.Username,
+                NewRule = request.NewRole
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<UserResponse>(data);
+            return Ok(result);
+        }        
+        
+        [HttpPost]
+        [Route("revoke")]
+        public async Task<IActionResult> RevokeAsync([FromBody] RevokeRoleRequest request)
+        {
+            var command = new RevokeRoleCommand
+            {
+                Username = request.Username,
+                RoleToRemove = request.RoleToRevoke
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<UserResponse>(data);
             return Ok(result);
         }
     }

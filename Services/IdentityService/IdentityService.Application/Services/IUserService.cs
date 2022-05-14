@@ -11,5 +11,8 @@ namespace IdentityService.Application.Services
     {
         Task<Token> RegisterAsync(User user, string password);
         Task<Token> AuthenticateAsync(Token token);
+
+        Task<User> PromoteRoleAsync(string username, string newRole);
+        Task<User> RevokeRoleAsync(string username, string roleToRemove);
     }
 }
