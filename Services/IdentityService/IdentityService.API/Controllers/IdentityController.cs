@@ -5,6 +5,7 @@ using IdentityService.Application.Commands;
 using IdentityService.Application.Services;
 using IdentityService.Core.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ namespace IdentityService.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("secure")]
         public async Task<IActionResult> Secure()
         {

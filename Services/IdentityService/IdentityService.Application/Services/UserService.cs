@@ -1,14 +1,9 @@
 ﻿using IdentityService.Application.Adapters;
 using IdentityService.Core.Models;
-using IdentityService.Core.Settings;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,16 +12,12 @@ namespace IdentityService.Application.Services
     public class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManger;
         private readonly IAuthAdapter _authAdapter;
-        private readonly JsonWebTokenSettings _jsonWebTokenSettings;
 
-        public UserService(UserManager<User> userManager, RoleManager<IdentityRole> roleManger, IOptions<JsonWebTokenSettings> jsonwebtoken, IAuthAdapter authAdapter)
+        public UserService(UserManager<User> userManager, IAuthAdapter authAdapter)
         {
             _userManager = userManager;
-            _roleManger = roleManger;
             _authAdapter = authAdapter;
-            _jsonWebTokenSettings = jsonwebtoken.Value;
         }
 
         public async Task<Token> AuthenticateAsync(Token token)
@@ -35,7 +26,7 @@ namespace IdentityService.Application.Services
             if (user == null)
             {
                 token.Success = false;
-                token.Message = $"No account with {token.Email} registered";
+                token.Message = $"{token.Email} is not registered";
                 return token;
             }
 
@@ -43,7 +34,7 @@ namespace IdentityService.Application.Services
             if(authenticated == false)
             {
                 token.Success = false;
-                token.Message = "invalid credentials";
+                token.Message = "Invalid credentials";
                 return token;
             }
 
@@ -56,8 +47,6 @@ namespace IdentityService.Application.Services
             token.Roles = roles.ToList();
             return token;
         }
-
-
 
 
 
