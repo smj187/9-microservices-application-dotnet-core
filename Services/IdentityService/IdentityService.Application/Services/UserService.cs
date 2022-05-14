@@ -3,6 +3,7 @@ using IdentityService.Core.Models;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,37 @@ namespace IdentityService.Application.Services
 
             var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
             token.Roles = roles.ToList();
+
+            if (user.RefreshTokens.Any(r => r.IsActive))
+            {
+                var active = user.RefreshTokens.FirstOrDefault(r => r.IsActive);
+                token.RefreshToken = active.JsonWebToken;
+                token.RefreshTokenExpiration = active.ExpiresAt;
+            }
+            else
+            {
+                var refresh = _authAdapter.CreateRefreshToken();
+                token.RefreshToken = refresh.JsonWebToken;
+                token.RefreshTokenExpiration = refresh.ExpiresAt;
+
+                user.RefreshTokens.Add(refresh);
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+            }
+
+
             return token;
+        }
+
+        public async Task<IReadOnlyCollection<RefreshToken>> ListUserTokensAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new ArgumentException($"{userId} does not exist");
+            }
+
+            return user.RefreshTokens;
         }
 
         public async Task<User> PromoteRoleAsync(string username, string newRole)
@@ -74,6 +105,49 @@ namespace IdentityService.Application.Services
             user.Roles = roles.ToList();
 
             return user;
+        }
+
+        public async Task<Token> RefreshTokenAsync(string jsonWebToken)
+        {
+            var token = new Token();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshTokens.Any(t => t.JsonWebToken == jsonWebToken));
+            if (user == null)
+            {
+                token.Success = false;
+                token.Message = "no valid token found";
+                return token;
+            }
+
+            var refresh = user.RefreshTokens.FirstOrDefault(t => t.JsonWebToken == jsonWebToken);
+            if (refresh == null || !refresh.IsActive)
+            {
+                token.Success = false;
+                token.Message = "token is not active";
+                return token;
+            }
+
+            // revoke
+            refresh.RevokedAt = DateTimeOffset.Now;
+
+            // generate new refresh token
+            var newRefresh = _authAdapter.CreateRefreshToken();
+            user.RefreshTokens.Add(newRefresh);
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            token.Success = true;
+            token.JsonWebToken = await _authAdapter.CreateJsonWebToken(user);
+            token.Username = user.UserName;
+            token.UserId = Guid.Parse(user.Id);
+
+            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            token.Roles = roles.ToList();
+
+            token.RefreshToken = newRefresh.JsonWebToken;
+            token.RefreshTokenExpiration = newRefresh.ExpiresAt;
+
+            return token;
         }
 
         public async Task<Token> RegisterAsync(User user, string password)
@@ -107,6 +181,28 @@ namespace IdentityService.Application.Services
             var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
             token.Roles = roles.ToList();
             return token;
+        }
+
+        public async Task<bool> RevokeRefreshTokenAsync(Guid userId, string jsonWebToken)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.ToString());
+            if (user == null)
+            {
+                return false;
+            }
+
+            var refresh = user.RefreshTokens.FirstOrDefault(r => r.JsonWebToken == jsonWebToken);
+            if(refresh == null || !refresh.IsActive)
+            {
+                return false;
+            }
+
+            // revoke token
+            refresh.RevokedAt = DateTimeOffset.Now;
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<User> RevokeRoleAsync(string username, string roleToRemove)

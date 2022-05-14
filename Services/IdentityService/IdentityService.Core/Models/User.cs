@@ -16,9 +16,12 @@ namespace IdentityService.Core.Models
         [NotMapped]
         public List<string> Roles { get; set; }
 
+        public List<RefreshToken> RefreshTokens { get; set; }
+
         public User()
         {
             Roles = new List<string>();
+            RefreshTokens = new List<RefreshToken>();
         }
     }
 }

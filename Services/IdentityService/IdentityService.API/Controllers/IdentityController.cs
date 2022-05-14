@@ -2,6 +2,7 @@
 using IdentityService.API.Contracts.Requests;
 using IdentityService.API.Contracts.Responses;
 using IdentityService.Application.Commands;
+using IdentityService.Application.Queries;
 using IdentityService.Application.Services;
 using IdentityService.Core.Models;
 using MediatR;
@@ -30,21 +31,7 @@ namespace IdentityService.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
-        [Authorize]
-        [Route("secure")]
-        public async Task<IActionResult> Secure()
-        {
-            return Ok("Secure Data");
-        }    
         
-        [HttpGet]
-        [Authorize(Roles = "Administrator")]
-        [Route("admin")]
-        public async Task<IActionResult> SecureAdministrator()
-        {
-            return Ok("Secure Data Administrator");
-        }
 
         [HttpPost]
         [Route("register")]
@@ -78,6 +65,7 @@ namespace IdentityService.API.Controllers
             var data = await _mediator.Send(command);
 
             var result = _mapper.Map<AuthenticateUserResponse>(data);
+            SetRefreshTokenInCookie(result.RefreshToken);
             return Ok(result);
         }
 
@@ -111,6 +99,73 @@ namespace IdentityService.API.Controllers
 
             var result = _mapper.Map<UserResponse>(data);
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("refresh-token")]
+        public async Task<IActionResult> RefreshTokenAsync()
+        {
+            var refresh = Request.Cookies["refreshToken"];
+
+            var command = new RefreshTokenCommand
+            {
+                OldToken = refresh
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<AuthenticateUserResponse>(data);
+            SetRefreshTokenInCookie(result.RefreshToken);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("refresh-token/{userId:guid}")]
+        public async Task<IActionResult> GetRefreshTokensAsync([FromRoute] Guid userId)
+        {
+            var query = new ListUserTokensQuery
+            {
+                UserId = userId
+            };
+
+            var data = await _mediator.Send(query);
+            return Ok(data);
+        }
+
+        [HttpPost]
+        [Route("revoke-token")]
+        public async Task<IActionResult> RevokeTokenAsync([FromBody] RevokeTokenRequest request)
+        {
+            var token = request.JsonWebToken ?? Request.Cookies["refreshToken"] ?? null;
+
+            if (token == null)
+                return BadRequest(new { message = "No token was provided" });
+
+            var command = new RevokeTokenCommand
+            {
+                JsonWebToken = request.JsonWebToken,
+                UserId = request.UserId
+            };
+
+            var data = await _mediator.Send(command);
+
+            if(!data)
+            {
+                return NotFound(new { message = "Not token was found" });
+            }
+
+            return Ok(new { message = "Token revoked" });
+        }
+
+
+        private void SetRefreshTokenInCookie(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(10),
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
     }
 }

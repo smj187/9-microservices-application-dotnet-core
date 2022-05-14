@@ -14,5 +14,13 @@ namespace IdentityService.Application.Services
 
         Task<User> PromoteRoleAsync(string username, string newRole);
         Task<User> RevokeRoleAsync(string username, string roleToRemove);
+
+        Task<Token> RefreshTokenAsync(string jsonWebToken);
+
+        // TODO: invalidate currently active token
+
+        Task<bool> RevokeRefreshTokenAsync(Guid userId, string jsonWebToken);
+
+        Task<IReadOnlyCollection<RefreshToken>> ListUserTokensAsync(Guid userId);
     }
 }

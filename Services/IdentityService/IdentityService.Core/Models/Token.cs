@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace IdentityService.Core.Models
@@ -16,5 +17,9 @@ namespace IdentityService.Core.Models
         public string Message { get; set; } = default!;
         public bool Success { get; set; }
         public List<string> Roles { get; set; } = default!;
+
+        [JsonIgnore]
+        public string RefreshToken { get; set; } = default!;
+        public DateTimeOffset RefreshTokenExpiration { get; set; }
     }
 }

@@ -8,11 +8,15 @@ namespace IdentityService.API.Contracts.Responses
 {
     public class AuthenticateUserResponse
     {
+        public Guid UserId { get; set; }
         public string Message { get; set; } = default!;
         public bool Success { get; set; }
         public string Username { get; set; } = default!;
         public string Email { get; set; } = default!;
         public List<string> Roles { get; set; } = default!;
         public string Jsonwebtoken { get; set; } = default!;
+
+        public string RefreshToken { get; set; } = default!;
+        public DateTimeOffset RefreshTokenExpiration { get; set; }
     }
 }

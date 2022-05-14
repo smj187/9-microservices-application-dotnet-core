@@ -10,5 +10,7 @@ namespace IdentityService.Application.Adapters
     public interface IAuthAdapter
     {
         Task<string> CreateJsonWebToken(User user);
+
+        RefreshToken CreateRefreshToken();
     }
 }

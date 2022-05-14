@@ -71,5 +71,18 @@ namespace IdentityService.Application.Adapters
             return claims;
         }
 
+        public RefreshToken CreateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using var generator = new System.Security.Cryptography.RNGCryptoServiceProvider();
+            generator.GetBytes(randomNumber);
+            return new RefreshToken
+            {
+                JsonWebToken = Convert.ToBase64String(randomNumber),
+                ExpiresAt = DateTime.UtcNow.AddDays(10),
+                CreatedAt = DateTime.UtcNow
+            };
+        }
+
     }
 }
