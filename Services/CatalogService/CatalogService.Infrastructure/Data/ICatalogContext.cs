@@ -1,4 +1,4 @@
-﻿using CatalogService.Core.Models;
+﻿using CatalogService.Core.Entities;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;

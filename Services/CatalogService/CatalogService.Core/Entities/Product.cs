@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Models
+namespace CatalogService.Core.Entities
 {
-    public class Category
+    public class Product
     {
         public Guid Id { get; set; }
 
@@ -14,5 +14,6 @@ namespace CatalogService.Core.Models
         public string Description { get; set; } = default!;
 
         public string ImageUrl { get; set; } = default!;
+        public decimal Price { get; set; }
     }
 }

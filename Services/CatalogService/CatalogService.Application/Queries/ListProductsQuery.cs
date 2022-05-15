@@ -1,4 +1,4 @@
-﻿using CatalogService.Core.Models;
+﻿using CatalogService.Core.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;

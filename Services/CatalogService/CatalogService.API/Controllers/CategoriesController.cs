@@ -1,7 +1,7 @@
 ﻿using CatalogService.API.Contracts.Requests;
 using CatalogService.Application.Commands;
 using CatalogService.Application.Queries;
-using CatalogService.Core.Models;
+using CatalogService.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;

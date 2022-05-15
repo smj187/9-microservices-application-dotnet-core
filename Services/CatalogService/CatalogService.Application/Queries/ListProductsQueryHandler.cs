@@ -1,4 +1,4 @@
-﻿using CatalogService.Core.Models;
+﻿using CatalogService.Core.Entities;
 using CatalogService.Infrastructure.Data;
 using MediatR;
 using MongoDB.Driver;

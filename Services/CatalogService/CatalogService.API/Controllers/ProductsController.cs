@@ -1,7 +1,9 @@
-﻿using CatalogService.API.Contracts.Requests;
+﻿using AutoMapper;
+using CatalogService.API.Contracts.Requests;
+using CatalogService.API.Contracts.Responses;
 using CatalogService.Application.Commands;
 using CatalogService.Application.Queries;
-using CatalogService.Core.Models;
+using CatalogService.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,10 +19,12 @@ namespace CatalogService.API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public ProductsController(IMediator mediator)
+        public ProductsController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -29,7 +33,8 @@ namespace CatalogService.API.Controllers
             var query = new ListProductsQuery();
             var data = await _mediator.Send(query);
 
-            return Ok(data);
+            var result = _mapper.Map<IEnumerable<ProductResponse>>(data);
+            return Ok(result);
         }
 
         [HttpPost]
