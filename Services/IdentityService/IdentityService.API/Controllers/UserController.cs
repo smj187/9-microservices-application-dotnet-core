@@ -34,7 +34,7 @@ namespace IdentityService.API.Controllers
         public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterRequest request)
         {
             var newUser = _mapper.Map<User>(request);
-            newUser.CreatedAt = DateTimeOffset.Now;
+            newUser.CreatedAt = DateTime.Now;
 
             var command = new RegisterUserCommand
             {

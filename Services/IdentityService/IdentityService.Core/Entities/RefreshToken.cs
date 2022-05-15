@@ -11,11 +11,11 @@ namespace IdentityService.Core.Entities
     public class RefreshToken
     {
         public string Token { get; set; } = default!;
-        public DateTimeOffset ExpiresAt { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public DateTimeOffset? RevokedAt { get; set; }
+        public DateTime ExpiresAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? RevokedAt { get; set; }
 
         public bool IsActive => RevokedAt == null && !IsExpired;
-        public bool IsExpired => DateTimeOffset.UtcNow >= ExpiresAt;
+        public bool IsExpired => DateTime.UtcNow >= ExpiresAt;
     }
 }

@@ -11,7 +11,7 @@ namespace IdentityService.Core.Entities
 {
     public class User : IdentityUser
     {
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         [NotMapped]
         public List<string> Roles { get; set; }

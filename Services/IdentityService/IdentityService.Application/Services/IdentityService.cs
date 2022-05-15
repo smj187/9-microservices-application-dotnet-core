@@ -112,7 +112,7 @@ namespace IdentityService.Application.Services
             }
 
             // mark as revoked
-            refresh.RevokedAt = DateTimeOffset.Now;
+            refresh.RevokedAt = DateTime.Now;
 
             // generate new refresh token
             var newRefresh = _authAdapter.CreateRefreshToken();
@@ -151,7 +151,7 @@ namespace IdentityService.Application.Services
             }
 
             // revoke token
-            refresh.RevokedAt = DateTimeOffset.Now;
+            refresh.RevokedAt = DateTime.Now;
             _context.Update(user);
             await _context.SaveChangesAsync();
 

@@ -14,6 +14,6 @@ namespace IdentityService.API.Contracts.Responses
 
         public List<string> Roles { get; set; } = new();
 
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

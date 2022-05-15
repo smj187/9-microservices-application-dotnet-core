@@ -17,19 +17,19 @@ namespace IdentityService.API.Extensions
     {
         public static void ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
         {
-            var builder = services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
-
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
             services.Configure<JsonWebTokenSettings>(configuration.GetSection("JsonWebToken"));
-
 
             services.AddDbContext<IdentityContext>(opts =>
             {
                 var str = configuration.GetConnectionString("DefaultConnection");
-                opts.UseMySql(str, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(str));
+                opts.UseNpgsql(str);
             });
 
+            services.AddDatabaseDeveloperPageExceptionFilter();
 
-            
+          
+
             // configure identity
             services.Configure<IdentityOptions>(options =>
             {
@@ -94,6 +94,16 @@ namespace IdentityService.API.Extensions
                 });
         }
 
+        public static async Task UseInitialMigration(this WebApplication app)
+        {
+            Console.WriteLine("initial migration started...");
+            using var scope = app.Services.CreateScope();
+
+            var context = scope.ServiceProvider.GetRequiredService<IdentityContext>();
+            await context.Database.MigrateAsync();
+            Console.WriteLine("initial migration complete");
+        }
+
         public static void UseInitialDatabaseSeeding(this WebApplication app)
         {
             using var scope = app.Services.CreateScope();
@@ -128,7 +138,7 @@ namespace IdentityService.API.Extensions
                         {
                             UserName = "root",
                             Email = "root@mail.com",
-                            CreatedAt = DateTimeOffset.Now
+                            CreatedAt = DateTime.Now
                         };
 
                         await userManager.CreateAsync(admin, "Pa$$w0rd.");
@@ -139,7 +149,7 @@ namespace IdentityService.API.Extensions
                         {
                             UserName = "user",
                             Email = "user@mail.com",
-                            CreatedAt = DateTimeOffset.Now
+                            CreatedAt = DateTime.Now
                         };
 
                         await userManager.CreateAsync(user, "Pa$$w0rd.");

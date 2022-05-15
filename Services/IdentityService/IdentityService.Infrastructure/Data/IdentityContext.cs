@@ -18,9 +18,43 @@ namespace IdentityService.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.UseSerialColumns();
             base.OnModelCreating(builder);
 
-            builder.Entity<User>().OwnsMany(u => u.RefreshTokens).ToTable("aspnetuserrefreshtokens");
+            builder.Entity<User>().OwnsMany(u => u.RefreshTokens).ToTable("AspNetUserRefreshTokens");
+        }
+
+
+   
+
+        public override int SaveChanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+
+            var modifiedEntites = ChangeTracker.Entries()
+                .Where(e => (e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted))
+                .ToList();
+
+            foreach (var entry in modifiedEntites)
+            {
+                foreach (var prop in entry.Properties)
+                {
+                    if (prop.Metadata.ClrType == typeof(DateTime))
+                    {
+                        prop.Metadata.FieldInfo.SetValue(entry.Entity, DateTime.SpecifyKind((DateTime)prop.CurrentValue, DateTimeKind.Utc));
+                    }
+                    else if (prop.Metadata.ClrType == typeof(DateTime?) && prop.CurrentValue != null)
+                    {
+                        prop.Metadata.FieldInfo.SetValue(entry.Entity, DateTime.SpecifyKind(((DateTime?)prop.CurrentValue).Value, DateTimeKind.Utc));
+                    }
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
 
 

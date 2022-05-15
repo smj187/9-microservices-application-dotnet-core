@@ -17,6 +17,6 @@ namespace IdentityService.API.Contracts.Responses
         public string Token { get; set; } = default!;
 
         public string? RefreshToken { get; set; } = null;
-        public DateTimeOffset? RefreshTokenExpiration { get; set; } = null;
+        public DateTime? RefreshTokenExpiration { get; set; } = null;
     }
 }

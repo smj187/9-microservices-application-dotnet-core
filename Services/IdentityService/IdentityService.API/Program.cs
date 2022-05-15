@@ -27,6 +27,8 @@ builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
+await app.UseInitialMigration();
+
 app.UseDevEnvironment();
 app.UseInitialDatabaseSeeding();
 app.UseHttpsRedirection();
