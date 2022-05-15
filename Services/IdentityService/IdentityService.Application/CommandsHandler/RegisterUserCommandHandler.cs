@@ -1,4 +1,5 @@
-﻿using IdentityService.Application.Services;
+﻿using IdentityService.Application.Commands;
+using IdentityService.Application.Services;
 using IdentityService.Core.Models;
 using MediatR;
 using Microsoft.AspNet.Identity;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Application.Commands
+namespace IdentityService.Application.CommandsHandler
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Token>
     {

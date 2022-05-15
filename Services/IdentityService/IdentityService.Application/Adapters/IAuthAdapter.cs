@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Models;
+﻿using IdentityService.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +12,6 @@ namespace IdentityService.Application.Adapters
         Task<string> CreateJsonWebToken(User user);
 
         RefreshToken CreateRefreshToken();
+
     }
 }

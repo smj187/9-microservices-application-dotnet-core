@@ -1,4 +1,5 @@
-﻿using IdentityService.Application.Services;
+﻿using IdentityService.Application.Commands;
+using IdentityService.Application.Services;
 using IdentityService.Core.Models;
 using MediatR;
 using System;
@@ -7,22 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Application.Commands
+namespace IdentityService.Application.CommandsHandler
 {
     public class AuthenticateUserCommandHandler : IRequestHandler<AuthenticateUserCommand, Token>
     {
-        private readonly IUserService _userService;
+        private readonly IIdentityService _identityService;
 
-        public AuthenticateUserCommandHandler(IUserService userService)
+        public AuthenticateUserCommandHandler(IIdentityService identityService)
         {
-            _userService = userService;
+            _identityService = identityService;
         }
 
         public async Task<Token> Handle(AuthenticateUserCommand request, CancellationToken cancellationToken)
         {
-            var token = await _userService.AuthenticateAsync(request.Token);
-
-            return token;
+            return await _identityService.AuthenticateAsync(request.Token);
         }
     }
 }

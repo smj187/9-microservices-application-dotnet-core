@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Models;
+﻿using IdentityService.Core.Entities;
 using IdentityService.Core.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -23,7 +23,6 @@ namespace IdentityService.Application.Adapters
             _userManager = userManager;
             _jsonWebTokenSettings = jsonWebTokenSettings.Value;
         }
-
 
         public async Task<string> CreateJsonWebToken(User user)
         {
@@ -78,7 +77,7 @@ namespace IdentityService.Application.Adapters
             generator.GetBytes(randomNumber);
             return new RefreshToken
             {
-                JsonWebToken = Convert.ToBase64String(randomNumber),
+                Token = Convert.ToBase64String(randomNumber),
                 ExpiresAt = DateTime.UtcNow.AddDays(10),
                 CreatedAt = DateTime.UtcNow
             };

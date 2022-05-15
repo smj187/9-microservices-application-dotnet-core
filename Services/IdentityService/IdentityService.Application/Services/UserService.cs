@@ -1,4 +1,5 @@
 ﻿using IdentityService.Application.Adapters;
+using IdentityService.Core.Entities;
 using IdentityService.Core.Models;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -25,131 +26,6 @@ namespace IdentityService.Application.Services
             _context = context;
         }
 
-        public async Task<Token> AuthenticateAsync(Token token)
-        {
-            var user = await _userManager.FindByEmailAsync(token.Email);
-            if (user == null)
-            {
-                token.Success = false;
-                token.Message = $"{token.Email} is not registered";
-                return token;
-            }
-
-            var authenticated = await _userManager.CheckPasswordAsync(user, token.Password);
-            if(authenticated == false)
-            {
-                token.Success = false;
-                token.Message = "Invalid credentials";
-                return token;
-            }
-
-            token.Success = true;
-            token.JsonWebToken = await _authAdapter.CreateJsonWebToken(user);
-            token.Username = user.UserName;
-            token.UserId = Guid.Parse(user.Id);
-
-            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
-            token.Roles = roles.ToList();
-
-            if (user.RefreshTokens.Any(r => r.IsActive))
-            {
-                var active = user.RefreshTokens.FirstOrDefault(r => r.IsActive);
-                token.RefreshToken = active.JsonWebToken;
-                token.RefreshTokenExpiration = active.ExpiresAt;
-            }
-            else
-            {
-                var refresh = _authAdapter.CreateRefreshToken();
-                token.RefreshToken = refresh.JsonWebToken;
-                token.RefreshTokenExpiration = refresh.ExpiresAt;
-
-                user.RefreshTokens.Add(refresh);
-                _context.Update(user);
-                await _context.SaveChangesAsync();
-            }
-
-
-            return token;
-        }
-
-        public async Task<IReadOnlyCollection<RefreshToken>> ListUserTokensAsync(Guid userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-            {
-                throw new ArgumentException($"{userId} does not exist");
-            }
-
-            return user.RefreshTokens;
-        }
-
-        public async Task<User> PromoteRoleAsync(string username, string newRole)
-        {
-            var user = await _userManager.FindByNameAsync(username);
-            if (user == null)
-            {
-                throw new KeyNotFoundException($"{username} does not exist");
-            }
-
-            var store = new RoleStore<IdentityRole>(_context);
-            var allRoles = store.Roles.ToList();
-
-            if (!allRoles.Select(r => r.Name).Contains(newRole))
-            {
-                throw new Exception($"{newRole} is not a valid role");
-            }
-
-            await _userManager.AddToRoleAsync(user, newRole);
-
-            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
-            user.Roles = roles.ToList();
-
-            return user;
-        }
-
-        public async Task<Token> RefreshTokenAsync(string jsonWebToken)
-        {
-            var token = new Token();
-
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshTokens.Any(t => t.JsonWebToken == jsonWebToken));
-            if (user == null)
-            {
-                token.Success = false;
-                token.Message = "no valid token found";
-                return token;
-            }
-
-            var refresh = user.RefreshTokens.FirstOrDefault(t => t.JsonWebToken == jsonWebToken);
-            if (refresh == null || !refresh.IsActive)
-            {
-                token.Success = false;
-                token.Message = "token is not active";
-                return token;
-            }
-
-            // revoke
-            refresh.RevokedAt = DateTimeOffset.Now;
-
-            // generate new refresh token
-            var newRefresh = _authAdapter.CreateRefreshToken();
-            user.RefreshTokens.Add(newRefresh);
-            _context.Update(user);
-            await _context.SaveChangesAsync();
-
-            token.Success = true;
-            token.JsonWebToken = await _authAdapter.CreateJsonWebToken(user);
-            token.Username = user.UserName;
-            token.UserId = Guid.Parse(user.Id);
-
-            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
-            token.Roles = roles.ToList();
-
-            token.RefreshToken = newRefresh.JsonWebToken;
-            token.RefreshTokenExpiration = newRefresh.ExpiresAt;
-
-            return token;
-        }
-
         public async Task<Token> RegisterAsync(User user, string password)
         {
             var existing = await _userManager.FindByEmailAsync(user.Email);
@@ -172,7 +48,7 @@ namespace IdentityService.Application.Services
             var token = new Token
             {
                 Success = true,
-                JsonWebToken = await _authAdapter.CreateJsonWebToken(user),
+                Jwt = await _authAdapter.CreateJsonWebToken(user),
                 Username = user.UserName,
                 UserId = Guid.Parse(user.Id),
                 Email = user.Email,
@@ -183,50 +59,96 @@ namespace IdentityService.Application.Services
             return token;
         }
 
-        public async Task<bool> RevokeRefreshTokenAsync(Guid userId, string jsonWebToken)
+
+        public async Task<User> FindUserAsync(Guid userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.ToString());
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId.ToString());
             if (user == null)
             {
-                return false;
+                throw new ArgumentNullException($"no user with id {userId}");
             }
 
-            var refresh = user.RefreshTokens.FirstOrDefault(r => r.JsonWebToken == jsonWebToken);
-            if(refresh == null || !refresh.IsActive)
+            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            user.Roles = roles.ToList();
+            return user;
+        }
+
+        public async Task<IReadOnlyCollection<User>> ListUsersAsync()
+        {
+            var users = await _context.Users.ToListAsync();
+
+            foreach (var user in users)
             {
-                return false;
+                var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+                user.Roles = roles.ToList();
             }
 
-            // revoke token
-            refresh.RevokedAt = DateTimeOffset.Now;
-            _context.Update(user);
+            return users;
+        }
+
+        public async Task<bool> TerminateUserAsync(Guid userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId.ToString());
+            if (user == null)
+            {
+                throw new ArgumentNullException($"no user with id {userId}");
+            }
+
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<User> RevokeRoleAsync(string username, string roleToRemove)
+
+
+        public async Task<User> PromoteRoleAsync(Guid userId, string role)
         {
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
-                throw new KeyNotFoundException($"{username} does not exist");
+                throw new KeyNotFoundException($"{userId} does not exist");
             }
 
             var store = new RoleStore<IdentityRole>(_context);
             var allRoles = store.Roles.ToList();
 
-            if (!allRoles.Select(r => r.Name).Contains(roleToRemove))
+            if (!allRoles.Select(r => r.Name).Contains(role))
             {
-                throw new Exception($"{roleToRemove} is not a valid role");
+                throw new Exception($"{role} is not a valid role");
             }
 
-            await _userManager.RemoveFromRoleAsync(user, roleToRemove);
+            await _userManager.AddToRoleAsync(user, role);
 
             var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
             user.Roles = roles.ToList();
 
             return user;
         }
+
+        public async Task<User> RevokeRoleAsync(Guid userId, string role)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"{userId} does not exist");
+            }
+
+            var store = new RoleStore<IdentityRole>(_context);
+            var allRoles = store.Roles.ToList();
+
+            if (!allRoles.Select(r => r.Name).Contains(role))
+            {
+                throw new Exception($"{role} is not a valid role");
+            }
+
+            await _userManager.RemoveFromRoleAsync(user, role);
+
+            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            user.Roles = roles.ToList();
+
+            return user;
+        }
+
     }
 }

@@ -16,7 +16,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IdentityService.Application.Services.IIdentityService, IdentityService.Application.Services.IdentityService>();
 builder.Services.AddTransient<IAuthAdapter, AuthAdapter>();
+
 
 builder.Services.ConfigureIdentity(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

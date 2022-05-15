@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace IdentityService.API.Contracts.Requests
 {
-    public class RevokeTokenRequest
+    public class RoleRevokeRequest
     {
-        public Guid UserId { get; set; }
-        public string JsonWebToken { get; set; } = default!;
+        public Guid UserId { get; set; } = default!;
+        public string Role { get; set; } = default!;
     }
 }

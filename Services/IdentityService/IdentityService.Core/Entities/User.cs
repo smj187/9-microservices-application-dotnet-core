@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace IdentityService.Core.Models
+namespace IdentityService.Core.Entities
 {
     public class User : IdentityUser
     {

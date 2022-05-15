@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Commands
 {
-    public class RefreshTokenCommand : IRequest<Token>
+    public class RefreshAuthenticationCommand : IRequest<Token>
     {
-        public string OldToken { get; set; } = default!;
+        public string Token { get; set; } = default!;
     }
 }

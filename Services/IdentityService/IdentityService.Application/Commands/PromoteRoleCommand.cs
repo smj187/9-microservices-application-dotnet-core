@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Models;
+﻿using IdentityService.Core.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace IdentityService.Application.Commands
 {
     public class PromoteRoleCommand : IRequest<User>
     {
-        public string Username { get; set; } = default!;
-        public string NewRule { get; set; } = default!;
+        public Guid UserId { get; set; } = default!;
+        public string Role { get; set; } = default!;
     }
 }

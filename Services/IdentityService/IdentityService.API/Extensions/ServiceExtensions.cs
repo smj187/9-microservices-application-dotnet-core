@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Models;
+﻿using IdentityService.Core.Entities;
 using IdentityService.Core.Settings;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

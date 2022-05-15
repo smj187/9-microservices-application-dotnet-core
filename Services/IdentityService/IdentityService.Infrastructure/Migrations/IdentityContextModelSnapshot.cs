@@ -19,7 +19,7 @@ namespace IdentityService.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("IdentityService.Core.Models.User", b =>
+            modelBuilder.Entity("IdentityService.Core.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -214,9 +214,9 @@ namespace IdentityService.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("IdentityService.Core.Models.User", b =>
+            modelBuilder.Entity("IdentityService.Core.Entities.User", b =>
                 {
-                    b.OwnsMany("IdentityService.Core.Models.RefreshToken", "RefreshTokens", b1 =>
+                    b.OwnsMany("IdentityService.Core.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<string>("UserId")
                                 .HasColumnType("varchar(255)");
@@ -231,16 +231,16 @@ namespace IdentityService.Infrastructure.Migrations
                             b1.Property<DateTimeOffset>("ExpiresAt")
                                 .HasColumnType("datetime(6)");
 
-                            b1.Property<string>("JsonWebToken")
-                                .IsRequired()
-                                .HasColumnType("longtext");
-
                             b1.Property<DateTimeOffset?>("RevokedAt")
                                 .HasColumnType("datetime(6)");
 
+                            b1.Property<string>("Token")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
                             b1.HasKey("UserId", "Id");
 
-                            b1.ToTable("RefreshToken");
+                            b1.ToTable("aspnetuserrefreshtokens", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -260,7 +260,7 @@ namespace IdentityService.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("IdentityService.Core.Models.User", null)
+                    b.HasOne("IdentityService.Core.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -269,7 +269,7 @@ namespace IdentityService.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("IdentityService.Core.Models.User", null)
+                    b.HasOne("IdentityService.Core.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -284,7 +284,7 @@ namespace IdentityService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IdentityService.Core.Models.User", null)
+                    b.HasOne("IdentityService.Core.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -293,7 +293,7 @@ namespace IdentityService.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("IdentityService.Core.Models.User", null)
+                    b.HasOne("IdentityService.Core.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

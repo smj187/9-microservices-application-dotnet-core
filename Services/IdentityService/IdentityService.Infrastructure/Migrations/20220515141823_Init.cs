@@ -144,6 +144,32 @@ namespace IdentityService.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "aspnetuserrefreshtokens",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Token = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
+                    RevokedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_aspnetuserrefreshtokens", x => new { x.UserId, x.Id });
+                    table.ForeignKey(
+                        name: "FK_aspnetuserrefreshtokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
@@ -243,6 +269,9 @@ namespace IdentityService.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "aspnetuserrefreshtokens");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserRoles");

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using IdentityService.API.Contracts.Requests;
 using IdentityService.API.Contracts.Responses;
-using IdentityService.Core.Models;
+using IdentityService.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +10,13 @@ using System.Threading.Tasks;
 
 namespace IdentityService.API.Profiles
 {
-    public class IdentityProfile : Profile
+    public class UserProfile : Profile
     {
-        public IdentityProfile()
+        public UserProfile()
         {
-            CreateMap<Token, AuthenticateUserResponse>()
-                .ForMember(dest => dest.Token, opts => opts.MapFrom(s => s.Jwt));
+            CreateMap<UserRegisterRequest, User>();
 
-            CreateMap<AuthenticateUserRequest, Token>();
+            CreateMap<User, UserResponse>();
         }
     }
 }

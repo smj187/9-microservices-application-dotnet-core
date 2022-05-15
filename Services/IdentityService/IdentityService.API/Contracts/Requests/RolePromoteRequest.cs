@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace IdentityService.API.Contracts.Requests
 {
-    public class PromoteRoleRequest
+    public class RolePromoteRequest
     {
-        public string Username { get; set; } = default!;
-        public string NewRole { get; set; } = default!;
+        public Guid UserId { get; set; } = default!;
+        public string Role { get; set; } = default!;
     }
 }

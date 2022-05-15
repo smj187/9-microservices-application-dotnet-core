@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.API.Contracts.Requests
 {
-    public class CreateUserRequest
+    public class UserRegisterRequest
     {
         public string Username { get; set; } = default!;
 

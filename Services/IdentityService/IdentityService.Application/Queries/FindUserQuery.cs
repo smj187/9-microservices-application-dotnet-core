@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Queries
 {
-    public class ListUserTokensQuery : IRequest<IReadOnlyCollection<RefreshToken>>
+    public class FindUserQuery : IRequest<User>
     {
         public Guid UserId { get; set; }
     }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace IdentityService.API.Contracts.Requests
 {
-    public class RevokeRoleRequest
+    public class RevokeAuthenticationRequest
     {
-        public string Username { get; set; } = default!;
-        public string RoleToRevoke { get; set; } = default!;
+        public Guid UserId { get; set; }
+        public string RefreshToken { get; set; } = default!;
     }
 }

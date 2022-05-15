@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Core.Models
+namespace IdentityService.Core.Entities
 {
     [Owned]
     public class RefreshToken
     {
-        public string JsonWebToken { get; set; } = default!;
+        public string Token { get; set; } = default!;
         public DateTimeOffset ExpiresAt { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? RevokedAt { get; set; }

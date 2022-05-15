@@ -1,4 +1,5 @@
-﻿using IdentityService.Core.Models;
+﻿using IdentityService.Core.Entities;
+using IdentityService.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +11,12 @@ namespace IdentityService.Application.Services
     public interface IUserService
     {
         Task<Token> RegisterAsync(User user, string password);
-        Task<Token> AuthenticateAsync(Token token);
+        
+        Task<User> FindUserAsync(Guid userId);
+        Task<IReadOnlyCollection<User>> ListUsersAsync();
+        Task<bool> TerminateUserAsync(Guid userId);
 
-        Task<User> PromoteRoleAsync(string username, string newRole);
-        Task<User> RevokeRoleAsync(string username, string roleToRemove);
-
-        Task<Token> RefreshTokenAsync(string jsonWebToken);
-
-        // TODO: invalidate currently active token
-
-        Task<bool> RevokeRefreshTokenAsync(Guid userId, string jsonWebToken);
-
-        Task<IReadOnlyCollection<RefreshToken>> ListUserTokensAsync(Guid userId);
+        Task<User> PromoteRoleAsync(Guid userId, string role);
+        Task<User> RevokeRoleAsync(Guid userId, string role);
     }
 }

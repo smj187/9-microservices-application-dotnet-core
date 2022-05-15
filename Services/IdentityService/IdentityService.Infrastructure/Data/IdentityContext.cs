@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Models;
+﻿using IdentityService.Core.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,6 +15,14 @@ namespace IdentityService.Infrastructure.Data
         {
 
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<User>().OwnsMany(u => u.RefreshTokens).ToTable("aspnetuserrefreshtokens");
+        }
+
 
         public DbSet<User> Users { get; set; } = default!;
     }

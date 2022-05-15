@@ -1,5 +1,6 @@
-﻿using IdentityService.Application.Services;
-using IdentityService.Core.Models;
+﻿using IdentityService.Application.Commands;
+using IdentityService.Application.Services;
+using IdentityService.Core.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Application.Commands
+namespace IdentityService.Application.CommandsHandler
 {
     public class PromoteRoleCommandHandler : IRequestHandler<PromoteRoleCommand, User>
     {
@@ -20,8 +21,7 @@ namespace IdentityService.Application.Commands
 
         public async Task<User> Handle(PromoteRoleCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userService.PromoteRoleAsync(request.Username, request.NewRule);
-            return user;
+            return await _userService.PromoteRoleAsync(request.UserId, request.Role);
         }
     }
 }

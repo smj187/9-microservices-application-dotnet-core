@@ -1,5 +1,6 @@
-﻿using IdentityService.Application.Services;
-using IdentityService.Core.Models;
+﻿using IdentityService.Application.Commands;
+using IdentityService.Application.Services;
+using IdentityService.Core.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Application.Commands
+namespace IdentityService.Application.CommandsHandler
 {
     public class RevokeRoleCommandHandler : IRequestHandler<RevokeRoleCommand, User>
     {
@@ -20,8 +21,7 @@ namespace IdentityService.Application.Commands
 
         public async Task<User> Handle(RevokeRoleCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userService.RevokeRoleAsync(request.Username, request.RoleToRemove);
-            return user;
+            return await _userService.RevokeRoleAsync(request.UserId, request.Role);
         }
     }
 }

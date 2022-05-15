@@ -20,38 +20,20 @@ namespace IdentityService.API.Controllers
     [Route("api/v1/[controller]")]
     public class IdentityController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public IdentityController(IUserService userService, IMapper mapper, IMediator mediator)
+        public IdentityController(IMapper mapper, IMediator mediator)
         {
-            _userService = userService;
             _mapper = mapper;
             _mediator = mediator;
         }
 
+
         
 
         [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] CreateUserRequest request)
-        {
-            var mapped = _mapper.Map<User>(request);
-
-            var command = new RegisterUserCommand
-            {
-                User = mapped,
-                Password = request.Password,
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<AuthenticateUserResponse>(data);
-            return Ok(result);
-        }
-
-        [HttpPost]
+        [AllowAnonymous]
         [Route("authenticate")]
         public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticateUserRequest request)
         {
@@ -65,61 +47,29 @@ namespace IdentityService.API.Controllers
             var data = await _mediator.Send(command);
 
             var result = _mapper.Map<AuthenticateUserResponse>(data);
-            SetRefreshTokenInCookie(result.RefreshToken);
             return Ok(result);
         }
 
-        [HttpPost]
-        [Route("promote")]
-        public async Task<IActionResult> PromoteAsync([FromBody] PromoteRoleRequest request)
-        {
-            var command = new PromoteRoleCommand
-            {
-                Username = request.Username,
-                NewRule = request.NewRole
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<UserResponse>(data);
-            return Ok(result);
-        }        
-        
-        [HttpPost]
-        [Route("revoke")]
-        public async Task<IActionResult> RevokeAsync([FromBody] RevokeRoleRequest request)
-        {
-            var command = new RevokeRoleCommand
-            {
-                Username = request.Username,
-                RoleToRemove = request.RoleToRevoke
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<UserResponse>(data);
-            return Ok(result);
-        }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("refresh-token")]
-        public async Task<IActionResult> RefreshTokenAsync()
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshAuthenticationRequest request)
         {
-            var refresh = Request.Cookies["refreshToken"];
 
-            var command = new RefreshTokenCommand
+            var command = new RefreshAuthenticationCommand
             {
-                OldToken = refresh
+                Token = request.RefreshToken
             };
 
             var data = await _mediator.Send(command);
 
             var result = _mapper.Map<AuthenticateUserResponse>(data);
-            SetRefreshTokenInCookie(result.RefreshToken);
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpGet]
+        [Authorize(Roles = "Administrator")]
         [Route("refresh-token/{userId:guid}")]
         public async Task<IActionResult> GetRefreshTokensAsync([FromRoute] Guid userId)
         {
@@ -133,39 +83,21 @@ namespace IdentityService.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("revoke-token")]
-        public async Task<IActionResult> RevokeTokenAsync([FromBody] RevokeTokenRequest request)
+        public async Task<IActionResult> RevokeAuthenticationAsync([FromBody] RevokeAuthenticationRequest request)
         {
-            var token = request.JsonWebToken ?? Request.Cookies["refreshToken"] ?? null;
-
-            if (token == null)
-                return BadRequest(new { message = "No token was provided" });
-
-            var command = new RevokeTokenCommand
+            var command = new RevokeAuthenticationCommand
             {
-                JsonWebToken = request.JsonWebToken,
+                RefreshToken = request.RefreshToken,
                 UserId = request.UserId
             };
 
             var data = await _mediator.Send(command);
-
-            if(!data)
-            {
-                return NotFound(new { message = "Not token was found" });
-            }
-
-            return Ok(new { message = "Token revoked" });
+            return Ok(data == true ? "success" : "an error occured");
         }
 
 
-        private void SetRefreshTokenInCookie(string refreshToken)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(10),
-            };
-            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
-        }
+
     }
 }

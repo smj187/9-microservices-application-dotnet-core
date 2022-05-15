@@ -1,4 +1,5 @@
-﻿using IdentityService.Core.Models;
+﻿using IdentityService.Core.Entities;
+using IdentityService.Core.Models;
 using MediatR;
 using System;
 using System.Collections.Generic;
