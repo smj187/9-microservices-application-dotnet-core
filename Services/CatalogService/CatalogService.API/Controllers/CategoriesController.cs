@@ -1,4 +1,6 @@
-﻿using CatalogService.API.Contracts.Requests;
+﻿using AutoMapper;
+using CatalogService.API.Contracts.Reponses;
+using CatalogService.API.Contracts.Requests;
 using CatalogService.Application.Commands;
 using CatalogService.Application.Queries;
 using CatalogService.Core.Entities;
@@ -17,37 +19,38 @@ namespace CatalogService.API.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public CategoriesController(IMediator mediator)
+        public CategoriesController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> ListCategoriesAsync()
         {
             var query = new ListCategoriesQuery();
+
             var data = await _mediator.Send(query);
 
-            return Ok(data);
+            var result = _mapper.Map<IReadOnlyCollection<Category>>(data);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategoriesAsync([FromBody] CreateCategoryRequst request)
+        public async Task<IActionResult> CreateCategoriesAsync([FromBody] CreateCategoryRequest createCategoryRequest)
         {
-            var newProduct = new Category
-            {
-                Name = request.Name,
-                Description = request.Description,
-                ImageUrl = request.ImageUrl,
-            };
+            var mapped = _mapper.Map<Category>(createCategoryRequest);
             var command = new CreateCategoryCommand
             {
-                NewCategory = newProduct
+                NewCategory = mapped
             };
 
             var data = await _mediator.Send(command);
-            return Ok(data);
+
+            var result = _mapper.Map<CategoryResponse>(data);
+            return Ok(result);
         }
     }
 }

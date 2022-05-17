@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using CatalogService.API.Contracts.Reponses;
 using CatalogService.API.Contracts.Requests;
-using CatalogService.API.Contracts.Responses;
 using CatalogService.Application.Commands;
 using CatalogService.Application.Queries;
 using CatalogService.Core.Entities;
@@ -31,29 +31,26 @@ namespace CatalogService.API.Controllers
         public async Task<IActionResult> ListProductsAsync()
         {
             var query = new ListProductsQuery();
+
             var data = await _mediator.Send(query);
 
-            var result = _mapper.Map<IEnumerable<ProductResponse>>(data);
+            var result = _mapper.Map<IReadOnlyCollection<ProductResponse>>(data);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductRequest request)
+        public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductRequest createProductRequest)
         {
-            var newProduct = new Product
-            {
-                Name = request.Name,
-                Description = request.Description,
-                ImageUrl = request.ImageUrl,
-                Price = request.Price,
-            };
+            var mapped = _mapper.Map<Product>(createProductRequest);
             var command = new CreateProductCommand
             {
-                NewProduct = newProduct
+                NewProduct = mapped
             };
 
             var data = await _mediator.Send(command);
-            return Ok(data);
+
+            var result = _mapper.Map<ProductResponse>(data);
+            return Ok(result);
         }
     }
 }

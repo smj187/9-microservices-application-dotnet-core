@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Infrastructure.Data
 {
-    public interface ICatalogContext
+    public interface ICatelogContext
     {
         IMongoCollection<Product> Products { get; }
-
         IMongoCollection<Category> Categories { get; }
     }
 }
