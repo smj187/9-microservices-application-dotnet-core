@@ -1,4 +1,5 @@
 ﻿using CatalogService.Core.Entities;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -8,18 +9,20 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Infrastructure.Data
 {
-    public class CatalogContext : ICatalogContext
+    public class CatalogContext : ICatelogContext
     {
-        private readonly IMongoDatabase _database;
-
-        public CatalogContext(string connectionStr, string database)
+        public CatalogContext(IConfiguration config)
         {
-            var client = new MongoClient(connectionStr);
-            _database = client.GetDatabase(database);
+            var str = config.GetValue<string>("ConnectionStrings:DefaultConnection");
+            var client = new MongoClient(str);
+            var db = config.GetValue<string>("ConnectionStrings:Database");
+            var database = client.GetDatabase(db);
+
+            Products = database.GetCollection<Product>("products");
+            Categories = database.GetCollection<Category>("categories");
         }
 
-        public IMongoCollection<Product> Products => _database.GetCollection<Product>("products");
-
-        public IMongoCollection<Category> Categories => _database.GetCollection<Category>("categories");
+        public IMongoCollection<Product> Products { get; private set; }
+        public IMongoCollection<Category> Categories { get; private set; }
     }
 }
