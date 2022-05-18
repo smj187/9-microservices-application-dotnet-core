@@ -41,6 +41,14 @@ services:
     networks:
       - identity-network
 
+  front-envoy:
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    ports:
+      - "9902:9902"
+      - "10000:10000"
+
   catalogservice.api:
     image: ${DOCKER_REGISTRY-}catalogserviceapi
     container_name: catalog_api

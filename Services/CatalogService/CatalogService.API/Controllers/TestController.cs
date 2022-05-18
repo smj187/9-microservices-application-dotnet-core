@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace CatalogService.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/")]
     public class TestController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Test() => Ok("success");
+        public IActionResult Test() => Ok("this is the catalog service");
     }
 }
