@@ -1,21 +1,18 @@
-version: "3"
+version: "3.4"
 
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - postgres
-      - pgadmin
+  mongodb:
+    image: mongo
+    container_name: catalog_mongo_db
+    restart: unless-stopped
     ports:
-      - "5003:80"
-    networks:
-      - identity-network
+      - 27017:27017
+    volumes:
+      - mongodb-data:/data/db
 
   postgres:
     image: postgres
-    container_name: identity-postgres_container
+    container_name: identity_postgres_db
     restart: unless-stopped
     environment:
       POSTGRES_DB: postgres
@@ -31,7 +28,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: identity-pgadmin4_container
+    container_name: identity_pgadmin4
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
@@ -44,7 +41,24 @@ services:
     networks:
       - identity-network
 
+  catalogservice.api:
+    image: ${DOCKER_REGISTRY-}catalogserviceapi
+    container_name: catalog_api
+    build:
+      context: .
+      dockerfile: Services/CatalogService/CatalogService.API/Dockerfile
+
+  identityservice.api:
+    image: ${DOCKER_REGISTRY-}identityserviceapi
+    container_name: identity_api
+    build:
+      context: .
+      dockerfile: Services/IdentityService/IdentityService.API/Dockerfile
+    networks:
+      - identity-network
+
 volumes:
+  mongodb-data:
   postgres-data:
   pgadmin-data:
 

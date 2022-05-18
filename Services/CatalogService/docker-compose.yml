@@ -34,5 +34,11 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
+  identityservice.api:
+    image: ${DOCKER_REGISTRY-}identityserviceapi
+    build:
+      context: ../..
+      dockerfile: Services/IdentityService/IdentityService.API/Dockerfile
+
 volumes:
   mongodb-data:
