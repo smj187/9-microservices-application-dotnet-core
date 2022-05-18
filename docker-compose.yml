@@ -1,0 +1,75 @@
+version: "3.4"
+
+services:
+  mongodb:
+    image: mongo
+    container_name: catalog_mongo_db
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb-data:/data/db
+
+  postgres:
+    image: postgres
+    container_name: identity_postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - identity-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: identity_pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "5555:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - identity-network
+
+  front-envoy:
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    ports:
+      - "9902:9902"
+      - "10000:10000"
+
+  catalogservice.api:
+    image: ${DOCKER_REGISTRY-}catalogserviceapi
+    container_name: catalog_api
+    build:
+      context: .
+      dockerfile: Services/CatalogService/CatalogService.API/Dockerfile
+
+  identityservice.api:
+    image: ${DOCKER_REGISTRY-}identityserviceapi
+    container_name: identity_api
+    build:
+      context: .
+      dockerfile: Services/IdentityService/IdentityService.API/Dockerfile
+    networks:
+      - identity-network
+
+volumes:
+  mongodb-data:
+  postgres-data:
+  pgadmin-data:
+
+networks:
+  identity-network:
+    driver: bridge
