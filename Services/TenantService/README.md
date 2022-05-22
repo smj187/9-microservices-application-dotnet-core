@@ -16,14 +16,8 @@ dotnet user-secrets -p ./TenantService.API.csproj set "Kestrel:Certificates:Deve
 Run the service container
 
 ```
-docker-compose -f docker-compose-services.yaml up --build
-docker-compose -f docker-compose-services.yaml down
-```
-
-Run the database container
-
-```
-docker-compose -f docker-compose-database.yaml up --build
+docker-compose -f docker-compose.yaml up --build
+docker-compose -f docker-compose.yaml down
 ```
 
 ## Database migrations
