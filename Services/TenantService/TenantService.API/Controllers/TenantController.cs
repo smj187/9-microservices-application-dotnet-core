@@ -1,13 +1,18 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TenantService.Application.Commands;
+using TenantService.Application.Queries;
 using TenantService.Contracts.v1.Requests;
 using TenantService.Contracts.v1.Responses;
 using TenantService.Core.Entities;
+using TenantService.Infrastructure.Data;
 
 namespace TenantService.API.Controllers
 {
@@ -16,17 +21,21 @@ namespace TenantService.API.Controllers
     public class TenantController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public TenantController(IMapper mapper)
+        public TenantController(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
+            _mediator = mediator;
         }
 
 
         [HttpGet]
         public async Task<IActionResult> ListTenantsAsync()
         {
-            var data = new List<Tenant>();
+            var query = new ListTenantsQuery();
+
+            var data = await _mediator.Send(query);
 
             var result = _mapper.Map<IEnumerable<TenantResponse>>(data);
             return Ok(result);
@@ -35,7 +44,13 @@ namespace TenantService.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTenantAsync([FromBody] CreateTenantRequest createTenantRequest)
         {
-            var data = _mapper.Map<Tenant>(createTenantRequest);
+            var mapped = _mapper.Map<Tenant>(createTenantRequest);
+            var command = new CreateTenantCommand
+            {
+                NewTenant = mapped
+            };
+  
+            var data = await _mediator.Send(command);
 
             var result = _mapper.Map<TenantResponse>(data);
             return Ok(result);

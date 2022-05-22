@@ -25,3 +25,13 @@ Run the database container
 ```
 docker-compose -f docker-compose-database.yaml up --build
 ```
+
+## Database migrations
+
+Run this command at the root level inside ./Services/TenantService
+
+```
+
+dotnet ef migrations add Init --project TenantService.Infrastructure -s TenantService.API
+dotnet ef database update --project TenantService.Infrastructure -s TenantService.API
+```
