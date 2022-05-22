@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.Application.Commands;
+using OrderService.Application.Queries;
 using OrderService.Contracts.v1.Requests;
 using OrderService.Contracts.v1.Responses;
 using OrderService.Core.Entities;
@@ -16,10 +19,12 @@ namespace OrderService.API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public OrdersController(IMapper mapper)
+        public OrdersController(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpPost]
@@ -27,14 +32,23 @@ namespace OrderService.API.Controllers
         {
             var mapped = _mapper.Map<Order>(createOrderRequest);
 
-            var result = _mapper.Map<OrderResponse>(mapped);
+            var command = new CreateOrderCommand
+            {
+                NewOrder = mapped
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<OrderResponse>(data);
             return Ok(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> ListOrdersAsync()
         {
-            var data = new List<Order>();
+            var query = new ListOrdersQuery();
+
+            var data = await _mediator.Send(query);
 
             var result = _mapper.Map<IEnumerable<Order>>(data);
             return Ok(result);

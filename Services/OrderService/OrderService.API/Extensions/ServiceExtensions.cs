@@ -24,6 +24,13 @@ namespace OrderService.API.Extensions
             return services;
         }
 
+        public static async Task UseInitialMigration(this WebApplication app)
+        {
+            await using var scope = app.Services.CreateAsyncScope();
+            using var database = scope.ServiceProvider.GetService<OrderContext>();
+            await database.Database.MigrateAsync();
+        }
+
 
         public static void UseDevEnvironment(this WebApplication app)
         {
