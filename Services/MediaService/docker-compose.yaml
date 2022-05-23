@@ -1,18 +1,18 @@
 version: "3.8"
 
 services:
-  tenantservice:
-    image: ${DOCKER_REGISTRY-}tenantservice
+  mediaservice:
+    image: ${DOCKER_REGISTRY-}mediaservice
     build:
       context: .
-      dockerfile: TenantService.API/Dockerfile
+      dockerfile: MediaService.API/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ConnectionStrings:DefaultConnection=server=host.docker.internal;user=root;database=mm-tenant;password=passwd;port=3307;
+      - ConnectionStrings:DefaultConnection=server=host.docker.internal;user=root;database=mm-media;password=passwd;port=3307;
     ports:
-      - "5201:80"
-      - "5200:443"
+      - "5301:80"
+      - "5300:443"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
@@ -30,7 +30,7 @@ services:
       MYSQL_USER: admin
       MYSQL_ROOT_PASSWORD: passwd
       MYSQL_PASSWORD: passwd
-      MYSQL_DATABASE: mm-tenant
+      MYSQL_DATABASE: mm-media
     volumes:
       - mysql-db:/var/lib/mysql
     ports:
