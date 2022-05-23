@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DeliveryService.Core\DeliveryService.Core.csproj" />
+    <ProjectReference Include="..\DeliveryService.Infrastructure\DeliveryService.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
