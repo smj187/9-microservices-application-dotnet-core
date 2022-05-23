@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "**/node_modules/**": true,
+    "**/obj/**": true,
+    "**/bin/**": true,
+    "**/.vs": true
+  }
+}
