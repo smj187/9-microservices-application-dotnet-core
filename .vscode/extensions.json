@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "formulahendry.docker-explorer",
+    "ms-azuretools.vscode-docker",
+    "christian-kohler.npm-intellisense",
+    "cweijan.vscode-mysql-client2",
+    "mongodb.mongodb-vscode",
+    "ms-dotnettools.blazorwasm-companion"
+  ]
+}
