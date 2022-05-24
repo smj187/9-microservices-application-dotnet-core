@@ -1,14 +1,15 @@
 ﻿using BuildingBlocks.Domain.Interfaces;
+using BuildingBlocks.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingBlocks.Domain.Repositories
+namespace MediaService.Infrastructure.Repositories
 {
-    public interface ICommandRepository<T> where T : IAggregateRoot
+    public interface IBlobRepository<T> : IRepository<T> where T : IAggregateRoot
     {
-        Task AddAsync(T entity);
+
     }
 }

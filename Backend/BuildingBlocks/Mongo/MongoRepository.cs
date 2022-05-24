@@ -22,10 +22,9 @@ namespace BuildingBlocks.Mongo
             _mongoCollection = database.GetCollection<T>(collectionName);
         }
 
-        public async Task<T> AddAsync(T entity)
+        public async Task AddAsync(T entity)
         {
             await _mongoCollection.InsertOneAsync(entity);
-            return entity;
         }
 
         public async Task<IReadOnlyCollection<T>> ListAsync()

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MediaService.Application.Queries
 {
-    public class ListMediaFileQuery : IRequest<IEnumerable<MediaFile>>
+    public class ListMediaFileQuery : IRequest<IEnumerable<Blob>>
     {
 
     }

@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace MediaService.Application.Commands
 {
-    public class CreateMediaFileCommand : IRequest<MediaFile>
+    public class CreateMediaFileCommand : IRequest<Blob>
     {
-        public MediaFile NewMediaFile { get; set; } = default!;
+        public Blob NewMediaFile { get; set; } = default!;
     }
 }

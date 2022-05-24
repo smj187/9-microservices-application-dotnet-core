@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.csproj" />
     <ProjectReference Include="..\MediaService.Application\MediaService.Application.csproj" />
     <ProjectReference Include="..\MediaService.Contracts\MediaService.Contracts.csproj" />
     <ProjectReference Include="..\MediaService.Infrastructure\MediaService.Infrastructure.csproj" />

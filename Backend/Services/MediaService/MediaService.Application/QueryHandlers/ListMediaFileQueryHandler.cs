@@ -1,7 +1,9 @@
 ﻿using MediaService.Application.Queries;
-using MediaService.Application.Repositories;
 using MediaService.Core.Entities;
+using MediaService.Infrastructure.Data;
+using MediaService.Infrastructure.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace MediaService.Application.QueryHandlers
 {
-    public class ListMediaFileQueryHandler : IRequestHandler<ListMediaFileQuery, IEnumerable<MediaFile>>
+    public class ListMediaFileQueryHandler : IRequestHandler<ListMediaFileQuery, IEnumerable<Blob>>
     {
-        private readonly IMediaFileRepository _mediaFileRepository;
+        private readonly IBlobRepository<Blob> _blobRepository;
 
-        public ListMediaFileQueryHandler(IMediaFileRepository mediaFileRepository)
+        public ListMediaFileQueryHandler(IBlobRepository<Blob> blobRepository)
         {
-            _mediaFileRepository = mediaFileRepository;
+            _blobRepository = blobRepository;
         }
 
-        public async Task<IEnumerable<MediaFile>> Handle(ListMediaFileQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Blob>> Handle(ListMediaFileQuery request, CancellationToken cancellationToken)
         {
-            return await _mediaFileRepository.ListMediaFilesAsync();
+            return await _blobRepository.ListAsync();
         }
     }
 }

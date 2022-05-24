@@ -1,6 +1,7 @@
-﻿using MediaService.Application.Commands;
-using MediaService.Application.Repositories;
+﻿using BuildingBlocks.EfCore.Interfaces;
+using MediaService.Application.Commands;
 using MediaService.Core.Entities;
+using MediaService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,18 +11,22 @@ using System.Threading.Tasks;
 
 namespace MediaService.Application.CommandHandlers
 {
-    public class CreateMediaFileCommandHandler : IRequestHandler<CreateMediaFileCommand, MediaFile>
+    public class CreateMediaFileCommandHandler : IRequestHandler<CreateMediaFileCommand, Blob>
     {
-        private readonly IMediaFileRepository _mediaFileRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IBlobRepository<Blob> _blobRepository;
 
-        public CreateMediaFileCommandHandler(IMediaFileRepository mediaFileRepository)
+        public CreateMediaFileCommandHandler(IUnitOfWork unitOfWork, IBlobRepository<Blob> blobRepository)
         {
-            _mediaFileRepository = mediaFileRepository;
+            _unitOfWork = unitOfWork;
+            _blobRepository = blobRepository;
         }
 
-        public async Task<MediaFile> Handle(CreateMediaFileCommand request, CancellationToken cancellationToken)
+        public async Task<Blob> Handle(CreateMediaFileCommand request, CancellationToken cancellationToken)
         {
-            return await _mediaFileRepository.CreateMediaFileAsync(request.NewMediaFile);
+            await _blobRepository.AddAsync(request.NewMediaFile);
+            await _unitOfWork.SaveChangesAsync();
+            return request.NewMediaFile;
         }
     }
 }

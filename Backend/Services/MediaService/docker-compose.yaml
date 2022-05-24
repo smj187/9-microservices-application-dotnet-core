@@ -9,7 +9,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ConnectionStrings:DefaultConnection=server=host.docker.internal;user=root;database=mm-media;password=passwd;port=3307;
+      - ConnectionStrings:DefaultConnection=server=host.docker.internal;user=root;database=mm-media;password=passwd;port=3308;
     ports:
       - "5301:80"
       - "5300:443"
@@ -34,7 +34,7 @@ services:
     volumes:
       - mysql-db:/var/lib/mysql
     ports:
-      - "3307:3306"
+      - "3308:3306"
     networks:
       - mysql-network
 

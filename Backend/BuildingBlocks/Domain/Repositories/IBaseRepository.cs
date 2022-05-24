@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Domain.Repositories
 {
-    public interface ICommandRepository<T> where T : IAggregateRoot
+    public interface IBaseRepository<T> : ICommandRepository<T>, IQueryRepository<T> where T : IAggregateRoot
     {
-        Task AddAsync(T entity);
+
     }
 }

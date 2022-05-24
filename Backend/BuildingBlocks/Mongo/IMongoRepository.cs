@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Mongo
 {
-    public interface IMongoRepository<T> : IRepository<T> where T : IAggregateRoot
+    public interface IMongoRepository<T> : IBaseRepository<T> where T : IAggregateRoot
     {
 
     }
