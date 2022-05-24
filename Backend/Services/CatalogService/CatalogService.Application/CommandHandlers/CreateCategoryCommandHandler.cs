@@ -1,7 +1,6 @@
-﻿using CatalogService.Application.Commands;
-using CatalogService.Application.Repositories.Categories;
+﻿using BuildingBlocks.Mongo;
+using CatalogService.Application.Commands;
 using CatalogService.Core.Entities;
-using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,16 +12,16 @@ namespace CatalogService.Application.CommandHandlers
 {
     public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Category>
     {
-        private readonly ICategoryCommandRepository _categoryCommandRepository;
+        private readonly IMongoRepository<Category> _mongoRepository;
 
-        public CreateCategoryCommandHandler(ICategoryCommandRepository categoryCommandRepository)
+        public CreateCategoryCommandHandler(IMongoRepository<Category> mongoRepository)
         {
-            _categoryCommandRepository = categoryCommandRepository;
+            _mongoRepository = mongoRepository;
         }
 
         public async Task<Category> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            return await _categoryCommandRepository.CreateAsync(request.NewCategory);
+            return await _mongoRepository.AddAsync(request.NewCategory);
         }
     }
 }

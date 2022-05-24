@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using CatalogService.API.Contracts.Reponses;
-using CatalogService.API.Contracts.Requests;
 using CatalogService.Application.Commands;
 using CatalogService.Application.Queries;
+using CatalogService.Contracts.v1.Requests;
+using CatalogService.Contracts.v1.Responses;
 using CatalogService.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,7 @@ namespace CatalogService.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ListCategoriesAsync()
         {
-            var query = new ListCategoriesQuery();
+            var query = new ListCategoryQuery();
 
             var data = await _mediator.Send(query);
 
