@@ -10,7 +10,9 @@ WORKDIR /src
 COPY ["Services/IdentityService/IdentityService.API/IdentityService.API.csproj", "Services/IdentityService/IdentityService.API/"]
 COPY ["Services/IdentityService/IdentityService.Application/IdentityService.Application.csproj", "Services/IdentityService/IdentityService.Application/"]
 COPY ["Services/IdentityService/IdentityService.Core/IdentityService.Core.csproj", "Services/IdentityService/IdentityService.Core/"]
+COPY ["BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/"]
 COPY ["Services/IdentityService/IdentityService.Infrastructure/IdentityService.Infrastructure.csproj", "Services/IdentityService/IdentityService.Infrastructure/"]
+COPY ["Services/IdentityService/IdentityService.Contracts/IdentityService.Contracts.csproj", "Services/IdentityService/IdentityService.Contracts/"]
 RUN dotnet restore "Services/IdentityService/IdentityService.API/IdentityService.API.csproj"
 COPY . .
 WORKDIR "/src/Services/IdentityService/IdentityService.API"

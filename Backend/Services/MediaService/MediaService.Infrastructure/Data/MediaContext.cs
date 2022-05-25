@@ -1,4 +1,5 @@
 ﻿using MediaService.Core.Entities;
+using MediaService.Infrastructure.EntityTypeConfigurations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,11 @@ namespace MediaService.Infrastructure.Data
 
         }
 
-        public DbSet<MediaFile> Files { get; set; } = default!;
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new MediaFileEntityTypeConfiguration());
+        }
+
+        public DbSet<Blob> MediaFiles { get; set; } = default!;
     }
 }

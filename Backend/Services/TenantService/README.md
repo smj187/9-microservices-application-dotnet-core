@@ -11,15 +11,6 @@ cd Services/TenantService/TenantService.API
 dotnet user-secrets -p ./TenantService.API.csproj set "Kestrel:Certificates:Development:Password" "crypticpassword"
 ```
 
-## Docker build
-
-Run the service container
-
-```
-docker-compose -f docker-compose.yaml up --build
-docker-compose -f docker-compose.yaml down
-```
-
 ## Database migrations
 
 Run this command at the root level inside ./Services/TenantService

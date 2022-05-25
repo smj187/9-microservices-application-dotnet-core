@@ -1,31 +1,28 @@
+using BuildingBlocks.Extensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using TenantService.API.Extensions;
-using TenantService.Application.QueryHandlers;
-using TenantService.Application.Repositories;
+using TenantService.Core.Entities;
 using TenantService.Infrastructure.Data;
+using TenantService.Infrastructure.Repositories;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-
-builder.Services.ConfigureTenant(builder.Configuration);
-
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-builder.Services.AddTransient<ITenantRepository, TenantRepository>();
-
-builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddMediatR(Assembly.Load("TenantService.Application"));
+builder.Services.ConfigureMySql<TenantContext>(builder.Configuration)
+    .AddTransient<ITenantRepository<Tenant>, TenantRepository<Tenant>>();
 
 
 var app = builder.Build();
-await app.UseInitialMigration();
-app.UseDevEnvironment();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

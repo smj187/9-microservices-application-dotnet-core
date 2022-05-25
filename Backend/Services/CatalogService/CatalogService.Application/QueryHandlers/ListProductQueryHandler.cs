@@ -1,7 +1,6 @@
-﻿using CatalogService.Application.Queries;
-using CatalogService.Application.Repositories.Products;
+﻿using BuildingBlocks.Mongo;
+using CatalogService.Application.Queries;
 using CatalogService.Core.Entities;
-using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,16 +12,16 @@ namespace CatalogService.Application.QueryHandlers
 {
     public class ListProductQueryHandler : IRequestHandler<ListProductsQuery, IEnumerable<Product>>
     {
-        private readonly IProductQueryRepository _productQueryRepository;
+        private readonly IMongoRepository<Product> _mongoRepository;
 
-        public ListProductQueryHandler(IProductQueryRepository productQueryRepository)
+        public ListProductQueryHandler(IMongoRepository<Product> mongoRepository)
         {
-            _productQueryRepository = productQueryRepository;
+            _mongoRepository = mongoRepository;
         }
 
         public async Task<IEnumerable<Product>> Handle(ListProductsQuery request, CancellationToken cancellationToken)
         {
-            return await _productQueryRepository.ListAsync();
+            return await _mongoRepository.ListAsync();
         }
     }
 }

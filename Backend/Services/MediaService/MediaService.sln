@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Core", "MediaService.Core\MediaService.Core.csproj", "{953EBFA6-913C-475B-B27E-3E3738EF2643}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaService.Core", "MediaService.Core\MediaService.Core.csproj", "{953EBFA6-913C-475B-B27E-3E3738EF2643}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Contracts", "MediaService.Contracts\MediaService.Contracts.csproj", "{228EB3DE-27BD-44C0-AA62-2D5C02D8AB0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaService.Contracts", "MediaService.Contracts\MediaService.Contracts.csproj", "{228EB3DE-27BD-44C0-AA62-2D5C02D8AB0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Infrastructure", "MediaService.Infrastructure\MediaService.Infrastructure.csproj", "{A9B600E4-CB4D-4F1B-B81C-EE870F535A86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaService.Infrastructure", "MediaService.Infrastructure\MediaService.Infrastructure.csproj", "{A9B600E4-CB4D-4F1B-B81C-EE870F535A86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Application", "MediaService.Application\MediaService.Application.csproj", "{440EA1BD-04ED-4AF5-B77C-08CE24D7A1D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaService.Application", "MediaService.Application\MediaService.Application.csproj", "{440EA1BD-04ED-4AF5-B77C-08CE24D7A1D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.API", "MediaService.API\MediaService.API.csproj", "{28BAF451-385F-4A5D-AE07-6CBC688944BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaService.API", "MediaService.API\MediaService.API.csproj", "{28BAF451-385F-4A5D-AE07-6CBC688944BD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks", "..\..\BuildingBlocks\BuildingBlocks.csproj", "{987CA04A-B11D-4F87-BF71-00B9D1AC75AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{28BAF451-385F-4A5D-AE07-6CBC688944BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28BAF451-385F-4A5D-AE07-6CBC688944BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28BAF451-385F-4A5D-AE07-6CBC688944BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{987CA04A-B11D-4F87-BF71-00B9D1AC75AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{987CA04A-B11D-4F87-BF71-00B9D1AC75AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{987CA04A-B11D-4F87-BF71-00B9D1AC75AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{987CA04A-B11D-4F87-BF71-00B9D1AC75AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

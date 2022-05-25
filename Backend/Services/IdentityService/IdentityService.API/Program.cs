@@ -1,34 +1,33 @@
 
+using BuildingBlocks.Extensions;
 using IdentityService.API.Extensions;
 using IdentityService.Application.Adapters;
 using IdentityService.Application.Services;
-using IdentityService.Core.Models;
-using IdentityService.Core.Settings;
+using IdentityService.Infrastructure.Data;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using System.Reflection;
 
-// builder
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IdentityService.Application.Services.IIdentityService, IdentityService.Application.Services.IdentityService>();
-builder.Services.AddTransient<IAuthAdapter, AuthAdapter>();
-
-builder.Services.ConfigureIdentity(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddMediatR(Assembly.Load("IdentityService.Application"));
 
-// app
+builder.Services.ConfigureNpgsql<IdentityContext>(builder.Configuration)
+    .AddIdentity(builder.Configuration)
+    .AddTransient<IUserService, UserService>()
+    .AddTransient<IdentityService.Application.Services.IIdentityService, IdentityService.Application.Services.IdentityService>()
+    .AddTransient<IAuthAdapter, AuthAdapter>();
+
+
 var app = builder.Build();
-await app.UseInitialMigration();
-app.UseDevEnvironment();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 app.UseInitialDatabaseSeeding();
 app.UseHttpsRedirection();
 app.UseAuthentication();

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CatalogService.API.Contracts.Reponses;
-using CatalogService.API.Contracts.Requests;
+using CatalogService.Contracts.v1.Requests;
+using CatalogService.Contracts.v1.Responses;
 using CatalogService.Core.Entities;
 using System;
 using System.Collections.Generic;

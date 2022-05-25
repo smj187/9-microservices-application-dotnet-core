@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.API", "PaymentService.API\PaymentService.API.csproj", "{4837BBEB-5E3B-4896-AA1D-03059C11A5D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentService.API", "PaymentService.API\PaymentService.API.csproj", "{4837BBEB-5E3B-4896-AA1D-03059C11A5D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Contracts", "PaymentService.Contracts\PaymentService.Contracts.csproj", "{270E4483-E667-414A-847E-99BAE685570D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentService.Contracts", "PaymentService.Contracts\PaymentService.Contracts.csproj", "{270E4483-E667-414A-847E-99BAE685570D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Core", "PaymentService.Core\PaymentService.Core.csproj", "{3E7F5BE5-CE14-4384-89E4-0FC22FE90578}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentService.Core", "PaymentService.Core\PaymentService.Core.csproj", "{3E7F5BE5-CE14-4384-89E4-0FC22FE90578}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Application", "PaymentService.Application\PaymentService.Application.csproj", "{55DC58F3-DAD3-4C09-83A4-3C19107B46E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentService.Application", "PaymentService.Application\PaymentService.Application.csproj", "{55DC58F3-DAD3-4C09-83A4-3C19107B46E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService.Infrastructure", "PaymentService.Infrastructure\PaymentService.Infrastructure.csproj", "{1EE0B1BA-DEBC-4996-8E12-898834812CD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentService.Infrastructure", "PaymentService.Infrastructure\PaymentService.Infrastructure.csproj", "{1EE0B1BA-DEBC-4996-8E12-898834812CD3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks", "..\..\BuildingBlocks\BuildingBlocks.csproj", "{C5FC032A-FD27-4267-98B9-A3D67FE0B3E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{1EE0B1BA-DEBC-4996-8E12-898834812CD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EE0B1BA-DEBC-4996-8E12-898834812CD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EE0B1BA-DEBC-4996-8E12-898834812CD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5FC032A-FD27-4267-98B9-A3D67FE0B3E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5FC032A-FD27-4267-98B9-A3D67FE0B3E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5FC032A-FD27-4267-98B9-A3D67FE0B3E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5FC032A-FD27-4267-98B9-A3D67FE0B3E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

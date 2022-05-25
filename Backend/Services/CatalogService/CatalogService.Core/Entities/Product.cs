@@ -1,4 +1,4 @@
-﻿using CatalogService.Core.Entities.Base;
+﻿using BuildingBlocks.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Core.Entities
 {
-    public class Product : MongoEntity
+    public class Product : AggregateRoot
     {
         public string Name { get; set; } = default!;
         public string Description { get; set; } = default!;

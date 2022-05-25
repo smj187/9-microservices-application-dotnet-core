@@ -1,7 +1,8 @@
-﻿using MediatR;
+﻿using BuildingBlocks.EfCore.Interfaces;
+using MediatR;
 using PaymentService.Application.Commands;
-using PaymentService.Application.Repositories;
 using PaymentService.Core.Entities;
+using PaymentService.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,20 @@ namespace PaymentService.Application.CommandHandlers
 {
     public class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand, Payment>
     {
-        private readonly PaymentRepository _paymentRepository;
+        private readonly IPaymentRepository<Payment> _paymentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreatePaymentCommandHandler(PaymentRepository paymentRepository)
+        public CreatePaymentCommandHandler(IPaymentRepository<Payment> paymentRepository, IUnitOfWork unitOfWork)
         {
             _paymentRepository = paymentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Payment> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
-            return await _paymentRepository.CreatePaymentAsync(request.NewPayment);
+            await _paymentRepository.AddAsync(request.NewPayment);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return request.NewPayment;
         }
     }
 }

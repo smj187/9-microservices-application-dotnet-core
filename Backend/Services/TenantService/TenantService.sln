@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TenantService.API", "TenantService.API\TenantService.API.csproj", "{51156940-F7A7-4B07-A468-361B67E1C409}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TenantService.API", "TenantService.API\TenantService.API.csproj", "{51156940-F7A7-4B07-A468-361B67E1C409}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TenantService.Contracts", "TenantService.Contracts\TenantService.Contracts.csproj", "{A02CC80E-1335-469A-86B6-81EFFC5D3895}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TenantService.Contracts", "TenantService.Contracts\TenantService.Contracts.csproj", "{A02CC80E-1335-469A-86B6-81EFFC5D3895}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TenantService.Core", "TenantService.Core\TenantService.Core.csproj", "{CA7CB383-C030-4CFD-95DF-3B4E0FE9C71B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TenantService.Core", "TenantService.Core\TenantService.Core.csproj", "{CA7CB383-C030-4CFD-95DF-3B4E0FE9C71B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TenantService.Infrastructure", "TenantService.Infrastructure\TenantService.Infrastructure.csproj", "{D845AE29-E5B5-49E1-88A5-150CA872C9CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TenantService.Infrastructure", "TenantService.Infrastructure\TenantService.Infrastructure.csproj", "{D845AE29-E5B5-49E1-88A5-150CA872C9CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TenantService.Application", "TenantService.Application\TenantService.Application.csproj", "{B306D0BC-BB7E-4774-970B-405516E8D12A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TenantService.Application", "TenantService.Application\TenantService.Application.csproj", "{B306D0BC-BB7E-4774-970B-405516E8D12A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks", "..\..\BuildingBlocks\BuildingBlocks.csproj", "{BD5CB915-9D24-4B07-8E3C-413B94E1C6B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{B306D0BC-BB7E-4774-970B-405516E8D12A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B306D0BC-BB7E-4774-970B-405516E8D12A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B306D0BC-BB7E-4774-970B-405516E8D12A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD5CB915-9D24-4B07-8E3C-413B94E1C6B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD5CB915-9D24-4B07-8E3C-413B94E1C6B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD5CB915-9D24-4B07-8E3C-413B94E1C6B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD5CB915-9D24-4B07-8E3C-413B94E1C6B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

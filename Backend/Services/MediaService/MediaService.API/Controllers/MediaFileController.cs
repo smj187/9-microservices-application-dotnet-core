@@ -42,7 +42,7 @@ namespace MediaService.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTenantAsync([FromBody] CreateFileRequest createTenantRequest)
         {
-            var mapped = _mapper.Map<MediaFile>(createTenantRequest);
+            var mapped = _mapper.Map<Blob>(createTenantRequest);
             var command = new CreateMediaFileCommand
             {
                 NewMediaFile = mapped

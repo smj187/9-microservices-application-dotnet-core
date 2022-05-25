@@ -14,8 +14,8 @@ namespace MediaService.API.Profiles
     {
         public MediaFileProfile()
         {
-            CreateMap<CreateFileRequest, MediaFile>();
-            CreateMap<MediaFile, FileResponse>();
+            CreateMap<CreateFileRequest, Blob>();
+            CreateMap<Blob, FileResponse>();
         }
     }
 }

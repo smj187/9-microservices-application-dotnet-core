@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuildingBlocks.Domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,18 +8,14 @@ using System.Threading.Tasks;
 
 namespace OrderService.Core.Entities
 {
-    public class Order
+    public class Order : AggregateRoot
     {
-        [Key]
-        public Guid Id { get; set; }
         public Guid UserId { get; set; }
 
         public Guid TenantId { get; set; }
 
-        //public List<Guid> Products { get; set; } = new();
-
-        public DateTime CreatedAt { get; set; }
-        public DateTime? ModifiedAt { get; set; }
         public bool Success { get; set; }
+
+        public List<Guid> Productds { get; set; } = new();
     }
 }

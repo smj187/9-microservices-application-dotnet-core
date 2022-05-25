@@ -1,23 +1,29 @@
+using BuildingBlocks.Extensions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using OrderService.API.Extensions;
-using OrderService.Application.Repositories;
+using OrderService.Core.Entities;
+using OrderService.Infrastructure.Data;
+using OrderService.Infrastructure.Repositories;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.Configure(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddTransient<IOrderRepository, OrderRepository>();
-builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddMediatR(Assembly.Load("OrderService.Application"));
 
+builder.Services.ConfigureNpgsql<OrderContext>(builder.Configuration)
+    .AddTransient<IOrderRepository<Order>, OrderRepository<Order>>();
 
 
 var app = builder.Build();
-await app.UseInitialMigration();
-app.UseDevEnvironment();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
