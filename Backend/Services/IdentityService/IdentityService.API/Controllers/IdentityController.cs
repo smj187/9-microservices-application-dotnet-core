@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using IdentityService.API.Contracts.Requests;
-using IdentityService.API.Contracts.Responses;
 using IdentityService.Application.Commands;
 using IdentityService.Application.Queries;
 using IdentityService.Application.Services;
+using IdentityService.Contracts.v1.Requests;
+using IdentityService.Contracts.v1.Responses;
 using IdentityService.Core.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

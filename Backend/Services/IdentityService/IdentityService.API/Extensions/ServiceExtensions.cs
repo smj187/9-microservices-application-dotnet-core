@@ -1,5 +1,4 @@
 ﻿using IdentityService.Core.Entities;
-using IdentityService.Core.Settings;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -15,20 +14,10 @@ namespace IdentityService.API.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
-            services.Configure<JsonWebTokenSettings>(configuration.GetSection("JsonWebToken"));
 
-            services.AddDbContext<IdentityContext>(opts =>
-            {
-                var str = configuration.GetConnectionString("DefaultConnection");
-                opts.UseNpgsql(str);
-            });
-
-            services.AddDatabaseDeveloperPageExceptionFilter();
-
-          
 
             // configure identity
             services.Configure<IdentityOptions>(options =>
@@ -66,10 +55,9 @@ namespace IdentityService.API.Extensions
 
 
             // configure jwt
-            var jwt = configuration.GetSection("JsonWebToken");
-            var key = jwt.GetSection("Key").Value;
-            var issuer = jwt.GetSection("Issuer").Value;
-            var audience = jwt.GetSection("Audience").Value;
+            var key = configuration.GetValue<string>("JsonWebToken:Key");
+            var issuer = configuration.GetValue<string>("JsonWebToken:Issuer");
+            var audience = configuration.GetValue<string>("JsonWebToken:Audience");
 
             services.AddAuthentication(options =>
             {
@@ -92,17 +80,10 @@ namespace IdentityService.API.Extensions
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                     };
                 });
+
+            return services;
         }
 
-        public static async Task UseInitialMigration(this WebApplication app)
-        {
-            Console.WriteLine("initial migration started...");
-            using var scope = app.Services.CreateScope();
-
-            var context = scope.ServiceProvider.GetRequiredService<IdentityContext>();
-            await context.Database.MigrateAsync();
-            Console.WriteLine("initial migration complete");
-        }
 
         public static void UseInitialDatabaseSeeding(this WebApplication app)
         {
@@ -117,22 +98,15 @@ namespace IdentityService.API.Extensions
                 var userManager = services.GetRequiredService<UserManager<User>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-
-                if(!roleManager.Roles.Any())
+                Task.Run(async () =>
                 {
-                    Task.Run(async () =>
+                    if (!roleManager.Roles.Any())
                     {
                         await roleManager.CreateAsync(new IdentityRole("Administrator"));
                         await roleManager.CreateAsync(new IdentityRole("User"));
-                    }).Wait();
-                }
+                    }
 
-                
-
-                // seed root user
-                if (!userManager.Users.Any())
-                {
-                    Task.Run(async () =>
+                    if (!userManager.Users.Any())
                     {
                         var admin = new User
                         {
@@ -154,9 +128,8 @@ namespace IdentityService.API.Extensions
 
                         await userManager.CreateAsync(user, "Pa$$w0rd.");
                         await userManager.AddToRoleAsync(user, "User");
-                    }).Wait();
-                }
-
+                    }
+                }).Wait();
             }
             catch (Exception ex)
             {
@@ -165,13 +138,6 @@ namespace IdentityService.API.Extensions
             }
         }
 
-        public static void UseDevEnvironment(this WebApplication app)
-        {
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-        }
+        
     }
 }

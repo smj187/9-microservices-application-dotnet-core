@@ -1,6 +1,6 @@
 ﻿using IdentityService.Core.Entities;
-using IdentityService.Core.Settings;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -16,12 +16,12 @@ namespace IdentityService.Application.Adapters
     public class AuthAdapter : IAuthAdapter
     {
         private readonly UserManager<User> _userManager;
-        private readonly JsonWebTokenSettings _jsonWebTokenSettings;
+        private readonly IConfiguration _configuration;
 
-        public AuthAdapter(UserManager<User> userManager, IOptions<JsonWebTokenSettings> jsonWebTokenSettings)
+        public AuthAdapter(UserManager<User> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
-            _jsonWebTokenSettings = jsonWebTokenSettings.Value;
+            _configuration = configuration;
         }
 
         public async Task<string> CreateJsonWebToken(User user)
@@ -35,18 +35,24 @@ namespace IdentityService.Application.Adapters
 
         private JwtSecurityToken GenerateToken(SigningCredentials signingCredentials, List<Claim> claims)
         {
+            var issuer = _configuration.GetValue<string>("JsonWebToken:Issuer");
+            var audience = _configuration.GetValue<string>("JsonWebToken:Audience");
+            var expires = _configuration.GetValue<string>("JsonWebToken:DurationInMinutes");
+
             var jwtSecurityToken = new JwtSecurityToken(
-                issuer: _jsonWebTokenSettings.Issuer,
-                audience: _jsonWebTokenSettings.Audience,
+                issuer: issuer,
+                audience: audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jsonWebTokenSettings.DurationInMinutes),
+                expires: DateTime.UtcNow.AddMinutes(int.Parse(expires)),
                 signingCredentials: signingCredentials);
             return jwtSecurityToken;
         }
 
         private SigningCredentials GetSigningCredentials()
         {
-            var securet = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jsonWebTokenSettings.Key));
+            var key = _configuration.GetValue<string>("JsonWebToken:Key");
+
+            var securet = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             return new SigningCredentials(securet, SecurityAlgorithms.HmacSha256); ;
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.API.Contracts.Requests
+namespace IdentityService.Contracts.v1.Requests
 {
     public class RefreshAuthenticationRequest
     {
