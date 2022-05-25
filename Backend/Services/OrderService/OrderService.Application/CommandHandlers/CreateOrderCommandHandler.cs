@@ -1,7 +1,8 @@
-﻿using MediatR;
+﻿using BuildingBlocks.EfCore.Interfaces;
+using MediatR;
 using OrderService.Application.Commands;
-using OrderService.Application.Repositories;
 using OrderService.Core.Entities;
+using OrderService.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +13,20 @@ namespace OrderService.Application.CommandHandlers
 {
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Order>
     {
-        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderRepository<Order> _orderRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateOrderCommandHandler(IOrderRepository orderRepository)
+        public CreateOrderCommandHandler(IOrderRepository<Order> orderRepository, IUnitOfWork unitOfWork)
         {
             _orderRepository = orderRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Order> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            return await _orderRepository.CreateOrderAsync(request.NewOrder);
+            await _orderRepository.AddAsync(request.NewOrder);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return request.NewOrder;
         }
     }
 }

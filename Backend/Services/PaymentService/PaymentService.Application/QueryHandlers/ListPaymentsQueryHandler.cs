@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using PaymentService.Application.Queries;
-using PaymentService.Application.Repositories;
 using PaymentService.Core.Entities;
+using PaymentService.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +12,16 @@ namespace PaymentService.Application.QueryHandlers
 {
     public class ListPaymentsQueryHandler : IRequestHandler<ListPaymentsQuery, IEnumerable<Payment>>
     {
-        private readonly PaymentRepository _paymentRepository;
+        private readonly IPaymentRepository<Payment> _paymentRepository;
 
-        public ListPaymentsQueryHandler(PaymentRepository paymentRepository)
+        public ListPaymentsQueryHandler(IPaymentRepository<Payment> paymentRepository)
         {
             _paymentRepository = paymentRepository;
         }
 
         public async Task<IEnumerable<Payment>> Handle(ListPaymentsQuery request, CancellationToken cancellationToken)
         {
-            return await _paymentRepository.ListPaymentsAsync();
+            return await _paymentRepository.ListAsync();
         }
     }
 }

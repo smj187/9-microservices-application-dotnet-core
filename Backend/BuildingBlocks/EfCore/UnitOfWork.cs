@@ -1,5 +1,7 @@
-﻿using BuildingBlocks.EfCore.Interfaces;
+﻿using BuildingBlocks.Domain.Interfaces;
+using BuildingBlocks.EfCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +19,15 @@ namespace BuildingBlocks.EfCore
             _context = context;
         }
 
-        public Task<int> SaveChangesAsync()
+
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return _context.SaveChangesAsync();
+            return _context.SaveChangesAsync(cancellationToken);
         }
 
         public void Dispose()
         {
-            // get rid of context, kill all off
             _context.Dispose();
-            // when im done, clear up memory
             GC.SuppressFinalize(this);
         }
     }

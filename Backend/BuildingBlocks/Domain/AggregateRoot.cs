@@ -20,7 +20,7 @@ namespace BuildingBlocks.Domain
             // TODO: id generation
             _id = Guid.NewGuid();
 
-            CreatedAt = DateTimeOffset.Now;
+            CreatedAt = DateTimeOffset.UtcNow;
             ModifiedAt = null;
             IsDeleted = false;
         }

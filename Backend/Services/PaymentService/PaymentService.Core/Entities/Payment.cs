@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuildingBlocks.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace PaymentService.Core.Entities
 {
-    public class Payment
+    public class Payment : AggregateRoot
     {
-        public Guid Id { get; set; }
-
         public Guid UserId { get; set; }
 
         public Guid TenantId { get; set; }

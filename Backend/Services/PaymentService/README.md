@@ -11,15 +11,6 @@ cd Services/PaymentService/PaymentService.API
 dotnet user-secrets -p ./PaymentService.API.csproj set "Kestrel:Certificates:Development:Password" "crypticpassword"
 ```
 
-## Docker build
-
-Run the service container
-
-```
-docker-compose -f docker-compose.yaml up --build
-docker-compose -f docker-compose.yaml down
-```
-
 ## Database migrations
 
 Run this command at the root level inside ./Services/PaymentService

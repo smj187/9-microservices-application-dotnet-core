@@ -8,7 +8,7 @@ namespace BuildingBlocks.EfCore.Interfaces
 {
     public interface IUnitOfWork
     {
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 
         void Dispose();
     }

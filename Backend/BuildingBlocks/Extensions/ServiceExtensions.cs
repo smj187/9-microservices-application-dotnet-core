@@ -35,6 +35,24 @@ namespace BuildingBlocks.Extensions
             return services;
         }
 
+        public static IServiceCollection ConfigureNpgsql<T>(this IServiceCollection services, IConfiguration configuration)
+            where T : DbContext
+        {
+            services.AddDbContext<T>(opts =>
+            {
+                var str = configuration.GetConnectionString("DefaultConnection");
+                opts.UseNpgsql(str);
+            });
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.BuildServiceProvider().GetRequiredService<T>().Database.Migrate();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork<T>>();
+
+            return services;
+        }
+
 
         public static IServiceCollection ConfigureMongo(this IServiceCollection services, IConfiguration configuration)
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PaymentService.Core.Entities;
+using PaymentService.Infrastructure.EntityTypeConfigurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,16 @@ namespace PaymentService.Infrastructure.Data
 
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new PaymentEntityTypeConfiguration());
+            modelBuilder.UseSerialColumns();
+            base.OnModelCreating(modelBuilder);
+        }
+
         public DbSet<Payment> Payments { get; set; } = default!;
+
+
+        
     }
 }
