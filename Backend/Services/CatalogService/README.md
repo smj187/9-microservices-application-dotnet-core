@@ -15,19 +15,3 @@ generate user secret
 ```
 dotnet user-secrets -p ./CatalogService.API/CatalogService.API.csproj set "Kestrel:Certificates:Development:Password" "crypticpassword"
 ```
-
-## Docker Compose
-
-Run the database only
-
-```
-docker-compose -f docker-compose-database.yaml up --build
-docker-compose -f docker-compose-database.yaml down
-```
-
-Run the service
-
-```
-docker-compose up --build
-docker-compose down
-```

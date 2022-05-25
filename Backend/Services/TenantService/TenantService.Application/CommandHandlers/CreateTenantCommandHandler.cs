@@ -26,7 +26,7 @@ namespace TenantService.Application.CommandHandlers
         public async Task<Tenant> Handle(CreateTenantCommand request, CancellationToken cancellationToken)
         {
             await _tenantRepository.AddAsync(request.NewTenant);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return request.NewTenant;
         }
     }

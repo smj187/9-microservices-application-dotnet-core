@@ -1,19 +1,18 @@
 using BuildingBlocks.Extensions;
-using DeliveryService.Application.QueryHandlers;
 using DeliveryService.Core.Entities;
 using MediatR;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddMongo(builder.Configuration)
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddMediatR(Assembly.Load("DeliveryService.Application"));
+builder.Services.ConfigureMongo(builder.Configuration)
     .AddMongoRepository<Delivery>("deliveries");
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddMediatR(typeof(ListDeliveriesQueryHandler).Assembly);
 
 
 var app = builder.Build();

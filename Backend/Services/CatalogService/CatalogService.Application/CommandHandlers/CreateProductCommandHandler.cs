@@ -21,7 +21,8 @@ namespace CatalogService.Application.CommandHandlers
 
         public async Task<Product> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            return await _mongoRepository.AddAsync(request.NewProduct);
+            await _mongoRepository.AddAsync(request.NewProduct);
+            return request.NewProduct;
         }
     }
 }

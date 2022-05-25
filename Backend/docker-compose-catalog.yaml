@@ -1,12 +1,12 @@
-version: "3.4"
+version: "3.8"
 
 services:
   mongo:
     image: mongo:latest
-    container_name: mongo_database_catalog
+    container_name: catalog_database
     restart: unless-stopped
     ports:
-      - 27017:27017
+      - 27018:27018
     volumes:
       - mongo-database:/data/db
     environment:
@@ -15,23 +15,28 @@ services:
 
   catalogservice:
     image: ${DOCKER_REGISTRY-}catalogservice
-    container_name: catalogservice
     build:
       context: .
-      dockerfile: CatalogService.API/Dockerfile
+      dockerfile: Services/CatalogService/CatalogService.API/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ConnectionStrings:DefaultConnection=mongodb://admin:passwd@host.docker.internal:27017
+      - ConnectionStrings:DefaultConnection=mongodb://host.docker.internal:27018
       - ConnectionStrings:Database=mm-catalog
-    depends_on:
-      - mongo
     ports:
-      - 5601:80
-      - 5600:443
+      - "5501:80"
+      - "5500:443"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - mongo
+    networks:
+      - mongo-network
 
 volumes:
-  mongo-database:
+  mongo-data:
+
+networks:
+  mongo-network:
+    driver: bridge

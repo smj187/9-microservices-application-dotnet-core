@@ -21,7 +21,8 @@ namespace CatalogService.Application.CommandHandlers
 
         public async Task<Category> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            return await _mongoRepository.AddAsync(request.NewCategory);
+            await _mongoRepository.AddAsync(request.NewCategory);
+            return request.NewCategory;
         }
     }
 }

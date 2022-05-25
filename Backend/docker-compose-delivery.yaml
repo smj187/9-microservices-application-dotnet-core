@@ -3,7 +3,7 @@ version: "3.8"
 services:
   mongo:
     image: mongo:latest
-    container_name: mongo_database_delivery
+    container_name: delivery_database
     restart: unless-stopped
     ports:
       - 27018:27018

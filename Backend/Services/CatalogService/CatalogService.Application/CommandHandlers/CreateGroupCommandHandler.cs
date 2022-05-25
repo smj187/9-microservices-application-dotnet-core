@@ -21,7 +21,8 @@ namespace CatalogService.Application.CommandHandlers
 
         public async Task<Group> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
         {
-            return await _mongoRepository.AddAsync(request.NewGroup);
+            await _mongoRepository.AddAsync(request.NewGroup);
+            return request.NewGroup;
         }
     }
 }

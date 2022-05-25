@@ -21,7 +21,8 @@ namespace DeliveryService.Application.CommandHandlers
 
         public async Task<Delivery> Handle(CreateDeliveryCommand request, CancellationToken cancellationToken)
         {
-            return await _mongoRepository.AddAsync(request.NewDelivery);
+            await _mongoRepository.AddAsync(request.NewDelivery);
+            return request.NewDelivery;
         }
     }
 }

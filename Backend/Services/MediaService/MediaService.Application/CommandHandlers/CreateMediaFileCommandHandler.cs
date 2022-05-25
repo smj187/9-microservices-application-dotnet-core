@@ -25,7 +25,7 @@ namespace MediaService.Application.CommandHandlers
         public async Task<Blob> Handle(CreateMediaFileCommand request, CancellationToken cancellationToken)
         {
             await _blobRepository.AddAsync(request.NewMediaFile);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return request.NewMediaFile;
         }
     }
