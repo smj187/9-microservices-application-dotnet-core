@@ -11,7 +11,7 @@ using TenantService.Infrastructure.Data;
 namespace TenantService.Infrastructure.Migrations
 {
     [DbContext(typeof(TenantContext))]
-    [Migration("20220524145135_Init")]
+    [Migration("20220525211638_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

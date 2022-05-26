@@ -1,0 +1,173 @@
+{
+	"info": {
+		"_postman_id": "543942b6-6aed-437b-8729-d86c59c0f588",
+		"name": "mm-backend-gateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12392873"
+	},
+	"item": [
+		{
+			"name": "ca - list products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:10000/ca/api/v1/products/list",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"ca",
+						"api",
+						"v1",
+						"products",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ca - create product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmciLCJqdGkiOiI4NWYyMDQ1Ni1lNmUxLTQ1ZjYtYWNlNi0zMDM3OTI5MzJlMDEiLCJlbWFpbCI6Im1lQHRlc3QuY29tIiwidWlkIjoiMWI4MDEzYTEtNjg3ZC00NWZiLWFmMmItNGM4OTI2NjlkNGViIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTY1MzUwODE0NywiaXNzIjoiSWRlbnRpdHlTZXJ2aWNlIiwiYXVkIjoiQXV0aGVudGljYXRlZFVzZXIifQ.4J9LtS0qx0ExMxh04jIb2eQg6iIr4pfnA-wTl87ORoA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{$randomProduct}}\",\r\n  \"description\": \"{{$randomLoremSentences}}\",\r\n  \"imageUrl\": \"{{$randomFoodImage}}\",\r\n  \"price\": {{$randomPrice}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:10000/ca/api/v1/products/create",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"ca",
+						"api",
+						"v1",
+						"products",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "de - list Deliveries",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:10000/de/api/v1/deliveries/list",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"de",
+						"api",
+						"v1",
+						"deliveries",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "de - create delivery",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmciLCJqdGkiOiI4NWYyMDQ1Ni1lNmUxLTQ1ZjYtYWNlNi0zMDM3OTI5MzJlMDEiLCJlbWFpbCI6Im1lQHRlc3QuY29tIiwidWlkIjoiMWI4MDEzYTEtNjg3ZC00NWZiLWFmMmItNGM4OTI2NjlkNGViIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTY1MzUwODE0NywiaXNzIjoiSWRlbnRpdHlTZXJ2aWNlIiwiYXVkIjoiQXV0aGVudGljYXRlZFVzZXIifQ.4J9LtS0qx0ExMxh04jIb2eQg6iIr4pfnA-wTl87ORoA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userId\": \"{{$guid}}\",\r\n  \"orderId\": \"{{$guid}}\",\r\n  \"tenantId\": \"{{$guid}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:10000/de/api/v1/deliveries/create",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"de",
+						"api",
+						"v1",
+						"deliveries",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "id - anonymous",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmciLCJqdGkiOiI4NWYyMDQ1Ni1lNmUxLTQ1ZjYtYWNlNi0zMDM3OTI5MzJlMDEiLCJlbWFpbCI6Im1lQHRlc3QuY29tIiwidWlkIjoiMWI4MDEzYTEtNjg3ZC00NWZiLWFmMmItNGM4OTI2NjlkNGViIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTY1MzUwODE0NywiaXNzIjoiSWRlbnRpdHlTZXJ2aWNlIiwiYXVkIjoiQXV0aGVudGljYXRlZFVzZXIifQ.4J9LtS0qx0ExMxh04jIb2eQg6iIr4pfnA-wTl87ORoA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:10000/id/api/v1/test/anonymous",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"id",
+						"api",
+						"v1",
+						"test",
+						"anonymous"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

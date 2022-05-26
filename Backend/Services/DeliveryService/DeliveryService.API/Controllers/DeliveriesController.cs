@@ -27,6 +27,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpGet]
+        [Route("list")]
         public async Task<IActionResult> ListDeliveriesAsync()
         {
             var query = new ListDeliveriesQuery();
@@ -38,6 +39,7 @@ namespace DeliveryService.API.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         public async Task<IActionResult> CreateCategoriesAsync([FromBody] CreateDeliveryRequest createCategoryRequest)
         {
             var mapped = _mapper.Map<Delivery>(createCategoryRequest);

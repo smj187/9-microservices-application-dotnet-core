@@ -28,6 +28,7 @@ namespace CatalogService.API.Controllers
         }
 
         [HttpGet]
+        [Route("list")]
         public async Task<IActionResult> ListCategoriesAsync()
         {
             var query = new ListCategoryQuery();
@@ -39,6 +40,7 @@ namespace CatalogService.API.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         public async Task<IActionResult> CreateCategoriesAsync([FromBody] CreateCategoryRequest createCategoryRequest)
         {
             var mapped = _mapper.Map<Category>(createCategoryRequest);

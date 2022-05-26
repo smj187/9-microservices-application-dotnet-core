@@ -1,29 +1,9 @@
 version: "3.8"
 
 services:
-  mediaservice:
-    image: ${DOCKER_REGISTRY-}mediaservice
-    build:
-      context: .
-      dockerfile: Services/MediaService/MediaService.API/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ConnectionStrings:DefaultConnection=server=host.docker.internal;user=root;database=mm-media;password=passwd;port=3308;
-    ports:
-      - "5301:80"
-      - "5300:443"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-    depends_on:
-      - mysql
-    networks:
-      - mysql-network
-
-  mysql:
-    image: mysql:latest
-    container_name: mysql
+  mediadatabase:
+    image: mysql
+    container_name: media_database
     command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
     environment:
@@ -32,15 +12,36 @@ services:
       MYSQL_PASSWORD: passwd
       MYSQL_DATABASE: mm-media
     volumes:
-      - mysql-db:/var/lib/mysql
+      - media-database:/var/lib/mysql
     ports:
-      - "3308:3306"
+      - "5302:3306"
     networks:
-      - mysql-network
+      - media-network
+
+  mediaservice:
+    image: ${DOCKER_REGISTRY-}mediaservice
+    container_name: media_service
+    build:
+      context: .
+      dockerfile: Services/MediaService/MediaService.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings:DefaultConnection=server=host.docker.internal;user=root;database=mm-media;password=passwd;port=3306;
+    ports:
+      - "5301:80"
+      - "5300:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - mediadatabase
+    networks:
+      - media-network
 
 volumes:
-  mysql-db:
+  media-database:
 
 networks:
-  mysql-network:
+  media-network:
     driver: bridge

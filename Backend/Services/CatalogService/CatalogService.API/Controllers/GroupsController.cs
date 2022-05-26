@@ -29,6 +29,7 @@ namespace CatalogService.API.Controllers
 
 
         [HttpGet]
+        [Route("list")]
         public async Task<IActionResult> ListGroupsAsync()
         {
             var query = new ListGroupsQuery();
@@ -40,6 +41,7 @@ namespace CatalogService.API.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         public async Task<IActionResult> CreateProductAsync([FromBody] CreateGroupRequest createProductRequest)
         {
             var mapped = _mapper.Map<Group>(createProductRequest);
