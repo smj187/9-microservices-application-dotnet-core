@@ -1,6 +1,7 @@
 
 using BuildingBlocks.Extensions;
 using IdentityService.API.Extensions;
+using IdentityService.API.Middleware;
 using IdentityService.Application.Adapters;
 using IdentityService.Application.Services;
 using IdentityService.Infrastructure.Data;
@@ -23,11 +24,14 @@ builder.Services.ConfigureNpgsql<IdentityContext>(builder.Configuration)
 
 
 var app = builder.Build();
+app.UsePathBase(new PathString("/identity-service"));
+app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<AuthenticationMiddleware>();
 app.UseInitialDatabaseSeeding();
 app.UseHttpsRedirection();
 app.UseAuthentication();

@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddMediatR(Assembly.Load("DeliveryService.Application"));
+builder.Services.AddMediatR(Assembly.Load("CatalogService.Application"));
 
 builder.Services.ConfigureMongo(builder.Configuration)
     .AddMongoRepository<Category>("categories")
@@ -20,6 +20,8 @@ builder.Services.ConfigureMongo(builder.Configuration)
 
 
 var app = builder.Build();
+app.UsePathBase(new PathString("/ca"));
+app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

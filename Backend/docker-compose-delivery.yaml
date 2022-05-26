@@ -1,27 +1,28 @@
 version: "3.8"
 
 services:
-  mongo:
-    image: mongo:latest
+  deliverydatabase:
+    image: mongo
     container_name: delivery_database
     restart: unless-stopped
     ports:
-      - 27018:27018
+      - 5502:27017
     volumes:
-      - mongo-database:/data/db
+      - delivery-database:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=passwd
 
   deliveryservice:
     image: ${DOCKER_REGISTRY-}deliveryservice
+    container_name: delivery_service
     build:
       context: .
-      dockerfile: DeliveryService.API/Dockerfile
+      dockerfile: Services/DeliveryService/DeliveryService.API/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ConnectionStrings:DefaultConnection=mongodb://host.docker.internal:27018
+      - ConnectionStrings:DefaultConnection=mongodb://admin:passwd@host.docker.internal:5502
       - ConnectionStrings:Database=mm-delivery
     ports:
       - "5501:80"
@@ -30,13 +31,7 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
-      - mongo
-    networks:
-      - mongo-network
+      - deliverydatabase
 
 volumes:
-  mongo-data:
-
-networks:
-  mongo-network:
-    driver: bridge
+  delivery-database:

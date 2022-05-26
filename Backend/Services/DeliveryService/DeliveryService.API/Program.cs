@@ -16,6 +16,8 @@ builder.Services.ConfigureMongo(builder.Configuration)
 
 
 var app = builder.Build();
+app.UsePathBase(new PathString("/de"));
+app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

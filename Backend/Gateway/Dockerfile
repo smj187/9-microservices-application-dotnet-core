@@ -1,13 +1,9 @@
 FROM envoyproxy/envoy-dev:latest
 
+COPY ./envoy.yaml /etc/envoy.yaml
+COPY ./configs /var/lib/envoy
+COPY ./https /var/lib/envoy/https
 
+RUN chmod go+x /var/lib/envoy && chmod go+r /etc/envoy.yaml /var/lib/envoy/*
 
-COPY ../config /etc/envoy-config
-COPY ./run_envoy.sh /run_envoy.sh
-
-
-RUN chmod go+r -R /etc/envoy-config \
-    && chmod go+rx /run_envoy.sh /etc/envoy-config /etc/envoy-config/*
-
-
-CMD ["/bin/sh", "/run_envoy.sh"]
+CMD ["/usr/local/bin/envoy", "-c /etc/envoy.yaml"]

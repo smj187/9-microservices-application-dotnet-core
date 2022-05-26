@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "7028bd15-6be2-46b9-afa9-2c868674fd8b",
-		"name": "mm-backend-collection",
+		"name": "mm-backend-services",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12392873"
 	},
@@ -27,12 +27,12 @@
 									}
 								},
 								"url": {
-									"raw": "https://localhost:5600/api/v1/categories",
+									"raw": "https://localhost:5100/api/v1/categories",
 									"protocol": "https",
 									"host": [
 										"localhost"
 									],
-									"port": "5600",
+									"port": "5100",
 									"path": [
 										"api",
 										"v1",
@@ -48,12 +48,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "https://localhost:5600/api/v1/categories",
+									"raw": "https://localhost:5100/api/v1/categories",
 									"protocol": "https",
 									"host": [
 										"localhost"
 									],
-									"port": "5600",
+									"port": "5100",
 									"path": [
 										"api",
 										"v1",
@@ -83,16 +83,17 @@
 									}
 								},
 								"url": {
-									"raw": "https://localhost:5600/api/v1/products",
+									"raw": "https://localhost:5100/api/v1/products/create",
 									"protocol": "https",
 									"host": [
 										"localhost"
 									],
-									"port": "5600",
+									"port": "5100",
 									"path": [
 										"api",
 										"v1",
-										"products"
+										"products",
+										"create"
 									]
 								}
 							},
@@ -104,16 +105,17 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "https://localhost:5600/api/v1/products",
+									"raw": "https://localhost:5100/api/v1/products/list",
 									"protocol": "https",
 									"host": [
 										"localhost"
 									],
-									"port": "5600",
+									"port": "5100",
 									"path": [
 										"api",
 										"v1",
-										"products"
+										"products",
+										"list"
 									]
 								}
 							},
@@ -130,12 +132,12 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "https://localhost:5600/api/v1/groups",
+									"raw": "https://localhost:5100/api/v1/groups",
 									"protocol": "https",
 									"host": [
 										"localhost"
 									],
-									"port": "5600",
+									"port": "5100",
 									"path": [
 										"api",
 										"v1",
@@ -160,12 +162,12 @@
 									}
 								},
 								"url": {
-									"raw": "https://localhost:5600/api/v1/groups",
+									"raw": "https://localhost:5100/api/v1/groups",
 									"protocol": "https",
 									"host": [
 										"localhost"
 									],
-									"port": "5600",
+									"port": "5100",
 									"path": [
 										"api",
 										"v1",
@@ -197,7 +199,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:5500/api/v1/deliveries",
+							"raw": "https://localhost:5500/api/v1/deliveries/create",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -206,7 +208,8 @@
 							"path": [
 								"api",
 								"v1",
-								"deliveries"
+								"deliveries",
+								"create"
 							]
 						}
 					},
@@ -218,7 +221,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:5500/api/v1/deliveries",
+							"raw": "https://localhost:5500/api/v1/deliveries/list",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -227,231 +230,8 @@
 							"path": [
 								"api",
 								"v1",
-								"deliveries"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "media service",
-			"item": [
-				{
-					"name": "create media",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"id\": \"{{$guid}}\",\r\n  \"name\": \"{{$randomBs}}\",\r\n  \"description\": \"{{$randomCatchPhrase}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://localhost:5300/api/v1/mediafile",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "5300",
-							"path": [
-								"api",
-								"v1",
-								"mediafile"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get media",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://localhost:5300/api/v1/mediafile",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "5300",
-							"path": [
-								"api",
-								"v1",
-								"mediafile"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "tenant service",
-			"item": [
-				{
-					"name": "get tenants",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://localhost:5200/api/v1/tenant",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "5200",
-							"path": [
-								"api",
-								"v1",
-								"tenant"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create tenant",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"{{$randomCompanyName}}\",\r\n  \"description\": \"{{$randomCompanySuffix}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://localhost:5200/api/v1/tenant",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "5200",
-							"path": [
-								"api",
-								"v1",
-								"tenant"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "payment service",
-			"item": [
-				{
-					"name": "create payment",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"userId\": \"{{$guid}}\",\r\n  \"tenantId\": \"{{$guid}}\",\r\n  \"orderId\": \"{{$guid}}\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://localhost:5400/api/v1/payments",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "5400",
-							"path": [
-								"api",
-								"v1",
-								"payments"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get all payments",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://localhost:5400/api/v1/payments",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "5400",
-							"path": [
-								"api",
-								"v1",
-								"payments"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "order service",
-			"item": [
-				{
-					"name": "create order",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"userid\": \"{{$guid}}\",\r\n    \"tenantid\": \"{{$guid}}\",\r\n    \"products\": [\r\n        \"{{$guid}}\", \"{{$guid}}\"\r\n    ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://localhost:5200/api/v1/orders",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "5200",
-							"path": [
-								"api",
-								"v1",
-								"orders"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get orders",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://localhost:5200/api/v1/orders",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "5200",
-							"path": [
-								"api",
-								"v1",
-								"orders"
+								"deliveries",
+								"list"
 							]
 						}
 					},
@@ -588,6 +368,230 @@
 							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "media service",
+			"item": [
+				{
+					"name": "create media",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"{{$guid}}\",\r\n  \"name\": \"{{$randomBs}}\",\r\n  \"description\": \"{{$randomCatchPhrase}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5300/api/v1/mediafile",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5300",
+							"path": [
+								"api",
+								"v1",
+								"mediafile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get media",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5300/api/v1/mediafile",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5300",
+							"path": [
+								"api",
+								"v1",
+								"mediafile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "order service",
+			"item": [
+				{
+					"name": "create order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userid\": \"{{$guid}}\",\r\n    \"tenantid\": \"{{$guid}}\",\r\n    \"products\": [\r\n        \"{{$guid}}\", \"{{$guid}}\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5200/api/v1/orders",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5200",
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5200/api/v1/orders",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5200",
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payment service",
+			"item": [
+				{
+					"name": "create payment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"{{$guid}}\",\r\n  \"tenantId\": \"{{$guid}}\",\r\n  \"orderId\": \"{{$guid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5400/api/v1/payments",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"api",
+								"v1",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all payments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5400/api/v1/payments",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5400",
+							"path": [
+								"api",
+								"v1",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tenant service",
+			"item": [
+				{
+					"name": "get tenants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:5200/api/v1/tenant",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5200",
+							"path": [
+								"api",
+								"v1",
+								"tenant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create tenant",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomCompanyName}}\",\r\n  \"description\": \"{{$randomCompanySuffix}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5200/api/v1/tenant",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5200",
+							"path": [
+								"api",
+								"v1",
+								"tenant"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

@@ -1,28 +1,8 @@
 version: "3.8"
 
 services:
-  identityservice:
-    image: ${DOCKER_REGISTRY-}identityservice
-    build:
-      context: .
-      dockerfile: Services/IdentityService/IdentityService.API/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ConnectionStrings:DefaultConnection=Server=host.docker.internal;Port=5435;Database=mm-identity;User Id=postgres;Password=postgres
-    ports:
-      - "5001:80"
-      - "5000:443"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-    depends_on:
-      - postgres
-    networks:
-      - postgres-network
-
-  postgres:
-    image: postgres:latest
+  identitydatabase:
+    image: postgres
     container_name: identity_database
     restart: unless-stopped
     environment:
@@ -31,15 +11,28 @@ services:
       POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data
     ports:
-      - "5435:5432"
+      - "5002:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - postgres-network
+      - identity-data:/var/lib/postgresql/data
+
+  identityservice:
+    image: ${DOCKER_REGISTRY-}identityservice
+    container_name: identity_service
+    build:
+      context: .
+      dockerfile: Services/IdentityService/IdentityService.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings:DefaultConnection=Server=host.docker.internal;Port=5002;Database=mm-identity;User Id=postgres;Password=postgres
+    ports:
+      - "5001:80"
+      - "5000:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - identitydatabase
 
 volumes:
-  postgres-data:
-
-networks:
-  postgres-network:
-    driver: bridge
+  identity-data:
