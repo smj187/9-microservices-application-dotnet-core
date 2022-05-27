@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.QueryHandlers
 {
-    public class ListUsersQueryHandler : IRequestHandler<ListUsersQuery, IReadOnlyCollection<User>>
+    public class ListUsersQueryHandler : IRequestHandler<ListUsersQuery, IReadOnlyCollection<ApplicationUser>>
     {
         private readonly IUserService _userService;
 
@@ -19,7 +19,7 @@ namespace IdentityService.Application.QueryHandlers
             _userService = userService;
         }
 
-        public async Task<IReadOnlyCollection<User>> Handle(ListUsersQuery request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<ApplicationUser>> Handle(ListUsersQuery request, CancellationToken cancellationToken)
         {
             return await _userService.ListUsersAsync();
         }

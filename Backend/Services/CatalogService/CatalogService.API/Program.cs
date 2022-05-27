@@ -1,6 +1,8 @@
 using BuildingBlocks.Extensions;
 using CatalogService.Core.Entities;
 using MediatR;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +22,7 @@ builder.Services.ConfigureMongo(builder.Configuration)
 
 
 var app = builder.Build();
-app.UsePathBase(new PathString("/ca"));
+app.UsePathBase(new PathString("/catalog-service"));
 app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
@@ -28,6 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

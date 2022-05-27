@@ -1,5 +1,4 @@
-﻿using IdentityService.Core.Entities;
-using IdentityService.Core.Models;
+﻿using IdentityService.Core.Models;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Commands
 {
-    public class RegisterUserCommand : IRequest<Token>
+    public class RegisterUserCommand : IRequest<AuthenticatedUser>
     {
-        public User User { get; set; } = default!;
+        public string Username { get; set; } = default!;
+        public string Email { get; set; } = default!;
         public string Password { get; set; } = default!;
     }
 }

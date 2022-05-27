@@ -29,70 +29,28 @@ namespace IdentityService.API.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [Route("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterRequest request)
+        public async Task<IActionResult> RegisterUserAsync([FromBody] RegisterUserRequest registerUserRequest)
         {
-            var newUser = _mapper.Map<User>(request);
-            newUser.CreatedAt = DateTime.Now;
+            if((registerUserRequest.Email != registerUserRequest.ConfirmEmail) || (registerUserRequest.Password != registerUserRequest.ConfirmPassword))
+            {
+                return BadRequest("email or password confirmation does not match");
+            }
 
             var command = new RegisterUserCommand
             {
-                User = newUser,
-                Password = request.Password,
+                Username = registerUserRequest.Username,
+                Email = registerUserRequest.Email,
+                Password = registerUserRequest.Password
             };
 
-
             var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<AuthenticateUserResponse>(data));
-        }
 
-        [HttpPost]
-        [Authorize(Roles = "Administrator")]
-        [Route("role-promote")]
-        public async Task<IActionResult> PromoteAsync([FromBody] RolePromoteRequest request)
-        {
-            var command = new PromoteRoleCommand
-            {
-                UserId = request.UserId,
-                Role = request.Role
-            };
-
-
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<UserResponse>(data));
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Administrator")]
-        [Route("role-revoke")]
-        public async Task<IActionResult> RevokeAsync([FromBody] RoleRevokeRequest request)
-        {
-            var command = new RevokeRoleCommand
-            {
-                UserId = request.UserId,
-                Role = request.Role
-            };
-
-
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<UserResponse>(data));
+            return Ok(data);
         }
 
         [HttpGet]
-        [Authorize(Roles = "Administrator")]
-        [Route("user-list")]
-        public async Task<IActionResult> ListUsersAsync()
-        {
-            var query = new ListUsersQuery();
-
-            var data = await _mediator.Send(query);
-            return Ok(_mapper.Map<IReadOnlyCollection<UserResponse>>(data));
-        }
-
-        [HttpGet]
-        [Authorize]
-        [Route("user-find/{userId:guid}")]
+        [Route("find/{id:guid}")]
         public async Task<IActionResult> FindUserAsync([FromRoute] Guid userId)
         {
             var query = new FindUserQuery
@@ -101,25 +59,19 @@ namespace IdentityService.API.Controllers
             };
 
             var data = await _mediator.Send(query);
-            return Ok(_mapper.Map<UserResponse>(data));
+
+            return Ok(data);
         }
 
-        [HttpDelete]
-        [Authorize(Roles = "Administrator")]
-        [Route("user-delete/{userId:guid}")]
-        public async Task<IActionResult> TerminateUserAsync([FromRoute] Guid userId)
+        [HttpGet]
+        [Route("list")]
+        public async Task<IActionResult> ListUsersAsync()
         {
-            var query = new TerminateUserCommand()
-            {
-                UserId = userId
-            };
+            var query = new ListUsersQuery();
 
             var data = await _mediator.Send(query);
-            if(data == false)
-            {
-                NotFound($"no user with {userId}");
-            }
-            return NoContent();
+
+            return Ok(data);
         }
     }
 }

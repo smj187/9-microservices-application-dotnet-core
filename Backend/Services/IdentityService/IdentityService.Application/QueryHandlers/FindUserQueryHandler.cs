@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.QueryHandlers
 {
-    public class FindUserQueryHandler : IRequestHandler<FindUserQuery, User>
+    public class FindUserQueryHandler : IRequestHandler<FindUserQuery, ApplicationUser>
     {
         private readonly IUserService _userService;
 
@@ -19,7 +19,7 @@ namespace IdentityService.Application.QueryHandlers
             _userService = userService;
         }
 
-        public async Task<User> Handle(FindUserQuery request, CancellationToken cancellationToken)
+        public async Task<ApplicationUser> Handle(FindUserQuery request, CancellationToken cancellationToken)
         {
             return await _userService.FindUserAsync(request.UserId);
         }

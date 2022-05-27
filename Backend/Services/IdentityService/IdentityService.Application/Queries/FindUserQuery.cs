@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Queries
 {
-    public class FindUserQuery : IRequest<User>
+    public class FindUserQuery : IRequest<ApplicationUser>
     {
         public Guid UserId { get; set; }
     }
