@@ -15,8 +15,6 @@ services:
       - database:/var/lib/mysql
     ports:
       - "5202:3306"
-    networks:
-      - tenant-network
 
   tenantservice:
     image: ${DOCKER_REGISTRY-}tenantservice
@@ -36,12 +34,6 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - tenantdatabase
-    networks:
-      - tenant-network
 
 volumes:
   database:
-
-networks:
-  tenant-network:
-    driver: bridge

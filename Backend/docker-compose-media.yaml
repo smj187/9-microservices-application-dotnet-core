@@ -15,8 +15,6 @@ services:
       - media-database:/var/lib/mysql
     ports:
       - "5302:3306"
-    networks:
-      - media-network
 
   mediaservice:
     image: ${DOCKER_REGISTRY-}mediaservice
@@ -36,12 +34,6 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - mediadatabase
-    networks:
-      - media-network
 
 volumes:
   media-database:
-
-networks:
-  media-network:
-    driver: bridge

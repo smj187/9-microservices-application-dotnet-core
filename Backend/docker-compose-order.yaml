@@ -14,8 +14,6 @@ services:
       - "5602:5432"
     volumes:
       - order-database:/var/lib/postgresql/data
-    networks:
-      - order-network
 
   orderservice:
     image: ${DOCKER_REGISTRY-}orderservice
@@ -35,12 +33,6 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - orderdatabase
-    networks:
-      - order-network
 
 volumes:
   order-database:
-
-networks:
-  order-network:
-    driver: bridge

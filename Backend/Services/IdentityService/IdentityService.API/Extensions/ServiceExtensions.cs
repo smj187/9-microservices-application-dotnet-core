@@ -14,12 +14,8 @@ namespace IdentityService.API.Extensions
 {
     public static class ServiceExtensions
     {
-        public static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
-
-
-            // configure identity
             services.Configure<IdentityOptions>(options =>
             {
                 // password settings
@@ -41,24 +37,6 @@ namespace IdentityService.API.Extensions
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                // cookie settings
-                options.Cookie.HttpOnly = false;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
-                options.LoginPath = "/Identity/Account/Login";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-                options.SlidingExpiration = true;
-            });
-
-
-
-            // configure jwt
-            var key = configuration.GetValue<string>("JsonWebToken:Key");
-            var issuer = configuration.GetValue<string>("JsonWebToken:Issuer");
-            var audience = configuration.GetValue<string>("JsonWebToken:Audience");
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -66,6 +44,10 @@ namespace IdentityService.API.Extensions
             })
                 .AddJwtBearer(o =>
                 {
+                    var issuer = configuration.GetValue<string>("JsonWebToken:Issuer");
+                    var audience = configuration.GetValue<string>("JsonWebToken:Audience");
+                    var key = configuration.GetValue<string>("JsonWebToken:Key");
+
                     o.RequireHttpsMetadata = false;
                     o.SaveToken = false;
                     o.TokenValidationParameters = new TokenValidationParameters
@@ -79,7 +61,16 @@ namespace IdentityService.API.Extensions
                         ValidAudience = audience,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                     };
+
+                    var JwkUrl = configuration.GetValue<string>("JwkUrl");
+
+                    // o.RequireHttpsMetadata = true;
+                    // //x.SaveToken = true; // keep the public key at Cache for 10 min.
+                    // //x.RefreshInterval = TimeSpan.FromSeconds(10);
+                    // o.IncludeErrorDetails = true; // <- great for debugging
+                    // o.SetJwksOptions(new JwkOptions("https://localhost:5000/jwks"));
                 });
+
 
             return services;
         }
@@ -95,7 +86,7 @@ namespace IdentityService.API.Extensions
             try
             {
                 // seed defaults
-                var userManager = services.GetRequiredService<UserManager<User>>();
+                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
                 Task.Run(async () =>
@@ -108,25 +99,24 @@ namespace IdentityService.API.Extensions
 
                     if (!userManager.Users.Any())
                     {
-                        var admin = new User
+                        var admin = new ApplicationUser
                         {
                             UserName = "root",
                             Email = "root@mail.com",
-                            CreatedAt = DateTime.Now
                         };
 
-                        await userManager.CreateAsync(admin, "Pa$$w0rd.");
+                        await userManager.CreateAsync(admin, "passwd");
                         await userManager.AddToRoleAsync(admin, "Administrator");
                         await userManager.AddToRoleAsync(admin, "User");
 
-                        var user = new User
+
+                        var user = new ApplicationUser
                         {
                             UserName = "user",
                             Email = "user@mail.com",
-                            CreatedAt = DateTime.Now
                         };
 
-                        await userManager.CreateAsync(user, "Pa$$w0rd.");
+                        await userManager.CreateAsync(user, "passwd");
                         await userManager.AddToRoleAsync(user, "User");
                     }
                 }).Wait();
@@ -138,6 +128,6 @@ namespace IdentityService.API.Extensions
             }
         }
 
-        
+
     }
 }

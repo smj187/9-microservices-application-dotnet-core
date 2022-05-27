@@ -19,6 +19,8 @@ builder.Services.ConfigureNpgsql<OrderContext>(builder.Configuration)
 
 
 var app = builder.Build();
+app.UsePathBase(new PathString("/order-service"));
+app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

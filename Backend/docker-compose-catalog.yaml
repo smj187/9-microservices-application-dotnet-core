@@ -12,6 +12,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=passwd
+
   catalogservice:
     image: ${DOCKER_REGISTRY-}catalogservice
     container_name: catalog_service

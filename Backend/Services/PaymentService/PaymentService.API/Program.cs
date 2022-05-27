@@ -18,6 +18,8 @@ builder.Services.ConfigureNpgsql<PaymentContext>(builder.Configuration)
 
 
 var app = builder.Build();
+app.UsePathBase(new PathString("/payment-service"));
+app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

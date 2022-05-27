@@ -18,6 +18,8 @@ builder.Services.ConfigureMySql<TenantContext>(builder.Configuration)
 
 
 var app = builder.Build();
+app.UsePathBase(new PathString("/tenant-service"));
+app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

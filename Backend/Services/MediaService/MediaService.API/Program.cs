@@ -18,6 +18,8 @@ builder.Services.ConfigureMySql<MediaContext>(builder.Configuration)
 
 
 var app = builder.Build();
+app.UsePathBase(new PathString("/media-service"));
+app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

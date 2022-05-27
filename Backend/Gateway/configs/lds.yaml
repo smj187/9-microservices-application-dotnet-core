@@ -20,65 +20,93 @@ resources:
                     domains:
                       - "*"
                     routes:
-                      # catalog service
                       - match:
-                          safe_regex:
-                            google_re2: {}
-                            regex: ^/ca\/api\/v\d+\/\w+\/(create|delete)
-                        route:
-                          auto_host_rewrite: true
-                          cluster: catalogservice
+                          prefix: /z
+                        direct_response:
+                          status: 200
+                          body:
+                            inline_string: "its working"
 
                       - match:
                           prefix: /ca
                         route:
                           auto_host_rewrite: true
+                          prefix_rewrite: /catalog-service
                           cluster: catalogservice
-                        typed_per_filter_config:
-                          envoy.filters.http.ext_authz:
-                            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
-                            disabled: true
-
-                      # delivery service
-                      - match:
-                          safe_regex:
-                            google_re2: {}
-                            regex: ^/de\/api\/v\d+\/\w+\/(create|delete)
-                        route:
-                          auto_host_rewrite: true
-                          cluster: deliveryservice
 
                       - match:
                           prefix: /de
                         route:
                           auto_host_rewrite: true
+                          prefix_rewrite: /delivery-service
                           cluster: deliveryservice
-                        typed_per_filter_config:
-                          envoy.filters.http.ext_authz:
-                            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
-                            disabled: true
+
+                      - match:
+                          prefix: /id
+                        route:
+                          auto_host_rewrite: true
+                          prefix_rewrite: /identity-service
+                          cluster: identityservice
+
+                      - match:
+                          prefix: /me
+                        route:
+                          auto_host_rewrite: true
+                          prefix_rewrite: /media-service
+                          cluster: mediaservice
+
+                      - match:
+                          prefix: /or
+                        route:
+                          auto_host_rewrite: true
+                          prefix_rewrite: /order-service
+                          cluster: orderservice
+
+                      - match:
+                          prefix: /pa
+                        route:
+                          auto_host_rewrite: true
+                          prefix_rewrite: /payment-service
+                          cluster: paymentservice
+
+                      - match:
+                          prefix: /te
+                        route:
+                          auto_host_rewrite: true
+                          prefix_rewrite: /tenant-service
+                          cluster: tenantservice
 
               http_filters:
-                - name: envoy.filters.http.ext_authz
+                - name: envoy.filters.http.jwt_authn
                   typed_config:
-                    "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
-                    transport_api_version: V3
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+                    providers:
+                      envoy-jwt-checker:
+                        issuer: https://localhost:5000
+                        audiences:
+                          - TestAudience
+                        remote_jwks:
+                          http_uri:
+                            uri: https://localhost:5000/jwks
+                            cluster: identityservice
+                            timeout: 1s
+                          cache_duration:
+                            seconds: 300
+                        from_headers:
+                          - name: Authorization
+                            value_prefix: "Bearer "
+                        forward: true
+                        forward_payload_header: x-jwt-payload
 
-                    http_service:
-                      server_uri:
-                        uri: identityservice
-                        cluster: identityservice
-                        timeout: 30s
-
-                      authorization_request:
-                        headers_to_add:
-                          - key: "x-authz-header1"
-                            value: "%REQ(x-request-id)%"
-
-                      authorization_response:
-                        allowed_upstream_headers:
-                          patterns:
-                            - exact: x-current-user
+                    rules:
+                      - match:
+                          safe_regex:
+                            google_re2: {}
+                            regex: ^/(ca|de|id|me|or|pa|te)\/api\/v\d+\/\w+\/(create|delete)
+                        requires:
+                          provider_and_audiences:
+                            provider_name: envoy-jwt-checker
+                            audiences: TestAudience
 
                 - name: envoy.filters.http.local_ratelimit
                   typed_config:

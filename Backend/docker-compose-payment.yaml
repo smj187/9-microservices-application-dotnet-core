@@ -14,8 +14,6 @@ services:
       - "5402:5432"
     volumes:
       - payment-database:/var/lib/postgresql/data
-    networks:
-      - payment-network
 
   paymentservice:
     image: ${DOCKER_REGISTRY-}paymentservice
@@ -35,12 +33,6 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - paymentdatabase
-    networks:
-      - payment-network
 
 volumes:
   payment-database:
-
-networks:
-  payment-network:
-    driver: bridge

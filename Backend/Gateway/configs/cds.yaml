@@ -1,24 +1,6 @@
 version_info: "0"
 resources:
   - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
-    name: identityservice
-    type: STRICT_DNS
-    lb_policy: ROUND_ROBIN
-    load_assignment:
-      cluster_name: identityservice
-      endpoints:
-        - lb_endpoints:
-            - endpoint:
-                address:
-                  socket_address:
-                    address: identityservice
-                    port_value: 443
-    transport_socket:
-      name: envoy.transport_sockets.tls
-      typed_config:
-        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-
-  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
     name: catalogservice
     type: STRICT_DNS
     lb_policy: ROUND_ROBIN
@@ -49,6 +31,101 @@ resources:
                 address:
                   socket_address:
                     address: deliveryservice
+                    port_value: 443
+
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+
+  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+    name: identityservice
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: identityservice
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: identityservice
+                    port_value: 443
+
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+
+  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+    name: mediaservice
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: mediaservice
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: mediaservice
+                    port_value: 443
+
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+
+  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+    name: orderservice
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: orderservice
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: orderservice
+                    port_value: 443
+
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+
+  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+    name: paymentservice
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: paymentservice
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: paymentservice
+                    port_value: 443
+
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+
+  - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
+    name: tenantservice
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: tenantservice
+      endpoints:
+        - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: tenantservice
                     port_value: 443
 
     transport_socket:

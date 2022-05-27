@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using IdentityService.Contracts.v1.Requests;
 using IdentityService.Contracts.v1.Responses;
 using IdentityService.Core.Entities;
 using System;
@@ -14,9 +13,8 @@ namespace IdentityService.API.Profiles
     {
         public UserProfile()
         {
-            CreateMap<UserRegisterRequest, User>();
-
-            CreateMap<User, UserResponse>();
+            CreateMap<ApplicationUser, AuthenticatedUserResponse>();
+            CreateMap<ApplicationUser, AuthenticatedUserUserResponse>();
         }
     }
 }

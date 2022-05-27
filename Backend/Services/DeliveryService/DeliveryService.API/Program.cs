@@ -16,7 +16,7 @@ builder.Services.ConfigureMongo(builder.Configuration)
 
 
 var app = builder.Build();
-app.UsePathBase(new PathString("/de"));
+app.UsePathBase(new PathString("/delivery-service"));
 app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
