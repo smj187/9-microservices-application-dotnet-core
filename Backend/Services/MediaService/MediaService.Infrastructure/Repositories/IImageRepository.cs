@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MediaService.Infrastructure.Repositories
 {
-    public interface IBlobRepository<T> : IRepository<T> where T : IAggregateRoot
+    public interface IImageRepository<T> : IRepository<T> where T : IAggregateRoot
     {
 
     }

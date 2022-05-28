@@ -29,29 +29,38 @@ namespace MediaService.API.Controllers
 
 
         [HttpGet]
+        [Route("list")]
         public async Task<IActionResult> ListMediaFileAsync()
         {
-            var query = new ListMediaFileQuery();
+            var query = new ListMediasQuery
+            {
+                FolderName = "my_test_folder"
+            };
 
             var data = await _mediator.Send(query);
 
-            var result = _mapper.Map<IEnumerable<FileResponse>>(data);
-            return Ok(result);
+            //var result = _mapper.Map<IReadOnlyCollection<FileResponse>>(data);
+            return Ok(data);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTenantAsync([FromBody] CreateFileRequest createTenantRequest)
+        [Route("upload")]
+        public async Task<IActionResult> UploadFileAsync([FromForm] IFormFile file, [FromForm] string title, [FromForm] string description, [FromForm] string tags)
         {
-            var mapped = _mapper.Map<Blob>(createTenantRequest);
-            var command = new CreateMediaFileCommand
+            var command = new UploadMediaCommand
             {
-                NewMediaFile = mapped
+                File = file,
+                Title = title,
+                Description = description,
+                Tags = tags,
+                FolderName = "my_test_folder"
             };
 
             var data = await _mediator.Send(command);
 
-            var result = _mapper.Map<FileResponse>(data);
-            return Ok(result);
+
+            return Ok(data);
         }
+
     }
 }
