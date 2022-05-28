@@ -18,9 +18,9 @@ namespace MediaService.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new MediaFileEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ImageEntityTypeConfiguration());
         }
 
-        public DbSet<Blob> MediaFiles { get; set; } = default!;
+        public DbSet<ImageBlob> Images { get; set; } = default!;
     }
 }

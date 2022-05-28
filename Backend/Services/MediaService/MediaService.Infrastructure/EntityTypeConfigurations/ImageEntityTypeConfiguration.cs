@@ -9,11 +9,18 @@ using System.Threading.Tasks;
 
 namespace MediaService.Infrastructure.EntityTypeConfigurations
 {
-    public class MediaFileEntityTypeConfiguration : IEntityTypeConfiguration<Blob>
+    public class ImageEntityTypeConfiguration : IEntityTypeConfiguration<ImageBlob>
     {
-        public void Configure(EntityTypeBuilder<Blob> builder)
+        public ImageEntityTypeConfiguration()
+        {
+
+        }
+
+        public void Configure(EntityTypeBuilder<ImageBlob> builder)
         {
             builder.HasKey(x => x.Id);
+
+            builder.OwnsMany<ImageUrl>(x => x.ImageUrls);
         }
     }
 }

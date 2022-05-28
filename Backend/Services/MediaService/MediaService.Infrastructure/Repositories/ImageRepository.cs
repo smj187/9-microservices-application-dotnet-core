@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace MediaService.Infrastructure.Repositories
 {
-    public class BlobRepository<T> : Repository<T>, IBlobRepository<T> where T : AggregateRoot
+    public class ImageRepository<T> : Repository<T>, IImageRepository<T> where T : AggregateRoot
     {
-        public BlobRepository(MediaContext context)
+        public ImageRepository(MediaContext context)
             : base(new EfCommandRepository<T>(context), new EfQueryRepository<T>(context))
         {
 

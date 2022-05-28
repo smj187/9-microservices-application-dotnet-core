@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace MediaService.Application.Queries
 {
-    public class ListMediaFileQuery : IRequest<IEnumerable<Blob>>
+    public class ListMediasQuery : IRequest<IReadOnlyCollection<BaseBlob>>
     {
-
+        public string FolderName { get; set; }
     }
 }
