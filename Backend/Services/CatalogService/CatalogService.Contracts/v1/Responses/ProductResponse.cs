@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Contracts.v1.Responses
 {
-    public class ProductResponse
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = default!;
-        public string Description { get; set; } = default!;
-        public string ImageUrl { get; set; } = default!;
-
-        public decimal Price { get; set; }
-    }
+    public record ProductResponse(Guid Id, string Name, decimal Price, List<ProductIngredientsResponse> Ingredients, List<ProductAllergensResponse> Allergens, List<ProductNutritionsResponse> Nutritions, bool IsVisible, string Description, string PriceDescription, List<ProductImagesResponse>? Images, List<string>? Tags);
+    public record ProductImagesResponse(string Url, string Name, string Description, string Tags);
+    public record ProductIngredientsResponse(string Name);
+    public record ProductAllergensResponse(string Abbr, string Name);
+    public record ProductNutritionsResponse(string Name, int Weight);
 }

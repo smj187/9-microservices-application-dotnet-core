@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CatalogService.Contracts.v1.Requests;
+using CatalogService.Contracts.v1.Requests.Groups;
 using CatalogService.Contracts.v1.Responses;
 using CatalogService.Core.Entities;
 using System;

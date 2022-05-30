@@ -16,12 +16,30 @@ namespace BuildingBlocks.Domain
         public AggregateRoot()
         {
             IsDeleted = false;
+            _events = new();
         }
+
+        public AggregateRoot(Guid id)
+            : base(id)
+        {
+            _events = new();
+        }
+
 
 
         public bool IsDeleted { get; protected set; }
 
-        public IReadOnlyCollection<IDomainEvent> DomainEvents => _events.ToImmutableArray();
+        public IReadOnlyCollection<IDomainEvent> DomainEvents => GetDomainEvents();
+
+        private Queue<IDomainEvent> GetDomainEvents()
+        {
+            if(_events == null)
+            {
+                return new Queue<IDomainEvent>();
+            }
+
+            return _events;
+        }
 
         public void ClearDomainEvents()
         {

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CatalogService.Contracts.v1.Events;
+using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,12 +14,39 @@ namespace CatalogService.API.Controllers
     [Route("[controller]")]
     public class TestController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get()
-        {
-            var res = 1;
+        private readonly IRequestClient<RequestRequestEvent> _requestClient;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-            return Ok(res);
+        public TestController(IRequestClient<RequestRequestEvent> requestClient, IPublishEndpoint publishEndpoint)
+        {
+            _requestClient = requestClient;
+            _publishEndpoint = publishEndpoint;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var data = new RequestRequestEvent
+            {
+                Id = Guid.Parse("a94ba49a-8e4c-47ac-b10f-1a6958fea4b8")
+            };
+
+            var data2 = new PublishEvent
+            {
+                Id = Guid.Parse("a94ba49a-8e4c-47ac-b10f-1a6958fea4b8"),
+                Message = "!!!"
+            };
+
+            await _publishEndpoint.Publish<PublishEvent>(data2);
+
+            var re = _requestClient.Create(data);
+            var response = await _requestClient.GetResponse<RequestResponseEvent>(data);
+
+            Console.WriteLine($"-> {response.Message.Echo}");
+
+            return Ok(response);
+
+        }
+
     }
 }

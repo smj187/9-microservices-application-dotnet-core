@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CatalogService.Application.Commands;
+using CatalogService.Application.Commands.Groups;
 using CatalogService.Application.Queries;
-using CatalogService.Contracts.v1.Requests;
+using CatalogService.Application.Queries.Groups;
+using CatalogService.Contracts.v1.Requests.Groups;
 using CatalogService.Contracts.v1.Responses;
 using CatalogService.Core.Entities;
 using MediatR;
@@ -29,7 +31,6 @@ namespace CatalogService.API.Controllers
 
 
         [HttpGet]
-        [Route("list")]
         public async Task<IActionResult> ListGroupsAsync()
         {
             var query = new ListGroupsQuery();
@@ -41,13 +42,82 @@ namespace CatalogService.API.Controllers
         }
 
         [HttpPost]
-        [Route("create")]
-        public async Task<IActionResult> CreateProductAsync([FromBody] CreateGroupRequest createProductRequest)
+        public async Task<IActionResult> CreateGroupAsync([FromBody] CreateGroupRequest createGroupRequest)
         {
-            var mapped = _mapper.Map<Group>(createProductRequest);
+            var mapped = _mapper.Map<Group>(createGroupRequest);
             var command = new CreateGroupCommand
             {
                 NewGroup = mapped
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<GroupResponse>(data);
+            return Ok(result);
+        }
+
+
+        [HttpGet]
+        [Route("{groupId:guid}/find")]
+        public async Task<IActionResult> FindGroupAsync([FromRoute] Guid groupId)
+        {
+            var query = new FindGroupQuery
+            {
+                GroupId = groupId
+            };
+
+            var data = await _mediator.Send(query);
+
+            var result = _mapper.Map<GroupResponse>(data);
+            return Ok(result);
+        }
+
+
+
+
+        [HttpPatch]
+        [Route("{groupId:guid}/price")]
+        public async Task<IActionResult> ChangeGroupPriceAsync([FromRoute] Guid groupId, [FromBody] PatchGroupPriceRequest patchGroupPriceRequest)
+        {
+            var command = new PatchGroupPriceCommand
+            {
+                GroupId = groupId,
+                Price = patchGroupPriceRequest.Price
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<GroupResponse>(data);
+            return Ok(result);
+        }
+
+        [HttpPatch]
+        [Route("{groupId:guid}/description")]
+        public async Task<IActionResult> ChangeGroupDescriptionAsync([FromRoute] Guid groupId, [FromBody] PatchGroupDescriptionRequest patchGroupDescriptionRequest)
+        {
+            var command = new PatchGroupDescriptionCommand
+            {
+                GroupId = groupId,
+                Name = patchGroupDescriptionRequest.Name,
+                Description = patchGroupDescriptionRequest.Description,
+                PriceDescription = patchGroupDescriptionRequest.PriceDescription,
+                Tags = patchGroupDescriptionRequest.Tags
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<GroupResponse>(data);
+            return Ok(result);
+        }
+
+        [HttpPatch]
+        [Route("{groupId:guid}/visibility")]
+        public async Task<IActionResult> ChangeGroupVisibilityAsync([FromRoute] Guid groupId, [FromBody] PatchGroupVisibilityRequest patchGroupVisibilityRequest)
+        {
+            var command = new PatchGroupVisibilityCommand
+            {
+                GroupId = groupId,
+                IsVisible = patchGroupVisibilityRequest.IsVisible
             };
 
             var data = await _mediator.Send(command);

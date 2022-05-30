@@ -4,6 +4,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,12 +25,46 @@ namespace BuildingBlocks.Mongo
 
         public async Task AddAsync(T entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             await _mongoCollection.InsertOneAsync(entity);
+        }
+
+        public async Task<T> FindAsync(Guid id)
+        {
+            var filter = _filterBuilder.Eq(x => x.Id, id);
+            return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _mongoCollection.Find(expression).FirstOrDefaultAsync();
+        }
+
+        public async Task<IReadOnlyCollection<T>> FindAsync(List<Guid> includes)
+        {
+            var filter = _filterBuilder.In(x => x.Id, includes);
+            return await _mongoCollection.Find(filter).ToListAsync();
         }
 
         public async Task<IReadOnlyCollection<T>> ListAsync()
         {
             return await _mongoCollection.Find(_filterBuilder.Empty).ToListAsync();
+        }
+
+        public async Task<T> PatchAsync(Guid id, T entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            var filter = _filterBuilder.Eq(x => x.Id, id);
+            await _mongoCollection.ReplaceOneAsync(filter, entity);
+            return entity;
         }
     }
 }

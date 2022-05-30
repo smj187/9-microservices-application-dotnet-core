@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Domain.Interfaces
 {
-    public interface IAggregateRoot
+    public interface IAggregateRoot : IEntity<Guid>
     {
         IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
 
