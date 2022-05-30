@@ -1,5 +1,8 @@
 using BuildingBlocks.Extensions;
+using BuildingBlocks.MassTransit;
 using CloudinaryDotNet;
+using MassTransit;
+using MediaService.Application.Consumers;
 using MediaService.Application.Services;
 using MediaService.Core.Entities;
 using MediaService.Infrastructure.Data;
@@ -30,6 +33,49 @@ if (new[] { cloudName, apiKey, apiSecret }.Any(string.IsNullOrWhiteSpace))
 }
 
 builder.Services.AddSingleton(new Cloudinary(new Account(cloudName, apiKey, apiSecret)));
+
+
+builder.Services.AddMassTransit(x =>
+{
+    //// RESPONSE
+    //x.AddConsumer<RequestRequestEventConsumer>();
+
+    //// PUBLISH
+    //x.AddConsumer<PubishEventConsumer>();
+
+    x.AddConsumers(Assembly.Load("MediaService.Application"));
+
+    x.UsingRabbitMq((context, config) =>
+    {
+        // default rabbitmq setup
+        config.Host(new Uri("rabbitmq://localhost/"), h =>
+        {
+            h.Username(RabbitMqSettings.Username);
+            h.Password(RabbitMqSettings.Password);
+        });
+
+        config.UseMessageRetry(retryConfig => retryConfig.Interval(5, TimeSpan.FromMilliseconds(250)));
+
+
+
+
+        // RESPONSE
+        config.ReceiveEndpoint("queue:response-queue", e =>
+        {
+            e.ConfigureConsumer<RequestRequestEventConsumer>(context);
+        });
+
+
+        // PUBLISH
+        config.ReceiveEndpoint("queue:publish-queue", e =>
+        {
+            e.ConfigureConsumer<PubishEventConsumer>(context);
+        });
+
+    });
+
+});
+
 
 var app = builder.Build();
 app.UsePathBase(new PathString("/media-service"));

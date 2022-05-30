@@ -1,5 +1,8 @@
 using BuildingBlocks.Extensions;
+using BuildingBlocks.MassTransit;
+using CatalogService.Contracts.v1.Events;
 using CatalogService.Core.Entities;
+using MassTransit;
 using MediatR;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +22,32 @@ builder.Services.ConfigureMongo(builder.Configuration)
     .AddMongoRepository<Product>("products");
 
 
+
+
+builder.Services.AddMassTransit(x =>
+{
+  
+
+    x.UsingRabbitMq((context, config) =>
+    {
+        // default rabbitmq setup
+        config.Host(new Uri("rabbitmq://localhost/"), h =>
+        {
+            h.Username(RabbitMqSettings.Username);
+            h.Password(RabbitMqSettings.Password);
+        });
+
+
+        config.ConfigureEndpoints(context);
+
+
+        config.UseMessageRetry(retryConfig => retryConfig.Interval(5, TimeSpan.FromMilliseconds(250)));
+
+    });
+
+    // RESPONSE
+    x.AddRequestClient<RequestResponseEvent>(new Uri("queue:response-queue"), RequestTimeout.After(s:10));
+});
 
 
 var app = builder.Build();

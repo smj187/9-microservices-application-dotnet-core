@@ -9,6 +9,7 @@ namespace BuildingBlocks.MassTransit
     public class RabbitMqSettings
     {
         public const string RabbitMqUri = "rabbitmq://localhost";
+        public const string MediaCatalogQueue = "queue:media-catalog-queue";
 
 
         public const string Username = "guest";
