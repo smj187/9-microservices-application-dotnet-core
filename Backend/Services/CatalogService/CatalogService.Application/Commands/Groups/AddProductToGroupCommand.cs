@@ -8,13 +8,9 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.Commands.Groups
 {
-    public class PatchGroupDescriptionCommand : IRequest<Group>
+    public class AddProductToGroupCommand : IRequest<Group>
     {
         public Guid GroupId { get; set; }
-
-        public string Name { get; set; } = default!;
-        public string? Description { get; set; }
-        public string? PriceDescription { get; set; }
-        public List<string>? Tags { get; set; }
+        public Guid ProductId { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace CatalogService.Core.Entities
         private string _name;
         private string? _description;
         private List<Guid> _products;
-
+        private bool _isVisible;
 
         public Category(string name, string? descripion = null, List<Guid>? productIds = null)
         {
@@ -25,6 +25,7 @@ namespace CatalogService.Core.Entities
             _description = descripion;
 
             _products = productIds ?? new List<Guid>();
+            _isVisible = false;
         }
 
         public string Name
@@ -39,11 +40,17 @@ namespace CatalogService.Core.Entities
             private set => _description = value;
         }
 
+        public bool IsVisible
+        {
+            get => _isVisible;
+            private set => _isVisible = value;
+        }
+
         public List<Guid> Images { get; set; } = new();
 
 
         [BsonElement("Products")]
-        public IEnumerable<Guid> ProductIds
+        public IEnumerable<Guid> Products
         {
             get => _products;
             private set => _products = new List<Guid>(value);
@@ -69,6 +76,14 @@ namespace CatalogService.Core.Entities
 
             _name = name;
             _description = description;
+        }
+
+
+        public void ChangeVisibility(bool isVisible)
+        {
+            Guard.Against.Null(isVisible, nameof(isVisible));
+
+            _isVisible = isVisible;
         }
 
     }

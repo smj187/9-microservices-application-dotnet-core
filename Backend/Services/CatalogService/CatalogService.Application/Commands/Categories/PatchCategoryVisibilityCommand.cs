@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Application.Queries.Categories
+namespace CatalogService.Application.Commands.Categories
 {
-    public class FindCategoryQuery : IRequest<Category>
+    public class PatchCategoryVisibilityCommand : IRequest<Category>
     {
         public Guid CategoryId { get; set; }
+        public bool IsVisible { get; set; }
     }
 }

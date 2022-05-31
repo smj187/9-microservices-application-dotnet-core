@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.CommandHandlers.Categories
 {
-    public class PatchCategoryDescriptionCommandHandler : IRequestHandler<PatchCategoryDescriptionCommand, Category>
+    public class PatchCategoryVisibilityCommandHandler : IRequestHandler<PatchCategoryVisibilityCommand, Category>
     {
         private readonly IMongoRepository<Category> _mongoRepository;
 
-        public PatchCategoryDescriptionCommandHandler(IMongoRepository<Category> mongoRepository)
+        public PatchCategoryVisibilityCommandHandler(IMongoRepository<Category> mongoRepository)
         {
             _mongoRepository = mongoRepository;
         }
 
-        public async Task<Category> Handle(PatchCategoryDescriptionCommand request, CancellationToken cancellationToken)
+        public async Task<Category> Handle(PatchCategoryVisibilityCommand request, CancellationToken cancellationToken)
         {
             var category = await _mongoRepository.FindAsync(x => x.Id == request.CategoryId);
 
@@ -28,8 +28,7 @@ namespace CatalogService.Application.CommandHandlers.Categories
                 throw new NotImplementedException();
             }
 
-
-            category.ChangeDescription(request.Name, request.Description);
+            category.ChangeVisibility(request.IsVisible);
 
             return await _mongoRepository.PatchAsync(request.CategoryId, category);
         }

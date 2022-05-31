@@ -76,7 +76,7 @@ namespace CatalogService.Core.Entities
 
 
 
-        [BsonElement("Ingredients")]
+        [BsonElement("Products")]
         public IEnumerable<Guid> Products
         {
             get => _products;
@@ -91,7 +91,7 @@ namespace CatalogService.Core.Entities
         }
 
 
-        public void ChangeDescription(string name, string description, string priceDesription, List<string> tags)
+        public void ChangeDescription(string name, string? description = null, string? priceDesription = null, List<string>? tags = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
 

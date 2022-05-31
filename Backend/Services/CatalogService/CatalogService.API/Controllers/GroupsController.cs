@@ -3,8 +3,7 @@ using CatalogService.Application.Commands;
 using CatalogService.Application.Commands.Groups;
 using CatalogService.Application.Queries;
 using CatalogService.Application.Queries.Groups;
-using CatalogService.Contracts.v1.Requests.Groups;
-using CatalogService.Contracts.v1.Responses;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -118,6 +117,39 @@ namespace CatalogService.API.Controllers
             {
                 GroupId = groupId,
                 IsVisible = patchGroupVisibilityRequest.IsVisible
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<GroupResponse>(data);
+            return Ok(result);
+        }
+
+
+        [HttpPatch]
+        [Route("{groupid:guid}/add-product/{productid:guid}")]
+        public async Task<IActionResult> AddGroupToCategoryAsync([FromRoute] Guid groupId, [FromRoute] Guid productId)
+        {
+            var command = new AddProductToGroupCommand
+            {
+                GroupId = groupId,
+                ProductId = productId
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<GroupResponse>(data);
+            return Ok(result);
+        }
+
+        [HttpPatch]
+        [Route("{groupid:guid}/remove-product/{productid:guid}")]
+        public async Task<IActionResult> RemoveGroupFromCategoryAsync([FromRoute] Guid groupId, [FromRoute] Guid productId)
+        {
+            var command = new RemoveProductFromGroupCommand
+            {
+                GroupId = groupId,
+                ProductId = productId
             };
 
             var data = await _mediator.Send(command);

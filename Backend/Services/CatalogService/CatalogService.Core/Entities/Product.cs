@@ -24,13 +24,10 @@ namespace CatalogService.Core.Entities
         private string? _priceDescription;
         private List<string>? _tags;
 
-        public Product(string name, decimal price, IEnumerable<Ingredient> ingredients, IEnumerable<Allergen> allergens, IEnumerable<Nutrition> nutritions, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null)
+        public Product(string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.NullOrNegativ(price, nameof(price));
-            Guard.Against.NullOrEmpty(ingredients, nameof(ingredients));
-            Guard.Against.NullOrEmpty(allergens, nameof(allergens));
-            Guard.Against.NullOrEmpty(nutritions, nameof(nutritions));
 
             _name = name;
             _description = description;
@@ -38,9 +35,9 @@ namespace CatalogService.Core.Entities
             _tags = tags?.ToList() ?? null;
 
 
-            _ingredients = ingredients.ToList();
-            _allergens = allergens.ToList();
-            _nutritions = nutritions.ToList();
+            _ingredients = ingredients?.ToList() ?? new List<Ingredient>();
+            _allergens = allergens?.ToList() ?? new List<Allergen>();
+            _nutritions = nutritions?.ToList() ?? new List<Nutrition>();
 
 
             _price = price;
@@ -115,7 +112,7 @@ namespace CatalogService.Core.Entities
             private set => _tags = value == null ? null : new List<string>(value);
         }
 
-        public void ChangeDescription(string name, string description, string priceDesription, List<string> tags)
+        public void ChangeDescription(string name, string? description = null, string? priceDesription = null, List<string>? tags = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
 
@@ -142,7 +139,7 @@ namespace CatalogService.Core.Entities
 
         public void AddIngredients(IEnumerable<Ingredient> ingredients)
         {
-            Guard.Against.NullOrEmpty(ingredients, nameof(ingredients));
+            Guard.Against.Null(ingredients, nameof(ingredients));
 
             foreach (var ingredient in ingredients)
             {
@@ -155,7 +152,7 @@ namespace CatalogService.Core.Entities
 
         public void AddAllergens(IEnumerable<Allergen> allergens)
         {
-            Guard.Against.NullOrEmpty(allergens, nameof(allergens));
+            Guard.Against.Null(allergens, nameof(allergens));
 
             foreach (var allergen in allergens)
             {
@@ -168,7 +165,7 @@ namespace CatalogService.Core.Entities
 
         public void AddNutrition(IEnumerable<Nutrition> nutritions)
         {
-            Guard.Against.NullOrEmpty(nutritions, nameof(nutritions));
+            Guard.Against.Null(nutritions, nameof(nutritions));
 
             foreach (var nutrition in nutritions)
             {
@@ -181,7 +178,7 @@ namespace CatalogService.Core.Entities
 
         public void RemoveIngredients(IEnumerable<Ingredient> ingredients)
         {
-            Guard.Against.NullOrEmpty(ingredients, nameof(ingredients));
+            Guard.Against.Null(ingredients, nameof(ingredients));
 
             foreach (var ingredient in ingredients)
             {
@@ -194,7 +191,7 @@ namespace CatalogService.Core.Entities
         }
         public void RemoveAllergen(IEnumerable<Allergen> allergens)
         {
-            Guard.Against.NullOrEmpty(allergens, nameof(allergens));
+            Guard.Against.Null(allergens, nameof(allergens));
 
             foreach (var allergen in allergens)
             {
@@ -207,7 +204,7 @@ namespace CatalogService.Core.Entities
         }
         public void RemoveNutrition(IEnumerable<Nutrition> nutritions)
         {
-            Guard.Against.NullOrEmpty(nutritions, nameof(nutritions));
+            Guard.Against.Null(nutritions, nameof(nutritions));
 
             foreach (var nutrition in nutritions)
             {

@@ -3,8 +3,7 @@ using CatalogService.Application.Commands;
 using CatalogService.Application.Commands.Categories;
 using CatalogService.Application.Queries;
 using CatalogService.Application.Queries.Categories;
-using CatalogService.Contracts.v1.Requests.Categories;
-using CatalogService.Contracts.v1.Responses;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,14 +35,14 @@ namespace CatalogService.API.Controllers
 
             var data = await _mediator.Send(query);
 
-            var result = _mapper.Map<IReadOnlyCollection<CategorySummaryResponse>>(data);
+            var result = _mapper.Map<IReadOnlyCollection<CategoryResponse>>(data);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategoryAsync([FromBody] CreateCategoryRequest createCategoryRequest)
+        public async Task<IActionResult> CreateCategoryAsync([FromBody] CreateCategoryRequest request)
         {
-            var mapped = _mapper.Map<Category>(createCategoryRequest);
+            var mapped = _mapper.Map<Category>(request);
             var command = new CreateCategoryCommand
             {
                 NewCategory = mapped
@@ -51,7 +50,7 @@ namespace CatalogService.API.Controllers
 
             var data = await _mediator.Send(command);
 
-            var result = _mapper.Map<CategoryDetailsResponse>(data);
+            var result = _mapper.Map<CategoryResponse>(data);
             return Ok(result);
         }
 
@@ -66,7 +65,23 @@ namespace CatalogService.API.Controllers
 
             var data = await _mediator.Send(query);
 
-            var result = _mapper.Map<CategoryDetailsResponse>(data);
+            var result = _mapper.Map<CategoryResponse>(data);
+            return Ok(result);
+        }
+
+        [HttpPatch]
+        [Route("{categoryid:guid}/visibility")]
+        public async Task<IActionResult> ChangeCategoryVisibilityAsync([FromRoute] Guid categoryId, [FromBody] PatchCategoryVisibilityCommand request)
+        {
+            var command = new PatchCategoryVisibilityCommand
+            {
+                CategoryId = categoryId,
+                IsVisible = request.IsVisible
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<CategoryResponse>(data);
             return Ok(result);
         }
 
@@ -82,7 +97,7 @@ namespace CatalogService.API.Controllers
 
             var data = await _mediator.Send(command);
 
-            var result = _mapper.Map<CategorySummaryResponse>(data);
+            var result = _mapper.Map<CategoryResponse>(data);
             return Ok(result);
         }
 
@@ -98,24 +113,24 @@ namespace CatalogService.API.Controllers
 
             var data = await _mediator.Send(command);
 
-            var result = _mapper.Map<CategorySummaryResponse>(data);
+            var result = _mapper.Map<CategoryResponse>(data);
             return Ok(result);
         }
 
         [HttpPatch]
         [Route("{categoryid:guid}/description")]
-        public async Task<IActionResult> ChangeCategoryDescriptionAsync([FromRoute] Guid categoryId, [FromBody] PatchCategoryDescriptionRequest patchCategoryDescriptionRequest)
+        public async Task<IActionResult> ChangeCategoryDescriptionAsync([FromRoute] Guid categoryId, [FromBody] PatchCategoryDescriptionRequest request)
         {
-            var command = new ChangeCategoryDescriptionCommand
+            var command = new PatchCategoryDescriptionCommand
             {
                 CategoryId = categoryId,
-                Name = patchCategoryDescriptionRequest.Name,
-                Description = patchCategoryDescriptionRequest.Description,
+                Name = request.Name,
+                Description = request.Description,
             };
 
             var data = await _mediator.Send(command);
 
-            var result = _mapper.Map<CategorySummaryResponse>(data);
+            var result = _mapper.Map<CategoryResponse>(data);
             return Ok(result);
         }
 

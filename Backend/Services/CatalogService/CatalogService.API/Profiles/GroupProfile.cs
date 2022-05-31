@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using CatalogService.Contracts.v1.Requests.Groups;
-using CatalogService.Contracts.v1.Responses;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,16 @@ namespace CatalogService.API.Profiles
     {
         public GroupProfile()
         {
-            CreateMap<CreateGroupRequest, Group>();
+            // requests
+            CreateMap<CreateGroupRequest, Group>()
+                .ConstructUsing((src, ctx) =>
+                {
+                    var tags = ctx.Mapper.Map<IEnumerable<string>>(src.Tags ?? new List<string>());
+                    return new Group(src.Name, src.Price, src.Description, src.PriceDescription, tags);
+                });
+
+
+            // responses
             CreateMap<Group, GroupResponse>();
         }
     }

@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
-using CatalogService.Contracts.v1.Requests.Products;
-using CatalogService.Contracts.v1.Responses;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -106,7 +105,7 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{productid:guid}/visibility")]
-        public async Task<IActionResult> ChangeVisibilityAsync([FromRoute] Guid productId, [FromBody] PatchVisibilityRequest changeVisibilityRequest)
+        public async Task<IActionResult> ChangeVisibilityAsync([FromRoute] Guid productId, [FromBody] PatchProductVisibilityRequest changeVisibilityRequest)
         {
             var command = new PatchVisibilityCommand
             {
@@ -119,7 +118,6 @@ namespace CatalogService.API.Controllers
             var result = _mapper.Map<ProductResponse>(data);
             return Ok(result);
         }
-
 
         [HttpPatch]
         [Route("{productid:guid}/ingredient/add")]
