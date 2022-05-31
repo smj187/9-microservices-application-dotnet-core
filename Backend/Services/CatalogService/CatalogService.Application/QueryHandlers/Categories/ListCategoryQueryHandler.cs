@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Mongo;
 using CatalogService.Application.Queries.Categories;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,16 @@ namespace CatalogService.Application.QueryHandlers.Categories
 {
     public class ListCategoryQueryHandler : IRequestHandler<ListCategoryQuery, IReadOnlyCollection<Category>>
     {
-        private readonly IMongoRepository<Category> _mongoRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public ListCategoryQueryHandler(IMongoRepository<Category> mongoRepository)
+        public ListCategoryQueryHandler(ICategoryRepository categoryRepository)
         {
-            _mongoRepository = mongoRepository;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<IReadOnlyCollection<Category>> Handle(ListCategoryQuery request, CancellationToken cancellationToken)
         {
-            return await _mongoRepository.ListAsync();
+            return await _categoryRepository.ListAsync();
         }
     }
 }

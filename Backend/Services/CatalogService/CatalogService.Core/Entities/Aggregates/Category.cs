@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Entities
+namespace CatalogService.Core.Entities.Aggregates
 {
     public class Category : AggregateRoot
     {
@@ -70,7 +70,7 @@ namespace CatalogService.Core.Entities
             _products.Remove(productId);
         }
 
-        public void ChangeDescription(string name, string description)
+        public void ChangeDescription(string name, string? description)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
 

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure.Pluralization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -15,10 +16,16 @@ namespace BuildingBlocks.Mongo
         private readonly IMongoCollection<T> _mongoCollection;
         private readonly FilterDefinitionBuilder<T> _filterBuilder = Builders<T>.Filter;
 
-        public MongoRepository(string connectionStr, string databaseName, string collectionName)
+        public MongoRepository(IConfiguration configuration)
         {
+            var connectionStr = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
+            var databaseName = configuration.GetValue<string>("ConnectionStrings:Database");
+
             var client = new MongoClient(connectionStr);
             var database = client.GetDatabase(databaseName);
+
+            var pl = new EnglishPluralizationService();
+            var collectionName = pl.Pluralize(typeof(T).Name.ToLower());
 
             _mongoCollection = database.GetCollection<T>(collectionName);
         }

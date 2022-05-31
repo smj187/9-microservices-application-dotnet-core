@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Mongo;
 using CatalogService.Application.Commands.Products;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,16 @@ namespace CatalogService.Application.CommandHandlers.Products
 {
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Product>
     {
-        private readonly IMongoRepository<Product> _mongoRepository;
+        private readonly IProductRepository _productRepository;
 
-        public CreateProductCommandHandler(IMongoRepository<Product> mongoRepository)
+        public CreateProductCommandHandler( IProductRepository productRepository)
         {
-            _mongoRepository = mongoRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<Product> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            await _mongoRepository.AddAsync(request.NewProduct);
+            await _productRepository.AddAsync(request.NewProduct);
             return request.NewProduct;
         }
     }

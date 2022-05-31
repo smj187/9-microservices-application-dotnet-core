@@ -70,24 +70,6 @@ namespace BuildingBlocks.Extensions
 
             return services;
         }
-
-     
-        public static IServiceCollection AddMongoRepository<T>(this IServiceCollection services, string collection)
-            where T : IAggregateRoot
-        {
-            services.AddSingleton<IMongoRepository<T>>(sp =>
-            {
-                var configuration = sp.GetService<IConfiguration>();
-                if (configuration == null)
-                { throw new Exception(nameof(configuration)); }
-
-                var str = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
-                var database = configuration.GetValue<string>("ConnectionStrings:Database");
-
-                return new MongoRepository<T>(str, database, collection);
-            });
-
-            return services;
-        }
+   
     }
 }

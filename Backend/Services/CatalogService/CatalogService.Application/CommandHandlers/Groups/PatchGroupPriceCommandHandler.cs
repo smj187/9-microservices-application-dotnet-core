@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Mongo;
 using CatalogService.Application.Commands.Groups;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,16 @@ namespace CatalogService.Application.CommandHandlers.Groups
 {
     public class PatchGroupPriceCommandHandler : IRequestHandler<PatchGroupPriceCommand, Group>
     {
-        private readonly IMongoRepository<Group> _mongoRepository;
+        private readonly IGroupRepository _groupRepository;
 
-        public PatchGroupPriceCommandHandler(IMongoRepository<Group> mongoRepository)
+        public PatchGroupPriceCommandHandler(IGroupRepository groupRepository)
         {
-            _mongoRepository = mongoRepository;
+            _groupRepository = groupRepository;
         }
 
         public async Task<Group> Handle(PatchGroupPriceCommand request, CancellationToken cancellationToken)
         {
-            var group = await _mongoRepository.FindAsync(x => x.Id == request.GroupId);
+            var group = await _groupRepository.FindAsync(x => x.Id == request.GroupId);
 
             if (group == null)
             {
@@ -31,7 +32,7 @@ namespace CatalogService.Application.CommandHandlers.Groups
 
             group.ChangePrice(request.Price);
 
-            return await _mongoRepository.PatchAsync(request.GroupId, group);
+            return await _groupRepository.PatchAsync(request.GroupId, group);
         }
     }
 }

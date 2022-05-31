@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Entities
+namespace CatalogService.Core.Entities.Aggregates
 {
     public class Group : AggregateRoot
     {

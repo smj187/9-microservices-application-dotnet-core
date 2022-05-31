@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Mongo;
 using CatalogService.Application.Queries.Categories;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,11 @@ namespace CatalogService.Application.QueryHandlers.Categories
 {
     public class FindCategoryQueryHandler : IRequestHandler<FindCategoryQuery, Category>
     {
-        private readonly IMongoRepository<Category> _categoryRepository;
-        private readonly IMongoRepository<Product> _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public FindCategoryQueryHandler(IMongoRepository<Category> categoryRepository, IMongoRepository<Product> productRepository)
+        public FindCategoryQueryHandler(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
-            _productRepository = productRepository;
         }
 
         public async Task<Category> Handle(FindCategoryQuery request, CancellationToken cancellationToken)

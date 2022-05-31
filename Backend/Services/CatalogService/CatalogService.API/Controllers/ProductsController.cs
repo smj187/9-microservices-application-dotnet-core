@@ -3,6 +3,7 @@ using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
 using CatalogService.Contracts.v1;
 using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;

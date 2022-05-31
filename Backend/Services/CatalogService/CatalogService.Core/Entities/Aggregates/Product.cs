@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Entities
+namespace CatalogService.Core.Entities.Aggregates
 {
     public class Product : AggregateRoot
     {
@@ -82,7 +82,7 @@ namespace CatalogService.Core.Entities
         public List<Guid> Images { get; set; } = new();
 
 
-        
+
 
         [BsonElement("Ingredients")]
         public IEnumerable<Ingredient> Ingredients
@@ -183,7 +183,7 @@ namespace CatalogService.Core.Entities
             foreach (var ingredient in ingredients)
             {
                 var existing = _ingredients.FirstOrDefault(x => x.Equals(ingredient));
-                if(existing != null)
+                if (existing != null)
                 {
                     _ingredients.Remove(existing);
                 }
@@ -196,7 +196,7 @@ namespace CatalogService.Core.Entities
             foreach (var allergen in allergens)
             {
                 var existing = _allergens.FirstOrDefault(x => x.Equals(allergen));
-                if(existing != null)
+                if (existing != null)
                 {
                     _allergens.Remove(existing);
                 }
@@ -209,7 +209,7 @@ namespace CatalogService.Core.Entities
             foreach (var nutrition in nutritions)
             {
                 var existing = _nutritions.FirstOrDefault(x => x.Equals(nutrition));
-                if(existing != null)
+                if (existing != null)
                 {
                     _nutritions.Remove(existing);
                 }

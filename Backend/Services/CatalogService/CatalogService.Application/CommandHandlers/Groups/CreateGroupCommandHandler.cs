@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Mongo;
 using CatalogService.Application.Commands.Groups;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,16 @@ namespace CatalogService.Application.CommandHandlers.Groups
 {
     public class CreateGroupCommandHandler : IRequestHandler<CreateGroupCommand, Group>
     {
-        private readonly IMongoRepository<Group> _mongoRepository;
+        private readonly IGroupRepository _groupRepository;
 
-        public CreateGroupCommandHandler(IMongoRepository<Group> mongoRepository)
+        public CreateGroupCommandHandler(IGroupRepository groupRepository)
         {
-            _mongoRepository = mongoRepository;
+            _groupRepository = groupRepository;
         }
 
         public async Task<Group> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
         {
-            await _mongoRepository.AddAsync(request.NewGroup);
+            await _groupRepository.AddAsync(request.NewGroup);
             return request.NewGroup;
         }
     }

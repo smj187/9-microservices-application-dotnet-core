@@ -1,5 +1,6 @@
 using BuildingBlocks.Extensions;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -14,9 +15,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("CatalogService.Application"));
 
 builder.Services.ConfigureMongo(builder.Configuration)
-    .AddMongoRepository<Category>("categories")
-    .AddMongoRepository<Group>("groups")
-    .AddMongoRepository<Product>("products");
+    .AddSingleton<IProductRepository, ProductRepository>()
+    .AddSingleton<ICategoryRepository, CategoryRepository>()
+    .AddSingleton<IGroupRepository, GroupRepository>();
 
 
 

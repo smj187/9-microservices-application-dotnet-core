@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Mongo;
 using CatalogService.Application.Queries.Products;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,16 @@ namespace CatalogService.Application.QueryHandlers.Products
 {
     public class FindProductQueryHandler : IRequestHandler<FindProductQuery, Product>
     {
-        private readonly IMongoRepository<Product> _mongoRepository;
+        private readonly IProductRepository _productRepository;
 
-        public FindProductQueryHandler(IMongoRepository<Product> mongoRepository)
+        public FindProductQueryHandler(IProductRepository productRepository)
         {
-            _mongoRepository = mongoRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<Product> Handle(FindProductQuery request, CancellationToken cancellationToken)
         {
-            return await _mongoRepository.FindAsync(request.ProductId);
+            return await _productRepository.FindAsync(request.ProductId);
         }
     }
 }

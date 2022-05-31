@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Mongo;
 using CatalogService.Application.Commands.Products;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,16 @@ namespace CatalogService.Application.CommandHandlers.Products
 {
     public class PatchProductDescriptionCommandHandler : IRequestHandler<PatchProductDescriptionCommand, Product>
     {
-        private readonly IMongoRepository<Product> _mongoRepository;
+        private readonly IProductRepository _productRepository;
 
-        public PatchProductDescriptionCommandHandler(IMongoRepository<Product> mongoRepository)
+        public PatchProductDescriptionCommandHandler(IProductRepository productRepository)
         {
-            _mongoRepository = mongoRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<Product> Handle(PatchProductDescriptionCommand request, CancellationToken cancellationToken)
         {
-            var product = await _mongoRepository.FindAsync(request.ProductId);
+            var product = await _productRepository.FindAsync(request.ProductId);
             if (product == null)
             {
                 throw new NotImplementedException();
@@ -29,7 +30,7 @@ namespace CatalogService.Application.CommandHandlers.Products
 
             product.ChangeDescription(request.Name, request.Description, request.PriceDescription, request.Tags);
 
-            return await _mongoRepository.PatchAsync(request.ProductId, product);
+            return await _productRepository.PatchAsync(request.ProductId, product);
         }
     }
 }

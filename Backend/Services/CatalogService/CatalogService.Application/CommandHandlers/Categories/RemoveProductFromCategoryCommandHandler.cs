@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Mongo;
 using CatalogService.Application.Commands.Categories;
-using CatalogService.Core.Entities;
+using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Infrastructure.Repositories;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,16 @@ namespace CatalogService.Application.CommandHandlers.Categories
 {
     public class RemoveProductFromCategoryCommandHandler : IRequestHandler<RemoveProductFromCategoryCommand, Category>
     {
-        private readonly IMongoRepository<Category> _mongoRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public RemoveProductFromCategoryCommandHandler(IMongoRepository<Category> mongoRepository)
+        public RemoveProductFromCategoryCommandHandler(ICategoryRepository categoryRepository)
         {
-            _mongoRepository = mongoRepository;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<Category> Handle(RemoveProductFromCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await _mongoRepository.FindAsync(x => x.Id == request.CategoryId);
+            var category = await _categoryRepository.FindAsync(x => x.Id == request.CategoryId);
 
             if (category == null)
             {
@@ -30,7 +31,7 @@ namespace CatalogService.Application.CommandHandlers.Categories
 
             category.RemoveProduct(request.ProductId);
 
-            return await _mongoRepository.PatchAsync(request.CategoryId, category);
+            return await _categoryRepository.PatchAsync(request.CategoryId, category);
 
         }
     }
