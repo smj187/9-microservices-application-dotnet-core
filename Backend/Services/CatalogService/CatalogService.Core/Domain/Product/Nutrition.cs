@@ -6,25 +6,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Entities
+namespace CatalogService.Core.Domain.Product
 {
-    public class Allergen : ValueObject
+    public class Nutrition : ValueObject
     {
-        public Allergen(string abbr, string name)
+        public Nutrition(string name, int weight)
         {
-            Guard.Against.NullOrWhiteSpace(abbr, nameof(abbr));
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
-            Abbr = abbr;
+            Guard.Against.Null(weight, nameof(weight));
             Name = name;
+            Weight = weight;
         }
 
-        public string Abbr { get; init; }
         public string Name { get; init; }
+        public int Weight { get; init; }
 
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return Abbr;
             yield return Name;
+            yield return Weight;
         }
     }
 }

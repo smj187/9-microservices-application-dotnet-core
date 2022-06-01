@@ -1,5 +1,4 @@
-﻿using CatalogService.Core.Entities;
-using CatalogService.Core.Entities.Aggregates;
+﻿using CatalogService.Core.Domain.Product;
 using MediatR;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,6 @@
-﻿using BuildingBlocks.Mongo;
+﻿using BuildingBlocks.Exceptions;
 using CatalogService.Application.Queries.Products;
-using CatalogService.Core.Entities.Aggregates;
-using CatalogService.Infrastructure.Repositories;
+using CatalogService.Core.Domain.Product;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,12 @@ namespace CatalogService.Application.QueryHandlers.Products
 
         public async Task<Product> Handle(FindProductQuery request, CancellationToken cancellationToken)
         {
-            return await _productRepository.FindAsync(request.ProductId);
+            var product = await _productRepository.FindAsync(request.ProductId);
+            if (product == null)
+            {
+                throw new AggregateNotFoundException(nameof(Product), request.ProductId);
+            }
+            return product;
         }
     }
 }

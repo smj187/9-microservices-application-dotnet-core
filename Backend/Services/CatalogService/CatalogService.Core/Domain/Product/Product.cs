@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Entities.Aggregates
+namespace CatalogService.Core.Domain.Product
 {
     public class Product : AggregateRoot
     {
@@ -120,6 +120,8 @@ namespace CatalogService.Core.Entities.Aggregates
             _description = description;
             _priceDescription = priceDesription;
             _tags = tags;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void ChangeVisibility(bool isVisible)
@@ -127,6 +129,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.Null(isVisible, nameof(isVisible));
 
             _isVisible = isVisible;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void ChangePrice(decimal price)
@@ -134,6 +138,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.NullOrNegativ(price, nameof(price));
 
             _price = price;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
 
@@ -148,6 +154,8 @@ namespace CatalogService.Core.Entities.Aggregates
                     _ingredients.Add(ingredient);
                 }
             }
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void AddAllergens(IEnumerable<Allergen> allergens)
@@ -161,6 +169,8 @@ namespace CatalogService.Core.Entities.Aggregates
                     _allergens.Add(allergen);
                 }
             }
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void AddNutrition(IEnumerable<Nutrition> nutritions)
@@ -174,6 +184,8 @@ namespace CatalogService.Core.Entities.Aggregates
                     _nutritions.Add(nutrition);
                 }
             }
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void RemoveIngredients(IEnumerable<Ingredient> ingredients)
@@ -188,6 +200,8 @@ namespace CatalogService.Core.Entities.Aggregates
                     _ingredients.Remove(existing);
                 }
             }
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
         public void RemoveAllergen(IEnumerable<Allergen> allergens)
         {
@@ -201,6 +215,8 @@ namespace CatalogService.Core.Entities.Aggregates
                     _allergens.Remove(existing);
                 }
             }
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
         public void RemoveNutrition(IEnumerable<Nutrition> nutritions)
         {
@@ -214,6 +230,8 @@ namespace CatalogService.Core.Entities.Aggregates
                     _nutritions.Remove(existing);
                 }
             }
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
     }
 }

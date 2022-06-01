@@ -1,14 +1,11 @@
-﻿using BuildingBlocks.Domain.Interfaces;
-using BuildingBlocks.EfCore.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingBlocks.EfCore
+namespace BuildingBlocks.Domain.EfCore
 {
     public class UnitOfWork<TDbContext> : IUnitOfWork where TDbContext : DbContext
     {

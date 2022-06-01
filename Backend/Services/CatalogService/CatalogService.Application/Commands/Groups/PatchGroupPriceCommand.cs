@@ -1,4 +1,4 @@
-﻿using CatalogService.Core.Entities.Aggregates;
+﻿using CatalogService.Core.Domain.Group;
 using MediatR;
 using System;
 using System.Collections.Generic;

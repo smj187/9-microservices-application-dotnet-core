@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingBlocks.EfCore.Interfaces
+namespace BuildingBlocks.Domain.Mongo
 {
-    public interface IEfRepository<T> : IBaseRepository<T> where T : IAggregateRoot
+    public interface IMongoRepository<T> : IBaseRepository<T> where T : IAggregateRoot
     {
 
     }

@@ -1,7 +1,6 @@
-﻿using BuildingBlocks.Mongo;
+﻿using BuildingBlocks.Exceptions;
 using CatalogService.Application.Commands.Categories;
-using CatalogService.Core.Entities.Aggregates;
-using CatalogService.Infrastructure.Repositories;
+using CatalogService.Core.Domain.Category;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -22,11 +21,11 @@ namespace CatalogService.Application.CommandHandlers.Categories
 
         public async Task<Category> Handle(RemoveProductFromCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await _categoryRepository.FindAsync(x => x.Id == request.CategoryId);
+            var category = await _categoryRepository.FindAsync(request.CategoryId);
 
             if (category == null)
             {
-                throw new NotImplementedException();
+                throw new AggregateNotFoundException(nameof(Category), request.CategoryId);
             }
 
             category.RemoveProduct(request.ProductId);

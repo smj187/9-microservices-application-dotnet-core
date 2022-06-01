@@ -1,7 +1,6 @@
-﻿using BuildingBlocks.Mongo;
+﻿using BuildingBlocks.Exceptions;
 using CatalogService.Application.Queries.Groups;
-using CatalogService.Core.Entities.Aggregates;
-using CatalogService.Infrastructure.Repositories;
+using CatalogService.Core.Domain.Group;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,13 @@ namespace CatalogService.Application.QueryHandlers.Groups
 
         public async Task<Group> Handle(FindGroupQuery request, CancellationToken cancellationToken)
         {
-            return await _groupRepository.FindAsync(request.GroupId);
+            var group = await _groupRepository.FindAsync(request.GroupId);
+            if (group == null)
+            {
+                throw new AggregateNotFoundException(nameof(Group), request.GroupId);
+            }
+
+            return group;
         }
     }
 }

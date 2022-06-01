@@ -1,9 +1,10 @@
 using BuildingBlocks.Extensions;
-using CatalogService.Core.Entities.Aggregates;
+using BuildingBlocks.Middleware;
+using CatalogService.Core.Domain.Category;
+using CatalogService.Core.Domain.Group;
+using CatalogService.Core.Domain.Product;
 using CatalogService.Infrastructure.Repositories;
 using MediatR;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

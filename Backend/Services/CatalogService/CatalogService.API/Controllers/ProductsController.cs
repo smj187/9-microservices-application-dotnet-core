@@ -2,14 +2,14 @@
 using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
 using CatalogService.Contracts.v1;
-using CatalogService.Core.Entities;
-using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Core.Domain.Product;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CatalogService.API.Controllers
@@ -20,11 +20,13 @@ namespace CatalogService.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IMediator mediator, IMapper mapper)
+        public ProductsController(IMediator mediator, IMapper mapper, ILogger<ProductsController> logger)
         {
             _mediator = mediator;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]

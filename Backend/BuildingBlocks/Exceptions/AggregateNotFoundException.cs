@@ -8,12 +8,8 @@ namespace BuildingBlocks.Exceptions
 {
     public class AggregateNotFoundException : Exception
     {
-        public AggregateNotFoundException(string message) : base(message)
-        {
-
-        }
-
-        public AggregateNotFoundException(string type, Guid id) : base($"No aggregate ({type}) for {id} was found")
+        public AggregateNotFoundException(string entity, Guid id) 
+            : base($"Aggreate '{entity.ToLower()}' [{id}] was not found.")
         {
 
         }

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Entities.Aggregates
+namespace CatalogService.Core.Domain.Category
 {
     public class Category : AggregateRoot
     {
@@ -61,6 +61,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.Null(productId, nameof(productId));
 
             _products.Add(productId);
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void RemoveProduct(Guid productId)
@@ -68,6 +70,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.Null(productId, nameof(productId));
 
             _products.Remove(productId);
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void ChangeDescription(string name, string? description)
@@ -76,6 +80,8 @@ namespace CatalogService.Core.Entities.Aggregates
 
             _name = name;
             _description = description;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
 
@@ -84,6 +90,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.Null(isVisible, nameof(isVisible));
 
             _isVisible = isVisible;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
     }

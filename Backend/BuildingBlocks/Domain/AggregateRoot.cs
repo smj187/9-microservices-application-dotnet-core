@@ -10,35 +10,15 @@ namespace BuildingBlocks.Domain
 {
     public abstract class AggregateRoot : Entity, IAggregateRoot
     {
-        private readonly Queue<IDomainEvent> _events = new();
+        private readonly List<IDomainEvent> _events = new();
+        public IReadOnlyList<IDomainEvent> DomainEvents
+            => _events == null ? new List<IDomainEvent>().AsReadOnly() : _events.AsReadOnly();
 
 
-        public AggregateRoot()
+
+        public void AddDomainEvent(IDomainEvent domainEvent)
         {
-            IsDeleted = false;
-            _events = new();
-        }
-
-        public AggregateRoot(Guid id)
-            : base(id)
-        {
-            _events = new();
-        }
-
-
-
-        public bool IsDeleted { get; protected set; }
-
-        public IReadOnlyCollection<IDomainEvent> DomainEvents => GetDomainEvents();
-
-        private Queue<IDomainEvent> GetDomainEvents()
-        {
-            if(_events == null)
-            {
-                return new Queue<IDomainEvent>();
-            }
-
-            return _events;
+            _events.Add(domainEvent);
         }
 
         public void ClearDomainEvents()
@@ -46,9 +26,5 @@ namespace BuildingBlocks.Domain
             _events.Clear();
         }
 
-        public void AddEvent(IDomainEvent domainEvent)
-        {
-            _events.Enqueue(domainEvent);
-        }
     }
 }

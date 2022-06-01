@@ -4,7 +4,7 @@ using CatalogService.Application.Commands.Groups;
 using CatalogService.Application.Queries;
 using CatalogService.Application.Queries.Groups;
 using CatalogService.Contracts.v1;
-using CatalogService.Core.Entities.Aggregates;
+using CatalogService.Core.Domain.Group;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;

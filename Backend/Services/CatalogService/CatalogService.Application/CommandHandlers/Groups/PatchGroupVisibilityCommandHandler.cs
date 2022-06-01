@@ -1,7 +1,6 @@
-﻿using BuildingBlocks.Mongo;
+﻿using BuildingBlocks.Exceptions;
 using CatalogService.Application.Commands.Groups;
-using CatalogService.Core.Entities.Aggregates;
-using CatalogService.Infrastructure.Repositories;
+using CatalogService.Core.Domain.Group;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -22,11 +21,11 @@ namespace CatalogService.Application.CommandHandlers.Groups
 
         public async Task<Group> Handle(PatchGroupVisibilityCommand request, CancellationToken cancellationToken)
         {
-            var group = await _groupRepository.FindAsync(x => x.Id == request.GroupId);
+            var group = await _groupRepository.FindAsync(request.GroupId);
 
             if (group == null)
             {
-                throw new NotImplementedException();
+                throw new AggregateNotFoundException(nameof(Group), request.GroupId);
             }
 
             group.ChangeVisibility(request.IsVisible);

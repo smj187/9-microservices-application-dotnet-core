@@ -1,7 +1,6 @@
-﻿using BuildingBlocks.Mongo;
+﻿using BuildingBlocks.Exceptions;
 using CatalogService.Application.Commands.Products;
-using CatalogService.Core.Entities.Aggregates;
-using CatalogService.Infrastructure.Repositories;
+using CatalogService.Core.Domain.Product;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,7 @@ namespace CatalogService.Application.CommandHandlers.Products
             var product = await _productRepository.FindAsync(request.ProductId);
             if (product == null)
             {
-                throw new NotImplementedException();
+                throw new AggregateNotFoundException(nameof(Product), request.ProductId);
             }
 
             product.ChangeDescription(request.Name, request.Description, request.PriceDescription, request.Tags);

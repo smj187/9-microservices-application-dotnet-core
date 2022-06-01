@@ -1,7 +1,5 @@
-﻿using BuildingBlocks.Mongo;
-using CatalogService.Application.Queries.Products;
-using CatalogService.Core.Entities.Aggregates;
-using CatalogService.Infrastructure.Repositories;
+﻿using CatalogService.Application.Queries.Products;
+using CatalogService.Core.Domain.Product;
 using MediatR;
 using System;
 using System.Collections.Generic;

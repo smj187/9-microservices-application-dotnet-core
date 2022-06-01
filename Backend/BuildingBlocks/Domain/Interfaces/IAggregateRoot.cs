@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Domain.Interfaces
 {
-    public interface IAggregateRoot : IEntity<Guid>
+    public interface IAggregateRoot
     {
-        IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
 
-        void AddEvent(IDomainEvent domainEvent);
-        void ClearDomainEvents();
     }
 }

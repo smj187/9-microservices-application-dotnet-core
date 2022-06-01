@@ -1,15 +1,15 @@
-﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using BuildingBlocks.Domain.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingBlocks.EfCore
+namespace BuildingBlocks.Domain.EfCore
 {
-    public class EfRepository<T> : Repository<T> where T : AggregateRoot
+    public class EfRepository<T> : BaseRepository<T> where T : AggregateRoot
     {
         public EfRepository(DbContext context)
             : base(new EfCommandRepository<T>(context), new EfQueryRepository<T>(context))

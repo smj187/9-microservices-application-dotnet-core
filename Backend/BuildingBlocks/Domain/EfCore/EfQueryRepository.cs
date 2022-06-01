@@ -1,15 +1,14 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Domain.Interfaces;
 using BuildingBlocks.Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingBlocks.EfCore
+namespace BuildingBlocks.Domain.EfCore
 {
     public class EfQueryRepository<T> : IQueryRepository<T> where T : AggregateRoot
     {
@@ -22,9 +21,24 @@ namespace BuildingBlocks.EfCore
             _database = _context.Set<T>();
         }
 
-        public async Task<IReadOnlyCollection<T>> ListAsync()
+        public Task<T> FindAsync(Guid id)
         {
-            return await _database.AsNoTracking().ToListAsync();
+            throw new NotImplementedException();
+        }
+
+        public Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IReadOnlyCollection<T>> ListAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IReadOnlyCollection<T>> ListAsync(List<Guid> includes)
+        {
+            throw new NotImplementedException();
         }
     }
 }

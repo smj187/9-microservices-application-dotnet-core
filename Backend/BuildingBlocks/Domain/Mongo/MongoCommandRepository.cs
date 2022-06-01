@@ -1,22 +1,22 @@
-﻿using BuildingBlocks.Domain.Interfaces;
+﻿using BuildingBlocks.Domain;
+using BuildingBlocks.Domain.Repositories;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure.Pluralization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingBlocks.Mongo
+namespace BuildingBlocks.Domain.Mongo
 {
-    public class MongoRepository<T> : IMongoRepository<T> where T : IAggregateRoot
+    public class MongoCommandRepository<T> : ICommandRepository<T> where T : AggregateRoot
     {
         private readonly IMongoCollection<T> _mongoCollection;
         private readonly FilterDefinitionBuilder<T> _filterBuilder = Builders<T>.Filter;
 
-        public MongoRepository(IConfiguration configuration)
+        public MongoCommandRepository(IConfiguration configuration)
         {
             var connectionStr = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
             var databaseName = configuration.GetValue<string>("ConnectionStrings:Database");
@@ -30,7 +30,7 @@ namespace BuildingBlocks.Mongo
             _mongoCollection = database.GetCollection<T>(collectionName);
         }
 
-        public async Task AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
             if (entity == null)
             {
@@ -38,28 +38,7 @@ namespace BuildingBlocks.Mongo
             }
 
             await _mongoCollection.InsertOneAsync(entity);
-        }
-
-        public async Task<T> FindAsync(Guid id)
-        {
-            var filter = _filterBuilder.Eq(x => x.Id, id);
-            return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
-        }
-
-        public async Task<T> FindAsync(Expression<Func<T, bool>> expression)
-        {
-            return await _mongoCollection.Find(expression).FirstOrDefaultAsync();
-        }
-
-        public async Task<IReadOnlyCollection<T>> FindAsync(List<Guid> includes)
-        {
-            var filter = _filterBuilder.In(x => x.Id, includes);
-            return await _mongoCollection.Find(filter).ToListAsync();
-        }
-
-        public async Task<IReadOnlyCollection<T>> ListAsync()
-        {
-            return await _mongoCollection.Find(_filterBuilder.Empty).ToListAsync();
+            return entity;
         }
 
         public async Task<T> PatchAsync(Guid id, T entity)

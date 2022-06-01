@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Entities.Aggregates
+namespace CatalogService.Core.Domain.Group
 {
     public class Group : AggregateRoot
     {
@@ -99,6 +99,8 @@ namespace CatalogService.Core.Entities.Aggregates
             _description = description;
             _priceDescription = priceDesription;
             _tags = tags;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void ChangeVisibility(bool isVisible)
@@ -106,6 +108,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.Null(isVisible, nameof(isVisible));
 
             _isVisible = isVisible;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void ChangePrice(decimal price)
@@ -113,6 +117,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.NullOrNegativ(price, nameof(price));
 
             _price = price;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void AddProduct(Guid productId)
@@ -120,6 +126,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.Null(productId, nameof(productId));
 
             _products.Add(productId);
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void RemoveProduct(Guid productId)
@@ -127,6 +135,8 @@ namespace CatalogService.Core.Entities.Aggregates
             Guard.Against.Null(productId, nameof(productId));
 
             _products.Remove(productId);
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
     }

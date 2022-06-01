@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Domain.Interfaces
 {
-    public interface IEntity<TKey>
+    public interface IEntity
     {
-        TKey Id { get; }
+        Guid Id { get; }
+
+        DateTimeOffset CreatedAt { get; }
+        DateTimeOffset? ModifiedAt { get; }
+
+        bool IsDeleted { get; }
     }
 }

@@ -1,7 +1,6 @@
-﻿using BuildingBlocks.Mongo;
+﻿using BuildingBlocks.Exceptions;
 using CatalogService.Application.Queries.Categories;
-using CatalogService.Core.Entities.Aggregates;
-using CatalogService.Infrastructure.Repositories;
+using CatalogService.Core.Domain.Category;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,13 @@ namespace CatalogService.Application.QueryHandlers.Categories
 
         public async Task<Category> Handle(FindCategoryQuery request, CancellationToken cancellationToken)
         {
-            return await _categoryRepository.FindAsync(request.CategoryId);
+            var category = await _categoryRepository.FindAsync(request.CategoryId);
+            if (category == null)
+            {
+                throw new AggregateNotFoundException(nameof(Category), request.CategoryId);
+            }
+
+            return category;
         }
     }
 }

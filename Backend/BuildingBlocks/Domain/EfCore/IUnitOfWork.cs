@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingBlocks.EfCore.Interfaces
+namespace BuildingBlocks.Domain.EfCore
 {
     public interface IUnitOfWork
     {
