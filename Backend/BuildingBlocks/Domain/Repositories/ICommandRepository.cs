@@ -9,6 +9,8 @@ namespace BuildingBlocks.Domain.Repositories
 {
     public interface ICommandRepository<T> where T : IAggregateRoot
     {
-        Task AddAsync(T entity);
+        Task<T> AddAsync(T entity);
+
+        Task<T> PatchAsync(Guid id, T entity);
     }
 }

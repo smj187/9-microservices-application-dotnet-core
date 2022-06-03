@@ -8,9 +8,6 @@ namespace BuildingBlocks.Domain.Interfaces
 {
     public interface IAggregateRoot
     {
-        IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
 
-        void AddEvent(IDomainEvent domainEvent);
-        void ClearDomainEvents();
     }
 }

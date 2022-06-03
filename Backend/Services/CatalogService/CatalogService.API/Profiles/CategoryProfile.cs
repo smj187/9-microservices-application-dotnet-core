@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using CatalogService.Contracts.v1.Requests;
-using CatalogService.Contracts.v1.Responses;
-using CatalogService.Core.Entities;
+using CatalogService.Contracts.v1;
+using CatalogService.Core.Domain.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +13,19 @@ namespace CatalogService.API.Profiles
     {
         public CategoryProfile()
         {
-            CreateMap<CreateCategoryRequest, Category>();
+            // requests
+            CreateMap<CreateCategoryRequest, Category>()
+                .ConstructUsing((src, ctx) =>
+                {
+                    return new Category(src.Name, src.Description);
+                });
+
+
+
+            // responses
             CreateMap<Category, CategoryResponse>();
+
+      
         }
     }
 }

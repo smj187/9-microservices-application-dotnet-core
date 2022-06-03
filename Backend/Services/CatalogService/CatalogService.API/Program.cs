@@ -1,11 +1,14 @@
 using BuildingBlocks.Extensions;
 using BuildingBlocks.MassTransit;
-using CatalogService.Contracts.v1.Events;
-using CatalogService.Core.Entities;
+using BuildingBlocks.Middleware;
+using CatalogService.Contracts.v1;
+using CatalogService.Core.Domain.Category;
+using CatalogService.Core.Domain.Group;
+using CatalogService.Core.Domain.Product;
+using CatalogService.Infrastructure.Repositories;
+using FileService.Contracts.v1;
 using MassTransit;
 using MediatR;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,36 +20,20 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("CatalogService.Application"));
 
 builder.Services.ConfigureMongo(builder.Configuration)
-    .AddMongoRepository<Category>("categories")
-    .AddMongoRepository<Group>("groups")
-    .AddMongoRepository<Product>("products");
-
-
+    .AddSingleton<IProductRepository, ProductRepository>()
+    .AddSingleton<ICategoryRepository, CategoryRepository>()
+    .AddSingleton<IGroupRepository, GroupRepository>();
 
 
 builder.Services.AddMassTransit(x =>
 {
-  
-
+    x.AddConsumers(Assembly.Load("CatalogService.Application"));
     x.UsingRabbitMq((context, config) =>
     {
-        // default rabbitmq setup
-        config.Host(new Uri("rabbitmq://localhost/"), h =>
-        {
-            h.Username(RabbitMqSettings.Username);
-            h.Password(RabbitMqSettings.Password);
-        });
-
-
-        config.ConfigureEndpoints(context);
-
-
-        config.UseMessageRetry(retryConfig => retryConfig.Interval(5, TimeSpan.FromMilliseconds(250)));
-
+        config.Host(RabbitMqSettings.RabbitMqUri);
+        config.ConfigureEndpoints(context, new SnakeCaseEndpointNameFormatter("catalog", false));
     });
-
-    // RESPONSE
-    x.AddRequestClient<RequestResponseEvent>(new Uri("queue:response-queue"), RequestTimeout.After(s:10));
+  
 });
 
 
@@ -58,6 +45,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,7 +1,4 @@
-﻿using BuildingBlocks.Domain.Interfaces;
-using BuildingBlocks.EfCore;
-using BuildingBlocks.EfCore.Interfaces;
-using BuildingBlocks.Mongo;
+﻿using BuildingBlocks.Domain.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +22,7 @@ namespace BuildingBlocks.Extensions
             services.AddDbContext<T>(opts =>
             {
                 var str = configuration.GetConnectionString("DefaultConnection");
-                opts.UseMySql(str, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(str));
+                opts.UseMySql(str, ServerVersion.AutoDetect(str));
             });
 
             services.BuildServiceProvider().GetRequiredService<T>().Database.Migrate();
@@ -34,6 +31,7 @@ namespace BuildingBlocks.Extensions
 
             return services;
         }
+
 
         public static IServiceCollection ConfigureNpgsql<T>(this IServiceCollection services, IConfiguration configuration)
             where T : DbContext
@@ -70,24 +68,6 @@ namespace BuildingBlocks.Extensions
 
             return services;
         }
-
-     
-        public static IServiceCollection AddMongoRepository<T>(this IServiceCollection services, string collection)
-            where T : IAggregateRoot
-        {
-            services.AddSingleton<IMongoRepository<T>>(sp =>
-            {
-                var configuration = sp.GetService<IConfiguration>();
-                if (configuration == null)
-                { throw new Exception(nameof(configuration)); }
-
-                var str = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
-                var database = configuration.GetValue<string>("ConnectionStrings:Database");
-
-                return new MongoRepository<T>(str, database, collection);
-            });
-
-            return services;
-        }
+   
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuildingBlocks.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,23 +7,48 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Domain
 {
-    public abstract class Entity
+    public abstract class Entity : IEntity
     {
-        private readonly Guid _id;
+        private Guid _id;
+        private DateTimeOffset _createdAt;
+        private DateTimeOffset? _modifiedAt;
+        private bool _isDeleted;
+
+        //public Entity()
+        //{
+        //    CreatedAt = DateTimeOffset.UtcNow;
+        //    ModifiedAt = null;
+
+        //    _id = Guid.NewGuid();
+        //}
 
 
-        public Entity()
+
+
+        public Guid Id
         {
-            // TODO: id generation
-            _id = Guid.NewGuid();
-
-            CreatedAt = DateTimeOffset.UtcNow;
-            ModifiedAt = null;
+            get => _id;
+            protected set => _id = value;
         }
 
-        public Guid Id => _id;
+        public DateTimeOffset CreatedAt
+        {
+            get => _createdAt;
+            protected set => _createdAt = value;
+        }
 
-        public DateTimeOffset CreatedAt { get; private set; }
-        public DateTimeOffset? ModifiedAt { get; protected set; }
+        public DateTimeOffset? ModifiedAt
+        {
+            get => _modifiedAt;
+            protected set => _modifiedAt = value;
+        }
+        public bool IsDeleted
+        {
+            get => _isDeleted;
+            protected set => _isDeleted = value;
+        }
+
+
+
     }
 }
