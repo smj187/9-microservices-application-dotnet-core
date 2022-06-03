@@ -1,8 +1,8 @@
 ﻿using BuildingBlocks.Domain;
 using BuildingBlocks.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -21,9 +21,9 @@ namespace BuildingBlocks.Domain.EfCore
             _database = _context.Set<T>();
         }
 
-        public Task<T> FindAsync(Guid id)
+        public async Task<T> FindAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _database.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public Task<T> FindAsync(Expression<Func<T, bool>> expression)
@@ -31,9 +31,9 @@ namespace BuildingBlocks.Domain.EfCore
             throw new NotImplementedException();
         }
 
-        public Task<IReadOnlyCollection<T>> ListAsync()
+        public async Task<IReadOnlyCollection<T>> ListAsync()
         {
-            throw new NotImplementedException();
+            return await _database.AsNoTracking().ToListAsync();
         }
 
         public Task<IReadOnlyCollection<T>> ListAsync(List<Guid> includes)

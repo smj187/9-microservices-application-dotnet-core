@@ -16,39 +16,40 @@ namespace BuildingBlocks.Extensions
 {
     public static class ServiceExtensions
     {
-        //public static IServiceCollection ConfigureMySql<T>(this IServiceCollection services, IConfiguration configuration)
-        //    where T : DbContext
-        //{
-        //    services.AddDbContext<T>(opts =>
-        //    {
-        //        var str = configuration.GetConnectionString("DefaultConnection");
-        //        opts.UseMySql(str, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(str));
-        //    });
+        public static IServiceCollection ConfigureMySql<T>(this IServiceCollection services, IConfiguration configuration)
+            where T : DbContext
+        {
+            services.AddDbContext<T>(opts =>
+            {
+                var str = configuration.GetConnectionString("DefaultConnection");
+                opts.UseMySql(str, ServerVersion.AutoDetect(str));
+            });
 
-        //    services.BuildServiceProvider().GetRequiredService<T>().Database.Migrate();
+            services.BuildServiceProvider().GetRequiredService<T>().Database.Migrate();
 
-        //    services.AddScoped<IUnitOfWork, UnitOfWork<T>>();
+            services.AddScoped<IUnitOfWork, UnitOfWork<T>>();
 
-        //    return services;
-        //}
+            return services;
+        }
 
-        //public static IServiceCollection ConfigureNpgsql<T>(this IServiceCollection services, IConfiguration configuration)
-        //    where T : DbContext
-        //{
-        //    services.AddDbContext<T>(opts =>
-        //    {
-        //        var str = configuration.GetConnectionString("DefaultConnection");
-        //        opts.UseNpgsql(str);
-        //    });
 
-        //    services.AddDatabaseDeveloperPageExceptionFilter();
+        public static IServiceCollection ConfigureNpgsql<T>(this IServiceCollection services, IConfiguration configuration)
+            where T : DbContext
+        {
+            services.AddDbContext<T>(opts =>
+            {
+                var str = configuration.GetConnectionString("DefaultConnection");
+                opts.UseNpgsql(str);
+            });
 
-        //    services.BuildServiceProvider().GetRequiredService<T>().Database.Migrate();
+            services.AddDatabaseDeveloperPageExceptionFilter();
 
-        //    services.AddScoped<IUnitOfWork, UnitOfWork<T>>();
+            services.BuildServiceProvider().GetRequiredService<T>().Database.Migrate();
 
-        //    return services;
-        //}
+            services.AddScoped<IUnitOfWork, UnitOfWork<T>>();
+
+            return services;
+        }
 
 
         public static IServiceCollection ConfigureMongo(this IServiceCollection services, IConfiguration configuration)

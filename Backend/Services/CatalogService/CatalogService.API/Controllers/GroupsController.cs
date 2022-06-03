@@ -41,9 +41,9 @@ namespace CatalogService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateGroupAsync([FromBody] CreateGroupRequest createGroupRequest)
+        public async Task<IActionResult> CreateGroupAsync([FromBody] CreateGroupRequest request)
         {
-            var mapped = _mapper.Map<Group>(createGroupRequest);
+            var mapped = _mapper.Map<Group>(request);
             var command = new CreateGroupCommand
             {
                 NewGroup = mapped
@@ -76,12 +76,12 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{groupId:guid}/price")]
-        public async Task<IActionResult> ChangeGroupPriceAsync([FromRoute] Guid groupId, [FromBody] PatchGroupPriceRequest patchGroupPriceRequest)
+        public async Task<IActionResult> ChangeGroupPriceAsync([FromRoute] Guid groupId, [FromBody] PatchGroupPriceRequest request)
         {
             var command = new PatchGroupPriceCommand
             {
                 GroupId = groupId,
-                Price = patchGroupPriceRequest.Price
+                Price = request.Price
             };
 
             var data = await _mediator.Send(command);
@@ -92,15 +92,15 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{groupId:guid}/description")]
-        public async Task<IActionResult> ChangeGroupDescriptionAsync([FromRoute] Guid groupId, [FromBody] PatchGroupDescriptionRequest patchGroupDescriptionRequest)
+        public async Task<IActionResult> ChangeGroupDescriptionAsync([FromRoute] Guid groupId, [FromBody] PatchGroupDescriptionRequest request)
         {
             var command = new PatchGroupDescriptionCommand
             {
                 GroupId = groupId,
-                Name = patchGroupDescriptionRequest.Name,
-                Description = patchGroupDescriptionRequest.Description,
-                PriceDescription = patchGroupDescriptionRequest.PriceDescription,
-                Tags = patchGroupDescriptionRequest.Tags
+                Name = request.Name,
+                Description = request.Description,
+                PriceDescription = request.PriceDescription,
+                Tags = request.Tags
             };
 
             var data = await _mediator.Send(command);
@@ -111,12 +111,12 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{groupId:guid}/visibility")]
-        public async Task<IActionResult> ChangeGroupVisibilityAsync([FromRoute] Guid groupId, [FromBody] PatchGroupVisibilityRequest patchGroupVisibilityRequest)
+        public async Task<IActionResult> ChangeGroupVisibilityAsync([FromRoute] Guid groupId, [FromBody] PatchGroupVisibilityRequest request)
         {
             var command = new PatchGroupVisibilityCommand
             {
                 GroupId = groupId,
-                IsVisible = patchGroupVisibilityRequest.IsVisible
+                IsVisible = request.IsVisible
             };
 
             var data = await _mediator.Send(command);

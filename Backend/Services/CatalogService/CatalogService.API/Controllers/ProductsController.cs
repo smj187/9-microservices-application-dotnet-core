@@ -20,13 +20,11 @@ namespace CatalogService.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IMediator mediator, IMapper mapper, ILogger<ProductsController> logger)
+        public ProductsController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
             _mapper = mapper;
-            _logger = logger;
         }
 
         [HttpGet]
@@ -41,9 +39,9 @@ namespace CatalogService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductRequest createProductRequest)
+        public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductRequest request)
         {
-            var mapped = _mapper.Map<Product>(createProductRequest);
+            var mapped = _mapper.Map<Product>(request);
             var command = new CreateProductCommand
             {
                 NewProduct = mapped
@@ -73,12 +71,12 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{productid:guid}/price")]
-        public async Task<IActionResult> ChangePriceAsync([FromRoute] Guid productId, [FromBody] PatchProductPriceRequest changeProductPriceRequest)
+        public async Task<IActionResult> ChangePriceAsync([FromRoute] Guid productId, [FromBody] PatchProductPriceRequest request)
         {
             var command = new PatchProductPriceCommand
             {
                 ProductId = productId,
-                Price = changeProductPriceRequest.Price
+                Price = request.Price
             };
 
             var data = await _mediator.Send(command);
@@ -89,15 +87,15 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{productid:guid}/description")]
-        public async Task<IActionResult> ChangeDescriptionAsync([FromRoute] Guid productId, [FromBody] PatchProductDescriptionRequest changeDescriptionRequest)
+        public async Task<IActionResult> ChangeDescriptionAsync([FromRoute] Guid productId, [FromBody] PatchProductDescriptionRequest request)
         {
             var command = new PatchProductDescriptionCommand
             {
                 ProductId = productId,
-                Name = changeDescriptionRequest.Name,
-                Description = changeDescriptionRequest.Description,
-                PriceDescription = changeDescriptionRequest.PriceDescription,
-                Tags = changeDescriptionRequest.Tags
+                Name = request.Name,
+                Description = request.Description,
+                PriceDescription = request.PriceDescription,
+                Tags = request.Tags
             };
 
             var data = await _mediator.Send(command);
@@ -108,12 +106,12 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{productid:guid}/visibility")]
-        public async Task<IActionResult> ChangeVisibilityAsync([FromRoute] Guid productId, [FromBody] PatchProductVisibilityRequest changeVisibilityRequest)
+        public async Task<IActionResult> ChangeVisibilityAsync([FromRoute] Guid productId, [FromBody] PatchProductVisibilityRequest request)
         {
             var command = new PatchVisibilityCommand
             {
                 ProductId = productId,
-                IsVisible = changeVisibilityRequest.IsVisible
+                IsVisible = request.IsVisible
             };
 
             var data = await _mediator.Send(command);
@@ -124,14 +122,14 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{productid:guid}/ingredient/add")]
-        public async Task<IActionResult> AddIngredientsAsync([FromRoute] Guid productId, [FromBody] AddIngredientsRequest addIngredientsRequest)
+        public async Task<IActionResult> AddIngredientsAsync([FromRoute] Guid productId, [FromBody] AddIngredientsRequest request)
         {
             var command = new AddIngredientsToProductCommand
             {
                 ProductId = productId,
-                Allergens = _mapper.Map<List<Allergen>>(addIngredientsRequest.Allergens),
-                Ingredients = _mapper.Map<List<Ingredient>>(addIngredientsRequest.Ingredients),
-                Nutritions = _mapper.Map<List<Nutrition>>(addIngredientsRequest.Nutritions),
+                Allergens = _mapper.Map<List<Allergen>>(request.Allergens),
+                Ingredients = _mapper.Map<List<Ingredient>>(request.Ingredients),
+                Nutritions = _mapper.Map<List<Nutrition>>(request.Nutritions),
             };
 
             var data = await _mediator.Send(command);
@@ -142,14 +140,14 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{productid:guid}/ingredient/remove")]
-        public async Task<IActionResult> AddIngredientsAsync([FromRoute] Guid ProductId, [FromBody] RemoveIngredientsRequest removeIngredientsRequest)
+        public async Task<IActionResult> AddIngredientsAsync([FromRoute] Guid ProductId, [FromBody] RemoveIngredientsRequest request)
         {
             var command = new RemoveIngredientsFromProductCommand
             {
                 ProductId = ProductId,
-                Allergens = _mapper.Map<List<Allergen>>(removeIngredientsRequest.Allergens),
-                Ingredients = _mapper.Map<List<Ingredient>>(removeIngredientsRequest.Ingredients),
-                Nutritions = _mapper.Map<List<Nutrition>>(removeIngredientsRequest.Nutritions),
+                Allergens = _mapper.Map<List<Allergen>>(request.Allergens),
+                Ingredients = _mapper.Map<List<Ingredient>>(request.Ingredients),
+                Nutritions = _mapper.Map<List<Nutrition>>(request.Nutritions),
             };
 
             var data = await _mediator.Send(command);
