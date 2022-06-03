@@ -37,7 +37,6 @@ builder.Services.AddMassTransit(x =>
 });
 
 
-
 var app = builder.Build();
 app.UsePathBase(new PathString("/catalog-service"));
 app.UseRouting();
