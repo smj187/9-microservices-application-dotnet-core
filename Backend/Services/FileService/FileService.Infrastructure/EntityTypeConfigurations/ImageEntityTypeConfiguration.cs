@@ -18,6 +18,7 @@ namespace FileService.Infrastructure.EntityTypeConfigurations
             builder.Property(x => x.ModifiedAt);
             builder.Property(x => x.IsDeleted);
             builder.OwnsMany(x => x.Images);
+
         }
     }
 }

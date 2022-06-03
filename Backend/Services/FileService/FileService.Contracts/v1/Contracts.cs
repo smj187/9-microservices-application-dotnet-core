@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 namespace FileService.Contracts.v1
 {
     // image request
-    public record UploadImageRequest(string? Title, string? Description, string? Tags, [Required] IFormFile Image);
+    public record UploadImageRequest([Required] Guid ExternalEntityId, string? Title, string? Description, string? Tags, [Required] IFormFile Image);
     public record PatchImageDescriptionRequest(string? Title, string? Description, string? Tags);
 
     // video request
-    public record UploadVideoRequest(string? Title, string? Description, string? Tags, [Required] IFormFile Video);
+    public record UploadVideoRequest([Required] Guid ExternalEntityId, string? Title, string? Description, string? Tags, [Required] IFormFile Video);
     public record PatchVideoDescriptionRequest(string? Title, string? Description, string? Tags);
 
 
     // image response
-    public record ImageResponse(Guid Id, string Title, string Description, string Tags, List<ImageUrlResponse> Images, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
+    public record ImageResponse(Guid Id, string Title, string Description, string Tags, List<ImageUrlResponse> Images, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt, Guid ExternalEntityId);
     public record ImageUrlResponse(int Breakpoint, string Url, string Format, long Size, int Width, int Height);
 
     // video response
-    public record VideoResponse(Guid Id, string Title, string Description, string Tags, VideoUrlResponse Url);
+    public record VideoResponse(Guid Id, string Title, string Description, string Tags, VideoUrlResponse Url, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt, Guid ExternalEntityId);
     public record VideoUrlResponse(string Url, string Format, int Duration, long Size, int Width, int Height);
 }

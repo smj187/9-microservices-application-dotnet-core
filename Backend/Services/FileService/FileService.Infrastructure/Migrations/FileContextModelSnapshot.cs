@@ -31,6 +31,9 @@ namespace FileService.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("ExternalEntityId")
+                        .HasColumnType("char(36)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
@@ -59,6 +62,9 @@ namespace FileService.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
+
+                    b.Property<Guid>("ExternalEntityId")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");

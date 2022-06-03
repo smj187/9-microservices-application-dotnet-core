@@ -17,7 +17,7 @@ namespace FileService.API.Profiles
             CreateMap<UploadImageRequest, ImageFile>()
                 .ConstructUsing((src, ctx) =>
                 {
-                    return new ImageFile(src.Title, src.Description, src.Tags);
+                    return new ImageFile(src.ExternalEntityId, src.Title, src.Description, src.Tags);
                 });
 
 

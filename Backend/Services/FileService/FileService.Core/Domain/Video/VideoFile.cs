@@ -10,13 +10,16 @@ namespace FileService.Core.Domain.Video
 {
     public class VideoFile : AggregateRoot
     {
+        private Guid _externalEntityId;
         private string? _title;
         private string? _description;
         private string? _tags;
         private VideoUrl _url;
 
-        public VideoFile(string? title, string? description, string? tags)
+        public VideoFile(Guid externalEntityId, string? title, string? description, string? tags)
         {
+            Guard.Against.Null(externalEntityId, nameof(externalEntityId));
+            _externalEntityId = externalEntityId;
 
             _title = title;
             _description = description;
@@ -26,6 +29,11 @@ namespace FileService.Core.Domain.Video
             ModifiedAt = null;
         }
 
+        public Guid ExternalEntityId
+        {
+            get => _externalEntityId;
+            private set => _externalEntityId = value;
+        }
 
         public string? Title
         {

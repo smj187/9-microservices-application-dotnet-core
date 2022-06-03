@@ -14,8 +14,6 @@ namespace CatalogService.Contracts.v1
     public record PatchCategoryDescriptionRequest([Required] string Name, string? Description);
 
 
-
-
     // create new group
     public record CreateGroupRequest([Required] string Name, [Required] decimal Price, string? Description, string? PriceDescription, List<string>? Tags);
 
@@ -27,8 +25,6 @@ namespace CatalogService.Contracts.v1
 
     // patch group visibility
     public record PatchGroupVisibilityRequest([Required] bool IsVisible);
-
-
 
 
     // create new product
@@ -49,4 +45,33 @@ namespace CatalogService.Contracts.v1
 
     // patch product visibility
     public record PatchProductVisibilityRequest([Required] bool IsVisible);
+
+
+
+
+
+
+    // generel category response
+    public record CategoryResponse(Guid Id, string Name, string Description, bool IsVisible, List<Guid> Products, List<CategoryImagesResponse> Images);
+    // images 
+    public record CategoryImagesResponse(string Url, string Name, string Description, string Tags);
+
+
+    // general group response
+    public record GroupResponse(Guid Id, string Name, string Description, string Price, string PriceDescription, bool IsVisible, List<GroupImagesResponse> Images, List<Guid> Products, List<string> Tags);
+    // image response
+    public record GroupImagesResponse(string Url, string Name, string Description, string Tags);
+
+
+    // general product response
+    public record ProductResponse(Guid Id, string Name, decimal Price, List<IngredientsResponse> Ingredients, List<AllergensResponse> Allergens, List<NutritionsResponse> Nutritions, bool IsVisible, string Description, string PriceDescription, List<ProductImagesResponse> Images, List<string> Tags);
+
+
+    // ingredients response
+    public record IngredientsResponse(string Name);
+    public record AllergensResponse(string Abbr, string Name);
+    public record NutritionsResponse(string Name, int Weight);
+
+    // image response
+    public record ProductImagesResponse(string Url, string Name, string Description, string Tags);
 }

@@ -10,14 +10,20 @@ namespace FileService.Core.Domain.Image
 {
     public class ImageFile : AggregateRoot
     {
+        private Guid _externalEntityId;
         private string? _title;
         private string? _description;
         private string? _tags;
 
         private List<ImageUrl> _images = new();
 
-        public ImageFile(string? title = null, string? description = null, string? tags = null)
+        private ImageFile() { }
+
+        public ImageFile(Guid externalEntityId, string? title = null, string? description = null, string? tags = null)
         {
+            Guard.Against.Null(externalEntityId, nameof(externalEntityId));
+            _externalEntityId = externalEntityId;
+
             _title = title;
             _description = description;
             _tags = tags;
@@ -26,6 +32,13 @@ namespace FileService.Core.Domain.Image
             ModifiedAt = null;
         }
 
+
+        public Guid ExternalEntityId
+        {
+            get => _externalEntityId;
+            private set => _externalEntityId = value;
+        }
+        
         public string? Title
         {
             get => _title;

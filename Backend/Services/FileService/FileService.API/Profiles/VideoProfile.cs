@@ -17,7 +17,7 @@ namespace FileService.API.Profiles
             CreateMap<UploadVideoRequest, VideoFile>()
                 .ConstructUsing((src, ctx) =>
                 {
-                    return new VideoFile(src.Title, src.Description, src.Tags);
+                    return new VideoFile(src.ExternalEntityId, src.Title, src.Description, src.Tags);
                 });
 
 

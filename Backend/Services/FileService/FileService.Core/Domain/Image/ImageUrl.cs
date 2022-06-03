@@ -17,6 +17,7 @@ namespace FileService.Core.Domain.Image
         private int _width;
         private int _height;
 
+        private ImageUrl() { }
         public ImageUrl(int breakpoint, string url, string format, long size, int width, int height)
         {
             Guard.Against.Null(breakpoint, nameof(breakpoint));
