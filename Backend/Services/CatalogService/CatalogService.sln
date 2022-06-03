@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogService.Contracts", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks", "..\..\BuildingBlocks\BuildingBlocks.csproj", "{30435F4F-4849-4D5C-8AA3-D6AFE001D0C4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileService.Contracts", "..\FileService\FileService.Contracts\FileService.Contracts.csproj", "{C0811C8B-7D09-4C4A-9867-7D17D344F4DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{30435F4F-4849-4D5C-8AA3-D6AFE001D0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30435F4F-4849-4D5C-8AA3-D6AFE001D0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30435F4F-4849-4D5C-8AA3-D6AFE001D0C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0811C8B-7D09-4C4A-9867-7D17D344F4DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0811C8B-7D09-4C4A-9867-7D17D344F4DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0811C8B-7D09-4C4A-9867-7D17D344F4DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0811C8B-7D09-4C4A-9867-7D17D344F4DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

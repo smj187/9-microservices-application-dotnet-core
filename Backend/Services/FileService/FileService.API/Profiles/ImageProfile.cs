@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FileService.Contracts.v1;
+using FileService.Core.Domain;
 using FileService.Core.Domain.Image;
 using System;
 using System.Collections.Generic;

@@ -2,6 +2,7 @@
 using BuildingBlocks.Exceptions;
 using FileService.Application.Commands.Images;
 using FileService.Application.Services;
+using FileService.Core.Domain;
 using FileService.Core.Domain.Image;
 using MediatR;
 using System;
@@ -37,6 +38,7 @@ namespace FileService.Application.CommandHandlers.Images
             var response = await _cloudService.UploadImageAsync(folder, request.File, title, description, tags);
 
             request.NewImageFile.AddImages(response.ToList());
+
 
             var image = await _imageRepository.AddAsync(request.NewImageFile);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

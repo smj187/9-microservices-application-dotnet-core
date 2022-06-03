@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 namespace FileService.Contracts.v1
 {
     // image request
-    public record UploadImageRequest([Required] Guid ExternalEntityId, string? Title, string? Description, string? Tags, [Required] IFormFile Image);
+    public record UploadImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
     public record PatchImageDescriptionRequest(string? Title, string? Description, string? Tags);
 
     // video request
-    public record UploadVideoRequest([Required] Guid ExternalEntityId, string? Title, string? Description, string? Tags, [Required] IFormFile Video);
+    public record UploadVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
     public record PatchVideoDescriptionRequest(string? Title, string? Description, string? Tags);
 
 

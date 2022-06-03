@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -46,7 +47,8 @@ namespace CatalogService.Contracts.v1
     // patch product visibility
     public record PatchProductVisibilityRequest([Required] bool IsVisible);
 
-
+    // manage media files
+    public record AddImageToProductRequest([Required] IFormFile Image, string? Title, string? Description, string? Tags);
 
 
 
@@ -73,5 +75,6 @@ namespace CatalogService.Contracts.v1
     public record NutritionsResponse(string Name, int Weight);
 
     // image response
-    public record ProductImagesResponse(string Url, string Name, string Description, string Tags);
+    //public record ProductImagesResponse(string Url, string Name, string Description, string Tags);
+    public record ProductImagesResponse(Guid Id);
 }

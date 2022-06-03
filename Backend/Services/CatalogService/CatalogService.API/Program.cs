@@ -1,9 +1,13 @@
 using BuildingBlocks.Extensions;
+using BuildingBlocks.MassTransit;
 using BuildingBlocks.Middleware;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Domain.Category;
 using CatalogService.Core.Domain.Group;
 using CatalogService.Core.Domain.Product;
 using CatalogService.Infrastructure.Repositories;
+using FileService.Contracts.v1;
+using MassTransit;
 using MediatR;
 using System.Reflection;
 
@@ -20,6 +24,17 @@ builder.Services.ConfigureMongo(builder.Configuration)
     .AddSingleton<ICategoryRepository, CategoryRepository>()
     .AddSingleton<IGroupRepository, GroupRepository>();
 
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumers(Assembly.Load("CatalogService.Application"));
+    x.UsingRabbitMq((context, config) =>
+    {
+        config.Host(RabbitMqSettings.RabbitMqUri);
+        config.ConfigureEndpoints(context, new SnakeCaseEndpointNameFormatter("catalog", false));
+    });
+  
+});
 
 
 

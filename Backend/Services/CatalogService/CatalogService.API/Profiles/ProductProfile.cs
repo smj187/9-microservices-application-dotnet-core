@@ -37,7 +37,8 @@ namespace CatalogService.API.Profiles
 
 
             // responses
-            CreateMap<Product, ProductResponse>();
+            CreateMap<Product, ProductResponse>()
+                .ForMember(dest => dest.Images, opts => opts.MapFrom(s => s.Images));
             CreateMap<Allergen, AllergensResponse>();
             CreateMap<Nutrition, NutritionsResponse>();
             CreateMap<Ingredient, IngredientsResponse>();

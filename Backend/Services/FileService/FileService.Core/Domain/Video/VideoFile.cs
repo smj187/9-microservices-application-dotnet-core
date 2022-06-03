@@ -14,7 +14,7 @@ namespace FileService.Core.Domain.Video
         private string? _title;
         private string? _description;
         private string? _tags;
-        private VideoUrl _url;
+        private VideoUrl _url = default!;
 
         public VideoFile(Guid externalEntityId, string? title, string? description, string? tags)
         {
@@ -28,6 +28,7 @@ namespace FileService.Core.Domain.Video
             CreatedAt = DateTimeOffset.UtcNow;
             ModifiedAt = null;
         }
+
 
         public Guid ExternalEntityId
         {

@@ -3,6 +3,7 @@ using FileService.Application.Commands.Images;
 using FileService.Application.Queries.Images;
 using FileService.Contracts.v1;
 using FileService.Core.Domain.Image;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,12 +20,14 @@ namespace FileService.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
+        private readonly IPublishEndpoint _publishEndpoint;
         private readonly string IMAGE_FOLDER_NAME = "test_images";
 
-        public ImagesController(IMapper mapper, IMediator mediator)
+        public ImagesController(IMapper mapper, IMediator mediator, IPublishEndpoint publishEndpoint)
         {
             _mapper = mapper;
             _mediator = mediator;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet]
@@ -51,6 +54,8 @@ namespace FileService.API.Controllers
             };
 
             var data = await _mediator.Send(command);
+
+            await _publishEndpoint.Publish(new AddImageToProductResponseEvent(data.ExternalEntityId, data.Id));
 
             var result = _mapper.Map<ImageResponse>(data);
             return Ok(result);
@@ -88,5 +93,6 @@ namespace FileService.API.Controllers
             var result = _mapper.Map<ImageResponse>(data);
             return Ok(result);
         }
+  
     }
 }

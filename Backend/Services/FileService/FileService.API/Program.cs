@@ -1,4 +1,5 @@
 using BuildingBlocks.Extensions;
+using BuildingBlocks.MassTransit;
 using BuildingBlocks.Middleware;
 using CloudinaryDotNet;
 using FileService.Application.Services;
@@ -6,6 +7,7 @@ using FileService.Core.Domain.Image;
 using FileService.Core.Domain.Video;
 using FileService.Infrastructure.Data;
 using FileService.Infrastructure.Repositories;
+using MassTransit;
 using MediatR;
 using System.Reflection;
 
@@ -34,6 +36,19 @@ if (new[] { cloudName, apiKey, apiSecret }.Any(string.IsNullOrWhiteSpace))
 }
 
 builder.Services.AddSingleton(new Cloudinary(new Account(cloudName, apiKey, apiSecret)));
+
+
+
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumers(Assembly.Load("FileService.Application"));
+    x.UsingRabbitMq((context, config) =>
+    {
+        config.Host(RabbitMqSettings.RabbitMqUri);
+        config.ConfigureEndpoints(context, new SnakeCaseEndpointNameFormatter("file", false));
+    });
+});
 
 
 var app = builder.Build();

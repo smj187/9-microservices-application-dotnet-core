@@ -3,6 +3,8 @@ using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
 using CatalogService.Contracts.v1;
 using CatalogService.Core.Domain.Product;
+using FileService.Contracts.v1;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -137,6 +139,8 @@ namespace CatalogService.API.Controllers
             var result = _mapper.Map<ProductResponse>(data);
             return Ok(result);
         }
+
+  
 
         [HttpPatch]
         [Route("{productid:guid}/ingredient/remove")]
