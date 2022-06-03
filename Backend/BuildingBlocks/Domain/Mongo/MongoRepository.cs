@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure.Pluralization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;

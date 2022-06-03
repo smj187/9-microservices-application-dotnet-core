@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Domain.Repositories;
+﻿using BuildingBlocks.Domain.Repositories;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
