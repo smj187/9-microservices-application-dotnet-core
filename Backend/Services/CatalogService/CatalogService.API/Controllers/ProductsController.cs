@@ -32,6 +32,7 @@ namespace CatalogService.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ListProductsAsync()
         {
+
             var query = new ListProductsQuery();
 
             var data = await _mediator.Send(query);

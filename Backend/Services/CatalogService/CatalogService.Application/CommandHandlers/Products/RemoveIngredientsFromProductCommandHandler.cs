@@ -2,6 +2,7 @@
 using CatalogService.Application.Commands.Products;
 using CatalogService.Core.Domain.Product;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace CatalogService.Application.CommandHandlers.Products
 
         public async Task<Product> Handle(RemoveIngredientsFromProductCommand request, CancellationToken cancellationToken)
         {
+
+
             var product = await _productRepository.FindAsync(request.ProductId);
 
             if (product == null)
