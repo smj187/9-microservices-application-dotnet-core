@@ -1,12 +1,15 @@
-﻿using System;
+﻿using IdentityService.Core.Domain.User;
+using IdentityService.Core.Models;
+using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Contracts.v1.Requests
+namespace IdentityService.Application.Commands.Users
 {
-    public class AuthenticateUserRequest
+    public class LoginUserCommand : IRequest<ApplicationUser>
     {
         public string Email { get; set; } = default!;
         public string Password { get; set; } = default!;

@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Domain.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,6 @@
-﻿using IdentityService.Application.Queries;
+﻿using IdentityService.Application.Queries.Users;
 using IdentityService.Application.Services;
-using IdentityService.Core.Entities;
+using IdentityService.Core.Domain.User;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Application.QueryHandlers
+namespace IdentityService.Application.QueryHandlers.Users
 {
     public class ListUsersQueryHandler : IRequestHandler<ListUsersQuery, IReadOnlyCollection<ApplicationUser>>
     {

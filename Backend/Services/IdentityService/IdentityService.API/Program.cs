@@ -4,11 +4,16 @@ using IdentityService.API;
 using IdentityService.API.Extensions;
 using IdentityService.API.Middleware;
 using IdentityService.Application.Services;
-using IdentityService.Core.Entities;
+using IdentityService.Core.Domain.User;
 using IdentityService.Infrastructure.Data;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using NetDevPack.Security.Jwt.Core.Jwa;
+using NetDevPack.Security.JwtExtensions;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +38,7 @@ builder.Services.AddJwksManager(opts =>
     opts.Jwe = Algorithm.Create(AlgorithmType.RSA, JwtType.Jwe);
 })
     .IdentityServer4AutoJwksManager();
+
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>();

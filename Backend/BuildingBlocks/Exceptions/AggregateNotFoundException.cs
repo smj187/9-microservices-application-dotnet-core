@@ -13,5 +13,11 @@ namespace BuildingBlocks.Exceptions
         {
 
         }
+
+        public AggregateNotFoundException(string message)
+            : base(message)
+        {
+
+        }
     }
 }

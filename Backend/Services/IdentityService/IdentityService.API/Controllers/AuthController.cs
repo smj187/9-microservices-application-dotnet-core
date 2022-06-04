@@ -2,7 +2,7 @@
 using IdentityService.Application.Commands;
 using IdentityService.Application.Queries;
 using IdentityService.Application.Services;
-using IdentityService.Contracts.v1.Requests;
+using IdentityService.Contracts.v1;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,21 +39,21 @@ namespace IdentityService.API.Controllers
             => Ok(await _identityService.CreateJsonWebToken("user@mail.com"));
 
 
-        [HttpPost]
-        [Route("authenticate")]
-        public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticateUserRequest authenticateUserRequest)
-        {
+        //[HttpPost]
+        //[Route("authenticate")]
+        //public async Task<IActionResult> AuthenticateAsync([FromBody] AuthenticateUserRequest authenticateUserRequest)
+        //{
 
-            var command = new AuthenticateUserCommand
-            {
-                Email = authenticateUserRequest.Email,
-                Password = authenticateUserRequest.Password,
-            };
+        //    var command = new AuthenticateUserCommand
+        //    {
+        //        Email = authenticateUserRequest.Email,
+        //        Password = authenticateUserRequest.Password,
+        //    };
 
-            var data = await _mediator.Send(command);
+        //    var data = await _mediator.Send(command);
 
-            return Ok(data);
-        }
+        //    return Ok(data);
+        //}
 
 
 

@@ -1,4 +1,5 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Domain.Admin;
+using IdentityService.Core.Domain.User;
 using Jwks.Manager;
 using Jwks.Manager.Store.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -21,10 +22,10 @@ namespace IdentityService.Infrastructure.Data
 
         //protected override void OnModelCreating(ModelBuilder builder)
         //{
-        //    builder.UseSerialColumns();
-        //    base.OnModelCreating(builder);
+        //    //builder.UseSerialColumns();
+        //    //base.OnModelCreating(builder);
 
-        //    builder.Entity<User>().OwnsMany(u => u.RefreshTokens).ToTable("AspNetUserRefreshTokens");
+        //    //builder.Entity<User>().OwnsMany(u => u.RefreshTokens).ToTable("AspNetUserRefreshTokens");
         //}
 
 
@@ -62,6 +63,5 @@ namespace IdentityService.Infrastructure.Data
         //}
 
 
-        //public DbSet<User> Users { get; set; } = default!;
     }
 }

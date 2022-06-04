@@ -1,4 +1,5 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Domain.Admin;
+using IdentityService.Core.Domain.User;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -37,39 +38,39 @@ namespace IdentityService.API.Extensions
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(o =>
-                {
-                    var issuer = configuration.GetValue<string>("JsonWebToken:Issuer");
-                    var audience = configuration.GetValue<string>("JsonWebToken:Audience");
-                    var key = configuration.GetValue<string>("JsonWebToken:Key");
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            //    .AddJwtBearer(o =>
+            //    {
+            //        var issuer = configuration.GetValue<string>("JsonWebToken:Issuer");
+            //        var audience = configuration.GetValue<string>("JsonWebToken:Audience");
+            //        var key = configuration.GetValue<string>("JsonWebToken:Key");
 
-                    o.RequireHttpsMetadata = false;
-                    o.SaveToken = false;
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero,
-                        ValidIssuer = issuer,
-                        ValidAudience = audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
-                    };
+            //        o.RequireHttpsMetadata = false;
+            //        o.SaveToken = false;
+            //        o.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuerSigningKey = true,
+            //            ValidateIssuer = true,
+            //            ValidateAudience = true,
+            //            ValidateLifetime = true,
+            //            ClockSkew = TimeSpan.Zero,
+            //            ValidIssuer = issuer,
+            //            ValidAudience = audience,
+            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+            //        };
 
-                    var JwkUrl = configuration.GetValue<string>("JwkUrl");
+            //        var JwkUrl = configuration.GetValue<string>("JwkUrl");
 
-                    // o.RequireHttpsMetadata = true;
-                    // //x.SaveToken = true; // keep the public key at Cache for 10 min.
-                    // //x.RefreshInterval = TimeSpan.FromSeconds(10);
-                    // o.IncludeErrorDetails = true; // <- great for debugging
-                    // o.SetJwksOptions(new JwkOptions("https://localhost:5000/jwks"));
-                });
+            //        // o.RequireHttpsMetadata = true;
+            //        // //x.SaveToken = true; // keep the public key at Cache for 10 min.
+            //        // //x.RefreshInterval = TimeSpan.FromSeconds(10);
+            //        // o.IncludeErrorDetails = true; // <- great for debugging
+            //        // o.SetJwksOptions(new JwkOptions("https://localhost:5000/jwks"));
+            //    });
 
 
             return services;
@@ -93,22 +94,33 @@ namespace IdentityService.API.Extensions
                 {
                     if (!roleManager.Roles.Any())
                     {
-                        await roleManager.CreateAsync(new IdentityRole("Administrator"));
-                        await roleManager.CreateAsync(new IdentityRole("User"));
+                        await roleManager.CreateAsync(new IdentityRole(Role.Administrator.ToString()));
+                        await roleManager.CreateAsync(new IdentityRole(Role.Moderator.ToString()));
+                        await roleManager.CreateAsync(new IdentityRole(Role.User.ToString()));
                     }
 
                     if (!userManager.Users.Any())
                     {
                         var admin = new ApplicationUser
                         {
-                            UserName = "root",
-                            Email = "root@mail.com",
+                            UserName = "admin",
+                            Email = "admin@mail.com",
                         };
 
                         await userManager.CreateAsync(admin, "passwd");
-                        await userManager.AddToRoleAsync(admin, "Administrator");
-                        await userManager.AddToRoleAsync(admin, "User");
+                        await userManager.AddToRoleAsync(admin, Role.Administrator.ToString());
+                        await userManager.AddToRoleAsync(admin, Role.Moderator.ToString());
+                        await userManager.AddToRoleAsync(admin, Role.User.ToString());
 
+                        var mod = new ApplicationUser
+                        {
+                            UserName = "mod",
+                            Email = "mod@mail.com",
+                        };
+
+                        await userManager.CreateAsync(mod, "passwd");
+                        await userManager.AddToRoleAsync(mod, Role.Moderator.ToString());
+                        await userManager.AddToRoleAsync(mod, Role.User.ToString());
 
                         var user = new ApplicationUser
                         {
@@ -117,7 +129,7 @@ namespace IdentityService.API.Extensions
                         };
 
                         await userManager.CreateAsync(user, "passwd");
-                        await userManager.AddToRoleAsync(user, "User");
+                        await userManager.AddToRoleAsync(user, Role.User.ToString());
                     }
                 }).Wait();
             }

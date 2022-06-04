@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using IdentityService.Application.Commands;
+using IdentityService.Application.Commands.Users;
 using IdentityService.Application.Queries;
-using IdentityService.Contracts.v1.Requests;
-using IdentityService.Contracts.v1.Responses;
-using IdentityService.Core.Entities;
+using IdentityService.Application.Queries.Users;
+using IdentityService.Contracts.v1;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,18 +30,20 @@ namespace IdentityService.API.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> RegisterUserAsync([FromBody] RegisterUserRequest registerUserRequest)
+        public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request)
         {
-            if((registerUserRequest.Email != registerUserRequest.ConfirmEmail) || (registerUserRequest.Password != registerUserRequest.ConfirmPassword))
+            if((request.Email != request.EmailConfirm) || (request.Password != request.Password))
             {
                 return BadRequest("email or password confirmation does not match");
             }
 
             var command = new RegisterUserCommand
             {
-                Username = registerUserRequest.Username,
-                Email = registerUserRequest.Email,
-                Password = registerUserRequest.Password
+                Username = request.Username,
+                Email = request.Email,
+                Password = request.Password,
+                Firstname = request.Firstname,
+                Lastname = request.Lastname
             };
 
             var data = await _mediator.Send(command);
@@ -49,29 +51,25 @@ namespace IdentityService.API.Controllers
             return Ok(data);
         }
 
-        [HttpGet]
-        [Route("find/{id:guid}")]
-        public async Task<IActionResult> FindUserAsync([FromRoute] Guid userId)
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginRequest request)
         {
-            var query = new FindUserQuery
+            var command = new LoginUserCommand
             {
-                UserId = userId
+                Email = request.Email,
+                Password = request.Password
             };
 
-            var data = await _mediator.Send(query);
-
+            var data = await _mediator.Send(command);
             return Ok(data);
         }
+
 
         [HttpGet]
-        [Route("list")]
-        public async Task<IActionResult> ListUsersAsync()
-        {
-            var query = new ListUsersQuery();
+        [Route("test")]
+        [Authorize]
+        public IActionResult AuthCheck() => Ok("hi");
 
-            var data = await _mediator.Send(query);
-
-            return Ok(data);
-        }
     }
 }

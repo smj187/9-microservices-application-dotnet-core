@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using IdentityService.Contracts.v1.Responses;
-using IdentityService.Core.Entities;
+using IdentityService.Contracts.v1;
+using IdentityService.Core.Domain.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;

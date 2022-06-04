@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Domain.User;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
