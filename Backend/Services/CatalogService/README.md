@@ -15,3 +15,9 @@ generate user secret
 ```
 dotnet user-secrets -p ./CatalogService.API/CatalogService.API.csproj set "Kestrel:Certificates:Development:Password" "crypticpassword"
 ```
+
+### Configure Local Nuget
+
+```
+dotnet nuget add source $PWD/../../../packages -n LocalPackages
+```

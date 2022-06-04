@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace CatalogService.API.Profiles
 {
     public class ProductProfile : Profile
