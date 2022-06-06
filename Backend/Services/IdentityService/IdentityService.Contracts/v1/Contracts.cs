@@ -11,39 +11,24 @@ namespace IdentityService.Contracts.v1
     public record UserRegisterRequest([Required] string Username, [Required] string Email, [Required] string EmailConfirm, [Required] string Password, [Required] string PasswordConfirm, string? Firstname, string? Lastname);
     public record UserLoginRequest([Required] string Email, [Required] string Password);
 
+    public record RefreshTokenRequest(string Token);
+    public record RevokeTokenRequest(string Token);
+    public record PatchUserProfileRequest(string? Firstname, string? Lastname);
+
+
     public record AddRoleToUserRequest([Required] List<string> Roles);
     public record RemoveRoleFromUserRequest([Required] List<string> Roles);
 
+
+
+
     // responses
+    public record RegisterUserResponse(UserResponse User, string Token, string RefreshToken, DateTimeOffset RefreshTokenExpiration);
+    public record LoginUserResponse(UserResponse User, string? Token, string RefreshToken, DateTimeOffset RefreshTokenExpiration);
+    public record UserResponse(Guid Id, string? Firstname, string? Lastname, string? AvatarUrl, string Username, string Email, List<string> Roles);
 
 
+    public record AdminUserResponse(Guid Id, string? Firstname, string? Lastname, string? AvatarUrl, string Username, string Email, List<string> Roles, DateTimeOffset? LockoutEnd, List<AdminRefreshTokenResponse> RefreshTokens, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
+    public record AdminRefreshTokenResponse(string Token, DateTimeOffset ExpiresAt, bool IsExpired, DateTimeOffset CreatedAt, DateTimeOffset RevokedAt, bool IsActive);
 
-
-
-
-    public class AuthenticateUserRequest
-    {
-        public string Email { get; set; } = default!;
-        public string Password { get; set; } = default!;
-    }
-
-    
-
-
-
-
-    public class AuthenticatedUserResponse
-    {
-        public string Token { get; set; }
-
-        public AuthenticatedUserUserResponse User { get; set; }
-    }
-
-    public class AuthenticatedUserUserResponse
-    {
-        public Guid Id { get; set; }
-        public string Email { get; set; }
-        public List<string> Roles { get; set; }
-
-    }
 }

@@ -45,6 +45,11 @@ namespace BuildingBlocks.Middleware
             {
                 await _next(httpContext);
             }
+            catch (AuthenticationException ex)
+            {
+                _logger.LogError(ex, $"Aggreate not found");
+                await HandleAuthenticationException(httpContext, ex);
+            }
             catch (AggregateNotFoundException ex)
             {
                 _logger.LogError(ex, $"Aggreate not found");
@@ -53,8 +58,24 @@ namespace BuildingBlocks.Middleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Something went wrong");
-                await HandlebadRequestExceptionAsync(httpContext, ex);
+                await HandleBadRequestExceptionAsync(httpContext, ex);
             }
+        }
+
+        private static async Task HandleAuthenticationException(HttpContext context, Exception exception)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+            await context.Response.WriteAsync(new Problem
+            {
+                type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                title = "Unauthorized",
+                status = context.Response.StatusCode,
+                detail = exception.Message,
+                instance = context.Request.Path,
+                traceId = "TODO: implement"
+            }.ToString());
         }
 
         private static async Task HandleNotFunctionExceptionAsync(HttpContext context, Exception exception)
@@ -73,7 +94,7 @@ namespace BuildingBlocks.Middleware
             }.ToString());
         }
 
-        private static async Task HandlebadRequestExceptionAsync(HttpContext context, Exception exception)
+        private static async Task HandleBadRequestExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status400BadRequest;

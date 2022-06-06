@@ -1,7 +1,8 @@
-﻿using IdentityService.Core.Domain.Admin;
-using IdentityService.Core.Domain.User;
+﻿using IdentityService.Core.Entities;
+using IdentityService.Infrastructure.EntityTypeConfigurations;
 using Jwks.Manager;
 using Jwks.Manager.Store.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,16 +21,17 @@ namespace IdentityService.Infrastructure.Data
 
         }
 
-        //protected override void OnModelCreating(ModelBuilder builder)
-        //{
-        //    //builder.UseSerialColumns();
-        //    //base.OnModelCreating(builder);
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
 
-        //    //builder.Entity<User>().OwnsMany(u => u.RefreshTokens).ToTable("AspNetUserRefreshTokens");
-        //}
+            builder.ApplyConfiguration(new UserEntityTypeConfiguration());
+        }
 
 
         public DbSet<SecurityKeyWithPrivate> SecurityKeys { get; set; }
+
+        //public DbSet<ApplicationUser> Users { get; set; }
 
 
         //public override int SaveChanges()

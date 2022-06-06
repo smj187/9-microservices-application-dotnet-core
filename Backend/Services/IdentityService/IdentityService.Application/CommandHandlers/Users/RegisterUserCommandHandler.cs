@@ -14,20 +14,22 @@ namespace IdentityService.Application.CommandHandlers.Users
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, AuthenticatedUser>
     {
         private readonly IUserService _userService;
-        private readonly IAuthService _authService;
+        private readonly ITokenService _tokenService;
 
-        public RegisterUserCommandHandler(IUserService userService, IAuthService authService)
+        public RegisterUserCommandHandler(IUserService userService, ITokenService authService)
         {
             _userService = userService;
-            _authService = authService;
+            _tokenService = authService;
         }
 
         public async Task<AuthenticatedUser> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _userService.RegisterUserAsync(request.Username, request.Email, request.Password, request.Firstname, request.Lastname);
-            var token = await _authService.CreateJsonWebToken(request.Email);
+            var token = await _tokenService.CreateJsonWebToken(request.Email);
 
-            return new AuthenticatedUser(user, token);
+            var refresh = await _userService.CreateRefreshTokenAsync(user);
+
+            return new AuthenticatedUser(user, token, refresh.Token, refresh.ExpiresAt);
         }
     }
 }

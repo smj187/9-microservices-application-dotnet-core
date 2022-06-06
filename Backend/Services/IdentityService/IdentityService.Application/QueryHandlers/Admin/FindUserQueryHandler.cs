@@ -1,7 +1,7 @@
 ﻿using BuildingBlocks.Exceptions;
-using IdentityService.Application.Queries.Users;
+using IdentityService.Application.Queries.Admins;
 using IdentityService.Application.Services;
-using IdentityService.Core.Domain.User;
+using IdentityService.Core.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,20 +9,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Application.QueryHandlers.Users
+namespace IdentityService.Application.QueryHandlers.Admin
 {
     public class FindUserQueryHandler : IRequestHandler<FindUserQuery, ApplicationUser>
     {
-        private readonly IUserService _userService;
+        private readonly IAdminService _adminService;
 
-        public FindUserQueryHandler(IUserService userService)
+        public FindUserQueryHandler(IAdminService adminService)
         {
-            _userService = userService;
+            _adminService = adminService;
         }
 
         public async Task<ApplicationUser> Handle(FindUserQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindUserAsync(request.UserId);
+            var user = await _adminService.FindUserAsync(request.UserId);
             if (user == null)
             {
                 throw new AggregateNotFoundException(nameof(ApplicationUser), request.UserId);

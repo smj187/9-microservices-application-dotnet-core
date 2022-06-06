@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using IdentityService.Application.Commands.Admin;
-using IdentityService.Application.Queries.Users;
+using IdentityService.Application.Commands.Admins;
+using IdentityService.Application.Queries.Admins;
 using IdentityService.Contracts.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,8 +36,7 @@ namespace IdentityService.API.Controllers
             };
 
             var data = await _mediator.Send(query);
-
-            return Ok(data);
+            return Ok(_mapper.Map<AdminUserResponse>(data));
         }
 
         [HttpGet]
@@ -47,8 +46,7 @@ namespace IdentityService.API.Controllers
             var query = new ListUsersQuery();
 
             var data = await _mediator.Send(query);
-
-            return Ok(data);
+            return Ok(_mapper.Map<IReadOnlyCollection<AdminUserResponse>>(data));
         }
 
         [HttpPatch]
@@ -62,7 +60,7 @@ namespace IdentityService.API.Controllers
             };
 
             var data = await _mediator.Send(command);
-            return Ok(data);
+            return Ok(_mapper.Map<AdminUserResponse>(data));
         }        
         
         [HttpPatch]
@@ -76,7 +74,36 @@ namespace IdentityService.API.Controllers
             };
 
             var data = await _mediator.Send(command);
-            return Ok(data);
+            return Ok(_mapper.Map<AdminUserResponse>(data));
         }
+
+
+        [HttpPatch]
+        [Route("{userid:guid}/lock")]
+        public async Task<IActionResult> LockUserAccountAsync([FromRoute] Guid userId)
+        {
+            var command = new LockUserAccountCommand
+            {
+                UserId = userId
+            };
+
+            var data = await _mediator.Send(command);
+            return Ok(_mapper.Map<AdminUserResponse>(data));
+        }
+
+        [HttpPatch]
+        [Route("{userid:guid}/unlock")]
+        public async Task<IActionResult> UnlockUserAccountAsync([FromRoute] Guid userId)
+        {
+            var command = new UnlockUserAccountCommand
+            {
+                UserId = userId
+            };
+
+            var data = await _mediator.Send(command);
+            return Ok(_mapper.Map<AdminUserResponse>(data));
+        }
+
+
     }
 }

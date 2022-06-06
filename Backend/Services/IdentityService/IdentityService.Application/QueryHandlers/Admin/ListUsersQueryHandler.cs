@@ -1,6 +1,6 @@
-﻿using IdentityService.Application.Queries.Users;
+﻿using IdentityService.Application.Queries.Admins;
 using IdentityService.Application.Services;
-using IdentityService.Core.Domain.User;
+using IdentityService.Core.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,20 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Application.QueryHandlers.Users
+namespace IdentityService.Application.QueryHandlers.Admin
 {
     public class ListUsersQueryHandler : IRequestHandler<ListUsersQuery, IReadOnlyCollection<ApplicationUser>>
     {
-        private readonly IUserService _userService;
+        private readonly IAdminService _adminService;
 
-        public ListUsersQueryHandler(IUserService userService)
+        public ListUsersQueryHandler(IAdminService adminService)
         {
-            _userService = userService;
+            _adminService = adminService;
         }
 
         public async Task<IReadOnlyCollection<ApplicationUser>> Handle(ListUsersQuery request, CancellationToken cancellationToken)
         {
-            return await _userService.ListUsersAsync();
+            return await _adminService.ListUsersAsync();
         }
     }
 }

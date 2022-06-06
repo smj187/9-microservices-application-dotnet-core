@@ -9,6 +9,8 @@ using CatalogService.Infrastructure.Repositories;
 using FileService.Contracts.v1;
 using MassTransit;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using NetDevPack.Security.JwtExtensions;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +38,13 @@ builder.Services.AddMassTransit(x =>
   
 });
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = true;
+    x.SaveToken = true;
+    x.SetJwksOptions(new JwkOptions("https://localhost:5000/jwks"));
+});
+
 
 var app = builder.Build();
 app.UsePathBase(new PathString("/catalog-service"));
@@ -45,7 +54,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
