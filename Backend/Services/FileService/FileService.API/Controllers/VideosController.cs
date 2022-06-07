@@ -2,6 +2,7 @@
 using FileService.Application.Commands.Videos;
 using FileService.Application.Queries.Videos;
 using FileService.Contracts.v1;
+using FileService.Contracts.v1.Contracts;
 using FileService.Core.Domain.Video;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

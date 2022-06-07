@@ -1,4 +1,5 @@
 ﻿using FileService.Core.Domain.Image;
+using FileService.Core.Domain.User;
 using FileService.Core.Domain.Video;
 using FileService.Infrastructure.EntityTypeConfigurations;
 using Microsoft.EntityFrameworkCore;
@@ -26,5 +27,6 @@ namespace FileService.Infrastructure.Data
 
         public DbSet<ImageFile> Images { get; set; } = default!;
         public DbSet<VideoFile> Videos { get; set; } = default!;
+        public DbSet<Avatar> Avatars { get; set; } = default!;
     }
 }

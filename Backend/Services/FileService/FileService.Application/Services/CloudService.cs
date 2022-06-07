@@ -2,6 +2,7 @@
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using FileService.Core.Domain.Image;
+using FileService.Core.Domain.User;
 using FileService.Core.Domain.Video;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
@@ -183,6 +184,32 @@ namespace FileService.Application.Services
             return breakpoints;
         }
 
-        
+        public async Task<string> UploadUserAvatarAsync(string folder, IFormFile file, Guid userId)
+        {
+            // check valid file type
+            var validTypes = new List<string> { "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp" };
+            if (!validTypes.Contains(file.ContentType))
+            {
+                throw new DomainViolationException($"{file.ContentType} is not supported");
+            }
+
+            // get stream
+            var bytes = await file.GetBytes();
+            using var inStream = new MemoryStream(bytes);
+
+
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription($"avatar_{userId}", inStream),
+                PublicIdPrefix = folder,
+                PublicId = $"avatar_{userId}",
+                Overwrite = true,
+                Format = file.ContentType.Split("image/").LastOrDefault()
+            };
+
+            var response = await _cloudinary.UploadAsync(uploadParams);
+
+            return response.SecureUrl.ToString();
+        }
     }
 }

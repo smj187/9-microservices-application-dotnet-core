@@ -105,5 +105,10 @@ namespace IdentityService.Core.Entities
             _firstname = firstname;
             _lastname = lastname;
         }
+
+        public void SetAvatar(string? url)
+        {
+            _avatarUrl = url;
+        }
     }
 }

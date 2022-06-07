@@ -1,9 +1,11 @@
 using BuildingBlocks.Extensions;
+using BuildingBlocks.MassTransit;
 using BuildingBlocks.Middleware;
 using IdentityService.API.Extensions;
 using IdentityService.API.Middleware;
 using IdentityService.Application.Services;
 using IdentityService.Infrastructure.Data;
+using MassTransit;
 using MediatR;
 using System.Reflection;
 
@@ -23,7 +25,16 @@ builder.Services.ConfigureMySql<IdentityContext>(builder.Configuration)
     .AddTransient<IAdminService, AdminService>()
     .AddTransient<ITokenService, TokenService>();
 
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumers(Assembly.Load("IdentityService.Application"));
+    x.UsingRabbitMq((context, config) =>
+    {
+        config.Host(RabbitMqSettings.RabbitMqUri);
+        config.ConfigureEndpoints(context, new SnakeCaseEndpointNameFormatter("identity", false));
+    });
 
+});
 
 var app = builder.Build();
 app.UsePathBase(new PathString("/identity-service"));

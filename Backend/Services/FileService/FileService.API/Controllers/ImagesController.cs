@@ -2,6 +2,8 @@
 using FileService.Application.Commands.Images;
 using FileService.Application.Queries.Images;
 using FileService.Contracts.v1;
+using FileService.Contracts.v1.Contracts;
+using FileService.Contracts.v1.Events;
 using FileService.Core.Domain.Image;
 using MassTransit;
 using MediatR;

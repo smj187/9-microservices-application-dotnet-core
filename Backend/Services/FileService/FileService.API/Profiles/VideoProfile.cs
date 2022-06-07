@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FileService.Contracts.v1;
+using FileService.Contracts.v1.Contracts;
 using FileService.Core.Domain.Video;
 using System;
 using System.Collections.Generic;

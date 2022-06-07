@@ -26,9 +26,9 @@ namespace BuildingBlocks.Domain.EfCore
             return await _database.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        public async Task<T> FindAsync(Expression<Func<T, bool>> expression)
         {
-            throw new NotImplementedException();
+            return await _database.AsNoTracking().FirstOrDefaultAsync(expression);
         }
 
         public async Task<IReadOnlyCollection<T>> ListAsync()

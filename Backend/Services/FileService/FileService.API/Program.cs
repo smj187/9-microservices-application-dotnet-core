@@ -4,6 +4,7 @@ using BuildingBlocks.Middleware;
 using CloudinaryDotNet;
 using FileService.Application.Services;
 using FileService.Core.Domain.Image;
+using FileService.Core.Domain.User;
 using FileService.Core.Domain.Video;
 using FileService.Infrastructure.Data;
 using FileService.Infrastructure.Repositories;
@@ -20,6 +21,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("FileService.Application"));
 
 builder.Services.ConfigureMySql<FileContext>(builder.Configuration)
+    .AddTransient<IAvatarRepository, AvatarRepository>()
     .AddTransient<IImageRepository, ImageRepository>()
     .AddTransient<IVideoRepository, VideoRepository>()
     .AddTransient<ICloudService, CloudService>();

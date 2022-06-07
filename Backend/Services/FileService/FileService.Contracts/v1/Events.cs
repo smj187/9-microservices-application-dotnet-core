@@ -6,7 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileService.Contracts.v1
+namespace FileService.Contracts.v1.Events
 {
     public record AddImageToProductResponseEvent(Guid ProductId, Guid ImageId);
+
+    public record AvatarUploadSuccessEvent(Guid UserId, string Url);
+
 }
