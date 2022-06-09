@@ -8,12 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="CloudinaryDotNet" Version="1.18.0" />
-    <PackageReference Include="FileService.Contracts" Version="1.0.0" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="2.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FileService.Contracts\FileService.Contracts.csproj" />
     <ProjectReference Include="..\FileService.Core\FileService.Core.csproj" />
   </ItemGroup>
 

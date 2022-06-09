@@ -1,12 +1,10 @@
 using BuildingBlocks.Extensions;
 using BuildingBlocks.MassTransit;
 using BuildingBlocks.Middleware;
-using CatalogService.Contracts.v1;
 using CatalogService.Core.Domain.Category;
 using CatalogService.Core.Domain.Group;
 using CatalogService.Core.Domain.Product;
 using CatalogService.Infrastructure.Repositories;
-using FileService.Contracts.v1;
 using MassTransit;
 using MediatR;
 using System.Reflection;
@@ -35,6 +33,7 @@ builder.Services.AddMassTransit(x =>
     });
   
 });
+
 
 
 var app = builder.Build();

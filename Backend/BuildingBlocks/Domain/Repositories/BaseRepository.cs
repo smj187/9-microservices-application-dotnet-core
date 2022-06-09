@@ -44,6 +44,11 @@ namespace BuildingBlocks.Domain.Repositories
             return await _queryRepository.ListAsync();
         }
 
+        public async Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _queryRepository.ListAsync(expression);
+        }
+
         public async Task<T> PatchAsync(Guid id, T entity)
         {
             return await _commandRepository.PatchAsync(id, entity);

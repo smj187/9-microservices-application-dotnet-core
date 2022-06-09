@@ -16,7 +16,6 @@ dotnet user-secrets -p ./FileService.API.csproj set "Kestrel:Certificates:Develo
 Run this command at the root level inside ./Services/FileService
 
 ```
-
 dotnet ef migrations add Init --project FileService.Infrastructure -s FileService.API
 dotnet ef database update --project FileService.Infrastructure -s FileService.API
 ```

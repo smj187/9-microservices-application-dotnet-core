@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
-using CatalogService.Contracts.v1;
+using CatalogService.Contracts.v1.Contracts;
 using CatalogService.Core.Domain.Product;
 using FileService.Contracts.v1;
 using MassTransit;

@@ -51,5 +51,10 @@ namespace BuildingBlocks.Domain.Mongo
             var filter = _filterBuilder.In(x => x.Id, includes);
             return await _mongoCollection.Find(filter).ToListAsync();
         }
+
+        public Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

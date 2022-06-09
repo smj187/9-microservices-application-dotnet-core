@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using IdentityService.Application.Commands;
-using IdentityService.Application.Queries;
-using IdentityService.Contracts.v1.Requests;
-using IdentityService.Contracts.v1.Responses;
-using IdentityService.Core.Entities;
+using IdentityService.Application.Commands.Users;
+using IdentityService.Application.Queries.Users;
+using IdentityService.Contracts.v1.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,48 +28,95 @@ namespace IdentityService.API.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> RegisterUserAsync([FromBody] RegisterUserRequest registerUserRequest)
+        public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request)
         {
-            if((registerUserRequest.Email != registerUserRequest.ConfirmEmail) || (registerUserRequest.Password != registerUserRequest.ConfirmPassword))
+            if((request.Email != request.EmailConfirm) || (request.Password != request.Password))
             {
                 return BadRequest("email or password confirmation does not match");
             }
 
             var command = new RegisterUserCommand
             {
-                Username = registerUserRequest.Username,
-                Email = registerUserRequest.Email,
-                Password = registerUserRequest.Password
+                Username = request.Username,
+                Email = request.Email,
+                Password = request.Password,
+                Firstname = request.Firstname,
+                Lastname = request.Lastname
             };
 
             var data = await _mediator.Send(command);
-
-            return Ok(data);
+            return Ok(_mapper.Map<RegisterUserResponse>(data));
         }
 
-        [HttpGet]
-        [Route("find/{id:guid}")]
-        public async Task<IActionResult> FindUserAsync([FromRoute] Guid userId)
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginRequest request)
         {
-            var query = new FindUserQuery
+            var command = new LoginUserCommand
+            {
+                Email = request.Email,
+                Password = request.Password
+            };
+
+            var data = await _mediator.Send(command);
+            return Ok(_mapper.Map<LoginUserResponse>(data));
+        }
+
+        [HttpPost]
+        [Route("{userid:guid}/token-refresh")]
+        public async Task<IActionResult> RefreshTokenAsync([FromRoute] Guid userId, [FromBody] RefreshTokenRequest request)
+        {
+            var command = new RefreshTokenCommand
+            {
+                Token = request.Token,
+                UserId = userId
+            };
+
+            var data = await _mediator.Send(command);
+            return Ok(_mapper.Map<LoginUserResponse>(data));
+        }
+
+        [HttpPost]
+        [Route("{userid:guid}/token-revoke")]
+        public async Task<IActionResult> RevokeTokenAsync([FromRoute] Guid userId, [FromBody] RevokeTokenRequest request)
+        {
+            var command = new RevokeTokenCommand
+            {
+                Token = request.Token,
+                UserId = userId
+            };
+
+            var data = await _mediator.Send(command);
+            return Ok(_mapper.Map<LoginUserResponse>(data));
+        }
+
+
+        [HttpGet]
+        [Route("{userid:guid}/profile")]
+        public async Task<IActionResult> GetUserProfileAsync([FromRoute] Guid userId)
+        {
+            var query = new FindUserProfileQuery
             {
                 UserId = userId
             };
 
             var data = await _mediator.Send(query);
-
-            return Ok(data);
+            return Ok(_mapper.Map<UserResponse>(data));
         }
 
-        [HttpGet]
-        [Route("list")]
-        public async Task<IActionResult> ListUsersAsync()
+        [HttpPatch]
+        [Route("{userid:guid}/profile")]
+        public async Task<IActionResult> PatchUserProfileAsync([FromRoute] Guid userId, [FromBody] PatchUserProfileRequest request)
         {
-            var query = new ListUsersQuery();
+            var command = new PatchUserProfileCommand
+            {
+                UserId = userId,
+                Firstname = request.Firstname,
+                Lastname = request.Lastname
+            };
 
-            var data = await _mediator.Send(query);
-
-            return Ok(data);
+            var data = await _mediator.Send(command);
+            return Ok(_mapper.Map<UserResponse>(data));
         }
     }
 }

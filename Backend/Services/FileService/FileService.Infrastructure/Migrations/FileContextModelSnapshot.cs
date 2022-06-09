@@ -19,148 +19,221 @@ namespace FileService.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("FileService.Core.Domain.Image.ImageFile", b =>
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.AssetFile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<Guid>("ExternalEntityId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("char(36)")
+                        .HasColumnName("external_entity_id");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_deleted");
 
                     b.Property<DateTimeOffset?>("ModifiedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("modified_at");
 
-                    b.Property<string>("Tags")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("longtext");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("type");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Images");
+                    b.ToTable("asset", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("AssetFile");
                 });
 
-            modelBuilder.Entity("FileService.Core.Domain.Video.VideoFile", b =>
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.Avatar.AvatarAsset", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                    b.HasBaseType("FileService.Core.Domain.Aggregates.AssetFile");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("avatar_url");
+
+                    b.HasDiscriminator().HasValue("AvatarAsset");
+                });
+
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.Image.ImageAsset", b =>
+                {
+                    b.HasBaseType("FileService.Core.Domain.Aggregates.AssetFile");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<Guid>("ExternalEntityId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTimeOffset?>("ModifiedAt")
-                        .HasColumnType("datetime(6)");
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
 
                     b.Property<string>("Tags")
-                        .HasColumnType("longtext");
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("longtext")
+                        .HasColumnName("tags");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext");
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("longtext")
+                        .HasColumnName("title");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Videos");
+                    b.HasDiscriminator().HasValue("ImageAsset");
                 });
 
-            modelBuilder.Entity("FileService.Core.Domain.Image.ImageFile", b =>
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.Video.VideoAsset", b =>
                 {
-                    b.OwnsMany("FileService.Core.Domain.Image.ImageUrl", "Images", b1 =>
+                    b.HasBaseType("FileService.Core.Domain.Aggregates.AssetFile");
+
+                    b.Property<string>("Description")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Tags")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("longtext")
+                        .HasColumnName("tags");
+
+                    b.Property<string>("Title")
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("longtext")
+                        .HasColumnName("title");
+
+                    b.HasDiscriminator().HasValue("VideoAsset");
+                });
+
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.AssetFile", b =>
+                {
+                    b.OwnsOne("FileService.Core.Domain.Aggregates.AssetType", "AssetType", b1 =>
                         {
-                            b1.Property<Guid>("ImageFileId")
+                            b1.Property<Guid>("AssetFileId")
                                 .HasColumnType("char(36)");
+
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("asset_type_description");
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("int")
+                                .HasColumnName("asset_type_value");
+
+                            b1.HasKey("AssetFileId");
+
+                            b1.ToTable("asset");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AssetFileId");
+                        });
+
+                    b.Navigation("AssetType")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.Image.ImageAsset", b =>
+                {
+                    b.OwnsMany("FileService.Core.Domain.ValueObjects.ImageUrl", "Images", b1 =>
+                        {
+                            b1.Property<Guid>("ImageAssetId")
+                                .HasColumnType("char(36)")
+                                .HasColumnName("image_file_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
+                                .HasColumnType("int")
+                                .HasColumnName("id");
 
                             b1.Property<int>("Breakpoint")
-                                .HasColumnType("int");
+                                .HasColumnType("int")
+                                .HasColumnName("breakpoint");
 
                             b1.Property<string>("Format")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasColumnType("longtext")
+                                .HasColumnName("image_format");
 
                             b1.Property<int>("Height")
-                                .HasColumnType("int");
+                                .HasColumnType("int")
+                                .HasColumnName("height");
 
                             b1.Property<long>("Size")
-                                .HasColumnType("bigint");
+                                .HasColumnType("bigint")
+                                .HasColumnName("size");
 
                             b1.Property<string>("Url")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasColumnType("longtext")
+                                .HasColumnName("image_url");
 
                             b1.Property<int>("Width")
-                                .HasColumnType("int");
+                                .HasColumnType("int")
+                                .HasColumnName("width");
 
-                            b1.HasKey("ImageFileId", "Id");
+                            b1.HasKey("ImageAssetId", "Id");
 
-                            b1.ToTable("ImageUrl");
+                            b1.ToTable("asset_image_urls", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("ImageFileId");
+                                .HasForeignKey("ImageAssetId");
                         });
 
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("FileService.Core.Domain.Video.VideoFile", b =>
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.Video.VideoAsset", b =>
                 {
-                    b.OwnsOne("FileService.Core.Domain.Video.VideoUrl", "Url", b1 =>
+                    b.OwnsOne("FileService.Core.Domain.ValueObjects.VideoUrl", "Video", b1 =>
                         {
-                            b1.Property<Guid>("VideoFileId")
+                            b1.Property<Guid>("VideoAssetId")
                                 .HasColumnType("char(36)");
 
                             b1.Property<double>("Duration")
-                                .HasColumnType("double");
+                                .HasColumnType("double")
+                                .HasColumnName("video_duration");
 
                             b1.Property<string>("Format")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasColumnType("longtext")
+                                .HasColumnName("video_format");
 
                             b1.Property<int>("Height")
-                                .HasColumnType("int");
+                                .HasColumnType("int")
+                                .HasColumnName("video_height");
 
                             b1.Property<long>("Size")
-                                .HasColumnType("bigint");
+                                .HasColumnType("bigint")
+                                .HasColumnName("video_size");
 
                             b1.Property<string>("Url")
                                 .IsRequired()
-                                .HasColumnType("longtext");
+                                .HasColumnType("longtext")
+                                .HasColumnName("video_url");
 
                             b1.Property<int>("Width")
-                                .HasColumnType("int");
+                                .HasColumnType("int")
+                                .HasColumnName("video_width");
 
-                            b1.HasKey("VideoFileId");
+                            b1.HasKey("VideoAssetId");
 
-                            b1.ToTable("Videos");
+                            b1.ToTable("asset");
 
                             b1.WithOwner()
-                                .HasForeignKey("VideoFileId");
+                                .HasForeignKey("VideoAssetId");
                         });
 
-                    b.Navigation("Url")
+                    b.Navigation("Video")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

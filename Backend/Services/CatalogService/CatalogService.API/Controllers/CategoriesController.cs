@@ -3,7 +3,7 @@ using CatalogService.Application.Commands;
 using CatalogService.Application.Commands.Categories;
 using CatalogService.Application.Queries;
 using CatalogService.Application.Queries.Categories;
-using CatalogService.Contracts.v1;
+using CatalogService.Contracts.v1.Contracts;
 using CatalogService.Core.Domain.Category;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

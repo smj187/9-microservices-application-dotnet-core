@@ -9,10 +9,23 @@ namespace IdentityService.Application.Services
 {
     public interface IUserService
     {
-        Task<ApplicationUser> RegisterUserAsync(string username, string email, string password);
+        // user
+        Task<ApplicationUser> RegisterUserAsync(string username, string email, string password, string? firstname, string? lastname);
         Task<ApplicationUser> LoginUserAsync(string email, string password);
 
-        Task<ApplicationUser> FindUserAsync(Guid userId);
-        Task<IReadOnlyCollection<ApplicationUser>> ListUsersAsync();
+        Task<ApplicationUser> UpdateUserProfileAsync(Guid userId, string? firstname, string? lastname);
+        Task AddAvatarToProfileAsync(Guid userId, string url);   
+        Task<ApplicationUser> FindProfileAsync(Guid userId);
+
+
+
+        // token
+        Task<RefreshToken> RenewRefreshTokenAsync(Guid userId, string token);
+        Task RevokeTokenAsync(string token);
+        
+        Task<RefreshToken> CreateRefreshTokenAsync(ApplicationUser user);
+
+
+
     }
 }

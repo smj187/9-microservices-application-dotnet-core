@@ -21,6 +21,7 @@ namespace CatalogService.Core.Domain.Group
         private bool _isVisible;
         private List<string>? _tags;
         private List<Guid> _products;
+        private List<Guid> _assets;
 
         public Group(string name, decimal price, string? description = null, string? priceDescription = null, IEnumerable<string>? tags = null)
         {
@@ -36,7 +37,7 @@ namespace CatalogService.Core.Domain.Group
 
             _isVisible = false;
             _products = new List<Guid>();
-            Images = new List<Guid>();
+            _assets = new();
         }
 
         public string Name
@@ -72,7 +73,18 @@ namespace CatalogService.Core.Domain.Group
 
 
 
-        public List<Guid> Images { get; set; } = new();
+        [BsonElement("Assets")]
+        public List<Guid> Assets
+        {
+            get => _assets;
+            private set => _assets = value;
+        }
+
+        public void AddAssetId(Guid imageId)
+        {
+            Guard.Against.Null(imageId, nameof(imageId));
+            _assets.Add(imageId);
+        }
 
 
 
