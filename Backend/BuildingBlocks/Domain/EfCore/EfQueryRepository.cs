@@ -40,5 +40,10 @@ namespace BuildingBlocks.Domain.EfCore
         {
             throw new NotImplementedException();
         }
+
+        public async Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _database.AsNoTracking().Where(expression).ToListAsync();
+        }
     }
 }

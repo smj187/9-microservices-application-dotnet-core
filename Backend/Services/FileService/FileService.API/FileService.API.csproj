@@ -10,7 +10,6 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.18.0" />
-    <PackageReference Include="FileService.Contracts" Version="1.0.0" />
     <PackageReference Include="MassTransit" Version="8.0.3" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
@@ -35,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.csproj" />
     <ProjectReference Include="..\FileService.Application\FileService.Application.csproj" />
+    <ProjectReference Include="..\FileService.Contracts\FileService.Contracts.csproj" />
     <ProjectReference Include="..\FileService.Infrastructure\FileService.Infrastructure.csproj" />
   </ItemGroup>
 

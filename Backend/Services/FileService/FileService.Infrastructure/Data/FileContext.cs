@@ -1,6 +1,4 @@
-﻿using FileService.Core.Domain.Image;
-using FileService.Core.Domain.User;
-using FileService.Core.Domain.Video;
+﻿using FileService.Core.Domain.Aggregates;
 using FileService.Infrastructure.EntityTypeConfigurations;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,12 +19,12 @@ namespace FileService.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new ImageEntityTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new VideoEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new AssetFileEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ImageAssetEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new VideoAssetEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new AvatarEntityTypeConfiguration());
         }
 
-        public DbSet<ImageFile> Images { get; set; } = default!;
-        public DbSet<VideoFile> Videos { get; set; } = default!;
-        public DbSet<Avatar> Avatars { get; set; } = default!;
+        public DbSet<AssetFile> AssetFiles { get; set; } = default!;
     }
 }

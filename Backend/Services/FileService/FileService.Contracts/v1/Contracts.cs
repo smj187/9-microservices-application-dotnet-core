@@ -8,27 +8,43 @@ using System.Threading.Tasks;
 
 namespace FileService.Contracts.v1.Contracts
 {
-    // image request
-    public record UploadImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
-    public record PatchImageDescriptionRequest(string? Title, string? Description, string? Tags);
+    // Requests
 
-    // video request
-    public record UploadVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
-    public record PatchVideoDescriptionRequest(string? Title, string? Description, string? Tags);
+    public record UploadProductImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
+    public record UploadProductVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
+    public record PatchProductImageDescriptionRequest(string? Title, string? Description, string? Tags);
 
 
-    // image response
-    public record ImageResponse(Guid Id, string Title, string Description, string Tags, List<ImageUrlResponse> Images, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt, [Required] Guid ExternalEntityId);
-    public record ImageUrlResponse(int Breakpoint, string Url, string Format, long Size, int Width, int Height);
+    public record UploadGroupImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
+    public record UploadGroupVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
+    public record PatchGroupImageDescriptionRequest(string? Title, string? Description, string? Tags);
 
-    // video response
-    public record VideoResponse(Guid Id, string Title, string Description, string Tags, VideoUrlResponse Url, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt, [Required] Guid ExternalEntityId);
-    public record VideoUrlResponse(string Url, string Format, int Duration, long Size, int Width, int Height);
-
+    
+    public record UploadCategoryImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
+    public record UploadCategoryVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
+    public record PatchCategoryImageDescriptionRequest(string? Title, string? Description, string? Tags);
 
 
 
-    // user avatar
-    public record UploadAvatarRequest([Required] IFormFile Image, [Required] Guid UserId);
-    public record UploadAvatarResponse(Guid Id, string Url, DateTimeOffset CreatedAt);
+    public record UploadAvatarRequest([Required] IFormFile Image, [Required] Guid ExternalEntityId);
+
+
+
+
+
+
+    // responses
+    public record AssetResponse(Guid Id, Guid ExternalEntityId, int AssetTypeValue, string AssetTypeDescription, string Type, string? Title, string? Description, string? Tags, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt)
+    {
+        public VideoAssetUrlResponse? Video { get; private set; } = null!;
+        public IEnumerable<ImageAssetUrlResponse>? Images { get; private set; } = null!;
+    }
+    public record ImageAssetUrlResponse(string Url, int Breakpoint, string Format, long Size, int Width, int Height);
+    public record VideoAssetUrlResponse(string Url, string Format, int Duration, long Size, int Width, int Height);
+
+
+    public record AvatarResponse(Guid Id, Guid ExternalEntityId, int AssetTypeValue, string AssetTypeDescription, string Url, string Type, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
+
+
+
 }

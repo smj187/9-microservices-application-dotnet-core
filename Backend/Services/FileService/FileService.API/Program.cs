@@ -3,9 +3,7 @@ using BuildingBlocks.MassTransit;
 using BuildingBlocks.Middleware;
 using CloudinaryDotNet;
 using FileService.Application.Services;
-using FileService.Core.Domain.Image;
-using FileService.Core.Domain.User;
-using FileService.Core.Domain.Video;
+using FileService.Core.Domain.Aggregates;
 using FileService.Infrastructure.Data;
 using FileService.Infrastructure.Repositories;
 using MassTransit;
@@ -20,10 +18,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("FileService.Application"));
 
+
+
 builder.Services.ConfigureMySql<FileContext>(builder.Configuration)
-    .AddTransient<IAvatarRepository, AvatarRepository>()
-    .AddTransient<IImageRepository, ImageRepository>()
-    .AddTransient<IVideoRepository, VideoRepository>()
+    .AddTransient<IAssetRepository, AssetRepository>()
     .AddTransient<ICloudService, CloudService>();
 
 
@@ -61,7 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
