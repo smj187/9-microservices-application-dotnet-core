@@ -21,7 +21,7 @@ namespace IdentityService.Application.CommandHandlers.Users
 
         public async Task<ApplicationUser> Handle(PatchUserProfileCommand request, CancellationToken cancellationToken)
         {
-            return await _userService.UpdateUserProfile(request.UserId, request.Firstname, request.Lastname);
+            return await _userService.UpdateUserProfileAsync(request.UserId, request.Firstname, request.Lastname);
         }
     }
 }

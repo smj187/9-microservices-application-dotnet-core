@@ -22,7 +22,7 @@ namespace IdentityService.Application.QueryHandlers.Users
 
         public async Task<ApplicationUser> Handle(FindUserProfileQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindProfile(request.UserId);
+            var user = await _userService.FindProfileAsync(request.UserId);
             if (user == null)
             {
                 throw new AggregateNotFoundException(nameof(ApplicationUser), request.UserId);

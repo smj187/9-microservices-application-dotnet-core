@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CatalogService.Contracts.v1;
+using CatalogService.Contracts.v1.Contracts;
 using CatalogService.Core.Domain.Category;
 using System;
 using System.Collections.Generic;

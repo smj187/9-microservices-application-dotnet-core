@@ -2,7 +2,9 @@
 using FileService.Application.Commands;
 using FileService.Application.Queries;
 using FileService.Contracts.v1.Contracts;
+using FileService.Contracts.v1.Events;
 using FileService.Core.Domain;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,11 +23,13 @@ namespace FileService.API.Controllers.Catalog
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ProductsController(IMediator mediator, IMapper mapper)
+        public ProductsController(IMediator mediator, IMapper mapper, IPublishEndpoint publishEndpoint)
         {
             _mediator = mediator;
             _mapper = mapper;
+            _publishEndpoint = publishEndpoint;
         }
 
 
@@ -48,7 +52,9 @@ namespace FileService.API.Controllers.Catalog
 
             var data = await _mediator.Send(command);
 
-            return Ok(_mapper.Map<AssetResponse>(data));
+            await _publishEndpoint.Publish(new ProductImageUploadResponseEvent(data.ExternalEntityId, data.Id));
+            var result = _mapper.Map<AssetResponse>(data);
+            return Ok(result);
         }
 
 
@@ -70,7 +76,10 @@ namespace FileService.API.Controllers.Catalog
             };
 
             var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<AssetResponse>(data));
+
+            await _publishEndpoint.Publish(new ProductVideoUploadResponseEvent(data.ExternalEntityId, data.Id));
+            var result = _mapper.Map<AssetResponse>(data);
+            return Ok(result);
         }
 
 

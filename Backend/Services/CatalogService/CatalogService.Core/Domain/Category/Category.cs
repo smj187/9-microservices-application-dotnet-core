@@ -17,6 +17,7 @@ namespace CatalogService.Core.Domain.Category
         private string? _description;
         private List<Guid> _products;
         private bool _isVisible;
+        private List<Guid> _assets;
 
         public Category(string name, string? descripion = null, List<Guid>? productIds = null)
         {
@@ -26,6 +27,8 @@ namespace CatalogService.Core.Domain.Category
 
             _products = productIds ?? new List<Guid>();
             _isVisible = false;
+
+            _assets = new();
         }
 
         public string Name
@@ -46,7 +49,18 @@ namespace CatalogService.Core.Domain.Category
             private set => _isVisible = value;
         }
 
-        public List<Guid> Images { get; set; } = new();
+        [BsonElement("Assets")]
+        public List<Guid> Assets
+        {
+            get => _assets;
+            private set => _assets = value;
+        }
+
+        public void AddAssetId(Guid imageId)
+        {
+            Guard.Against.Null(imageId, nameof(imageId));
+            _assets.Add(imageId);
+        }
 
 
         [BsonElement("Products")]

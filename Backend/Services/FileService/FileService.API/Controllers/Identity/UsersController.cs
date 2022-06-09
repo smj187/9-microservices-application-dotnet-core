@@ -2,7 +2,9 @@
 using FileService.Application.Commands;
 using FileService.Application.Queries;
 using FileService.Contracts.v1.Contracts;
+using FileService.Contracts.v1.Events;
 using FileService.Core.Domain;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,11 +22,13 @@ namespace FileService.API.Controllers.Identity
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public UsersController(IMediator mediator, IMapper mapper)
+        public UsersController(IMediator mediator, IMapper mapper, IPublishEndpoint publishEndpoint)
         {
             _mediator = mediator;
             _mapper = mapper;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpPost]
@@ -43,7 +47,10 @@ namespace FileService.API.Controllers.Identity
 
             var data = await _mediator.Send(command);
 
-            return Ok(_mapper.Map<AvatarResponse>(data));
+
+            await _publishEndpoint.Publish(new AvatarUploadResponseEvent(data.ExternalEntityId, data.Url));
+            var result = _mapper.Map<AvatarResponse>(data);
+            return Ok(result);
         }
 
         [HttpGet]

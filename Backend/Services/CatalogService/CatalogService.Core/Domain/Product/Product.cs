@@ -23,7 +23,7 @@ namespace CatalogService.Core.Domain.Product
         private string? _description;
         private string? _priceDescription;
         private List<string>? _tags;
-        private List<Guid> _images;
+        private List<Guid> _assets;
 
         public Product(string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null)
         {
@@ -44,7 +44,7 @@ namespace CatalogService.Core.Domain.Product
             _price = price;
             _isVisible = false;
 
-            _images = new();
+            _assets = new();
         }
 
 
@@ -80,17 +80,17 @@ namespace CatalogService.Core.Domain.Product
         }
 
 
-        [BsonElement("Images")]
-        public List<Guid> Images
+        [BsonElement("Assets")]
+        public List<Guid> Assets
         {
-            get => _images;
-            private set => _images = value;
+            get => _assets;
+            private set => _assets = value;
         }
 
-        public void AddImageId(Guid imageId)
+        public void AddAssetId(Guid imageId)
         {
             Guard.Against.Null(imageId, nameof(imageId));
-            _images.Add(imageId);
+            _assets.Add(imageId);
         }
 
 

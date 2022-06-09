@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.Contracts.v1
+namespace IdentityService.Contracts.v1.Contracts
 {
     // requests
     public record UserRegisterRequest([Required] string Username, [Required] string Email, [Required] string EmailConfirm, [Required] string Password, [Required] string PasswordConfirm, string? Firstname, string? Lastname);

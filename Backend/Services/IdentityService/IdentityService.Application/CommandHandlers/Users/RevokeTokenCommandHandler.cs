@@ -25,13 +25,13 @@ namespace IdentityService.Application.CommandHandlers.Users
 
         public async Task<AuthenticatedUser> Handle(RevokeTokenCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindProfile(request.UserId);
+            var user = await _userService.FindProfileAsync(request.UserId);
             if (user == null)
             {
                 throw new AggregateNotFoundException(nameof(ApplicationUser), request.UserId);
             }
 
-            await _userService.RevokeToken(request.Token);
+            await _userService.RevokeTokenAsync(request.Token);
 
             return new AuthenticatedUser(user, null, null, null);
         }

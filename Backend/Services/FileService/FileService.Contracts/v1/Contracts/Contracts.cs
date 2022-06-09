@@ -19,7 +19,7 @@ namespace FileService.Contracts.v1.Contracts
     public record UploadGroupVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
     public record PatchGroupImageDescriptionRequest(string? Title, string? Description, string? Tags);
 
-    
+
     public record UploadCategoryImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
     public record UploadCategoryVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
     public record PatchCategoryImageDescriptionRequest(string? Title, string? Description, string? Tags);

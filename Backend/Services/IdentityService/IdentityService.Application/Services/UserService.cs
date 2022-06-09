@@ -63,7 +63,7 @@ namespace IdentityService.Application.Services
             return await AssignRolesToUserAsync(user);
         }
 
-        public async Task<RefreshToken> RenewRefreshToken(Guid userId, string token)
+        public async Task<RefreshToken> RenewRefreshTokenAsync(Guid userId, string token)
         {
             var user =  await _context.Users.FirstOrDefaultAsync(x => x.Id == userId.ToString());
             if (user == null)
@@ -162,7 +162,7 @@ namespace IdentityService.Application.Services
             return await AssignRolesToUserAsync(user);
         }
 
-        public async Task RevokeToken(string token)
+        public async Task RevokeTokenAsync(string token)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.RefreshTokens.Any(t => t.Token == token));
             if (user == null)
@@ -183,7 +183,7 @@ namespace IdentityService.Application.Services
 
         }
 
-        public async Task<ApplicationUser> UpdateUserProfile(Guid userId, string? firstname, string? lastname)
+        public async Task<ApplicationUser> UpdateUserProfileAsync(Guid userId, string? firstname, string? lastname)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
@@ -200,7 +200,7 @@ namespace IdentityService.Application.Services
             return await AssignRolesToUserAsync(user);
         }
 
-        public async Task<ApplicationUser> FindProfile(Guid userId)
+        public async Task<ApplicationUser> FindProfileAsync(Guid userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
@@ -209,6 +209,17 @@ namespace IdentityService.Application.Services
             }
 
             return await AssignRolesToUserAsync(user);
+        }
+
+        public async Task AddAvatarToProfileAsync(Guid userId, string url)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new AggregateNotFoundException($"no such user with id'{userId}'");
+            }
+
+            user.SetAvatar(url);
         }
     }
 }

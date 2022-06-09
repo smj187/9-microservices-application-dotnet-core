@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using IdentityService.Contracts.v1;
+using IdentityService.Contracts.v1.Contracts;
 using IdentityService.Core.Entities;
 using IdentityService.Core.Models;
 using System;

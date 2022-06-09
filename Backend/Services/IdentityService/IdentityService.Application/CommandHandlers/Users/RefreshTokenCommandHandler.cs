@@ -25,13 +25,13 @@ namespace IdentityService.Application.CommandHandlers.Users
 
         public async Task<AuthenticatedUser> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindProfile(request.UserId);
+            var user = await _userService.FindProfileAsync(request.UserId);
             if (user == null)
             {
                 throw new AggregateNotFoundException(nameof(ApplicationUser), request.UserId);
             }
 
-            var refresh = await _userService.RenewRefreshToken(request.UserId, request.Token);
+            var refresh = await _userService.RenewRefreshTokenAsync(request.UserId, request.Token);
 
             var token = await _tokenService.CreateJsonWebToken(user.Email);
             

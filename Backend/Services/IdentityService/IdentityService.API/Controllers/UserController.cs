@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using IdentityService.Application.Commands.Users;
 using IdentityService.Application.Queries.Users;
-using IdentityService.Contracts.v1;
+using IdentityService.Contracts.v1.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,16 +1,12 @@
 using BuildingBlocks.Extensions;
 using BuildingBlocks.MassTransit;
 using BuildingBlocks.Middleware;
-using CatalogService.Contracts.v1;
 using CatalogService.Core.Domain.Category;
 using CatalogService.Core.Domain.Group;
 using CatalogService.Core.Domain.Product;
 using CatalogService.Infrastructure.Repositories;
-using FileService.Contracts.v1;
 using MassTransit;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using NetDevPack.Security.JwtExtensions;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,12 +34,6 @@ builder.Services.AddMassTransit(x =>
   
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
-{
-    x.RequireHttpsMetadata = true;
-    x.SaveToken = true;
-    x.SetJwksOptions(new JwkOptions("https://localhost:5000/jwks"));
-});
 
 
 var app = builder.Build();
@@ -54,7 +44,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

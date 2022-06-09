@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CatalogService.Contracts.v1;
+using CatalogService.Contracts.v1.Contracts;
 using CatalogService.Core.Domain.Product;
 using System;
 using System.Collections.Generic;
@@ -38,8 +38,7 @@ namespace CatalogService.API.Profiles
 
 
             // responses
-            CreateMap<Product, ProductResponse>()
-                .ForMember(dest => dest.Images, opts => opts.MapFrom(s => s.Images));
+            CreateMap<Product, ProductResponse>();
             CreateMap<Allergen, AllergensResponse>();
             CreateMap<Nutrition, NutritionsResponse>();
             CreateMap<Ingredient, IngredientsResponse>();
