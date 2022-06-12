@@ -13,16 +13,11 @@ namespace FileService.Core.Domain.Aggregates
         private Guid _externalEntityId;
         private AssetType _assetType;
         private string _type;
-
-        public AssetFile()
-        {
-
-        }
-
+    
         public AssetFile(Guid externalEntityId, AssetType assetType, string type)
         {
-            //Guard.Against.Null(externalEntityId, nameof(externalEntityId));
-            //Guard.Against.Null(assetType, nameof(assetType));
+            Guard.Against.Null(externalEntityId, nameof(externalEntityId));
+            Guard.Against.Null(assetType, nameof(assetType));
             Guard.Against.NullOrEmpty(type, nameof(type));
             _externalEntityId = externalEntityId;
             _assetType = assetType;

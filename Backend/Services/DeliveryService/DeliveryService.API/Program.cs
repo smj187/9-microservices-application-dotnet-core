@@ -10,8 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("DeliveryService.Application"));
-builder.Services.ConfigureMongo(builder.Configuration)
-    .AddMongoRepository<Delivery>("deliveries");
+builder.Services.ConfigureMongo(builder.Configuration);
 
 
 

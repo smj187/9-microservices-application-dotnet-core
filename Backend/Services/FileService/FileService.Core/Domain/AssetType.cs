@@ -21,11 +21,6 @@ namespace FileService.Core.Domain
         // idenity
         public static readonly AssetType IdentityAvatarImage = new(6, "Identity Avatar Image");
 
-        public AssetType()
-            : base()
-        {
-
-        }
 
         public AssetType(int value, string description)
             : base(value, description)

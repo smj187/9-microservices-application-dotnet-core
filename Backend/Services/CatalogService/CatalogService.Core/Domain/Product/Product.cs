@@ -220,7 +220,7 @@ namespace CatalogService.Core.Domain.Product
 
             foreach (var allergen in allergens)
             {
-                var existing = _allergens.FirstOrDefault(x => x.Equals(allergen));
+                var existing = _allergens.FirstOrDefault(x => x.Equals(allergen)) ?? null;
                 if (existing != null)
                 {
                     _allergens.Remove(existing);

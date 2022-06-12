@@ -15,12 +15,6 @@ namespace FileService.Core.Domain.Aggregates.Image
         private string? _description;
         private string? _tags;
 
-        public ImageAsset()
-             : base()
-        {
-
-        }
-
         public ImageAsset(Guid externalEntityId, List<ImageUrl> imageUrls, AssetType assetType, string? title = null, string? description = null, string? tags = null)
             : base(externalEntityId, assetType, "image")
         {

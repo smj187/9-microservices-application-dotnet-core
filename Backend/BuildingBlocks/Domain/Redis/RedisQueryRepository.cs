@@ -21,18 +21,18 @@ namespace BuildingBlocks.Domain.Redis
             _database = _redis.GetDatabase();
         }
 
-        public async Task<T> FindAsync(Guid id)
+        public async Task<T?> FindAsync(Guid id)
         {
             var response = await _database.StringGetAsync($"{typeof(T).Name.ToLower()}:{id}");
             return JsonConvert.DeserializeObject<T>(response);
         }
 
-        public Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        public Task<T?> FindAsync(Expression<Func<T, bool>> expression)
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> FindAsync(string id)
+        public Task<T?> FindAsync(string id)
         {
             throw new NotImplementedException();
         }

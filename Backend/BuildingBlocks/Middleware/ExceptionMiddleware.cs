@@ -15,12 +15,12 @@ namespace BuildingBlocks.Middleware
     public class Problem
     {
 
-        public string detail { get; set; }
-        public string instance { get; set; }
+        public string? detail { get; set; } = null!;
+        public string? instance { get; set; } = null!;
         public int status { get; set; }
-        public string title { get; set; }
-        public string type { get; set; }
-        public string traceId { get; set; }
+        public string? title { get; set; } = null!;
+        public string? type { get; set; } = null!;
+        public string? traceId { get; set; } = null!;
 
         public override string ToString()
         {

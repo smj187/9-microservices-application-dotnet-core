@@ -30,18 +30,18 @@ namespace BuildingBlocks.Domain.Mongo
             _mongoCollection = database.GetCollection<T>(collectionName);
         }
 
-        public async Task<T> FindAsync(Guid id)
+        public async Task<T?> FindAsync(Guid id)
         {
             var filter = _filterBuilder.Eq(x => x.Id, id);
             return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        public async Task<T?> FindAsync(Expression<Func<T, bool>> expression)
         {
             return await _mongoCollection.Find(expression).FirstOrDefaultAsync();
         }
 
-        public Task<T> FindAsync(string id)
+        public Task<T?> FindAsync(string id)
         {
             throw new NotImplementedException();
         }
