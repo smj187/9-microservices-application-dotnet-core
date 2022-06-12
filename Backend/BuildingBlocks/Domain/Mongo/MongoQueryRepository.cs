@@ -41,6 +41,11 @@ namespace BuildingBlocks.Domain.Mongo
             return await _mongoCollection.Find(expression).FirstOrDefaultAsync();
         }
 
+        public Task<T> FindAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IReadOnlyCollection<T>> ListAsync()
         {
             return await _mongoCollection.Find(_filterBuilder.Empty).ToListAsync();

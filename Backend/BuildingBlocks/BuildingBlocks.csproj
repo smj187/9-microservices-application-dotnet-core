@@ -22,8 +22,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.29.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.15.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.5.43" />
   </ItemGroup>
 
 </Project>

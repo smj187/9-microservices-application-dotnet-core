@@ -34,6 +34,11 @@ namespace BuildingBlocks.Domain.Repositories
             return await _queryRepository.FindAsync(expression);
         }
 
+        public async Task<T> FindAsync(string id)
+        {
+            return await _queryRepository.FindAsync(id);
+        }
+
         public async Task<IReadOnlyCollection<T>> ListAsync(List<Guid> includes)
         {
             return await _queryRepository.ListAsync(includes);
