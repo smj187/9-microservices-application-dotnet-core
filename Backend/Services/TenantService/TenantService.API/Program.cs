@@ -3,7 +3,6 @@ using MediatR;
 using System.Reflection;
 using TenantService.Core.Entities;
 using TenantService.Infrastructure.Data;
-using TenantService.Infrastructure.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("TenantService.Application"));
-builder.Services.ConfigureMySql<TenantContext>(builder.Configuration)
-    .AddTransient<ITenantRepository<Tenant>, TenantRepository<Tenant>>();
+builder.Services.ConfigureMySql<TenantContext>(builder.Configuration);
 
 
 var app = builder.Build();

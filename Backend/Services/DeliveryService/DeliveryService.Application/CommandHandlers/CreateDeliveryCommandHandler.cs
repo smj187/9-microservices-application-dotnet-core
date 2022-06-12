@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Mongo;
-using DeliveryService.Application.Commands;
+﻿using DeliveryService.Application.Commands;
 using DeliveryService.Core.Entities;
 using MediatR;
 using System;
@@ -12,17 +11,15 @@ namespace DeliveryService.Application.CommandHandlers
 {
     public class CreateDeliveryCommandHandler : IRequestHandler<CreateDeliveryCommand, Delivery>
     {
-        private readonly IMongoRepository<Delivery> _mongoRepository;
 
-        public CreateDeliveryCommandHandler(IMongoRepository<Delivery> mongoRepository)
+        public CreateDeliveryCommandHandler()
         {
-            _mongoRepository = mongoRepository;
+            
         }
 
-        public async Task<Delivery> Handle(CreateDeliveryCommand request, CancellationToken cancellationToken)
+        public Task<Delivery> Handle(CreateDeliveryCommand request, CancellationToken cancellationToken)
         {
-            await _mongoRepository.AddAsync(request.NewDelivery);
-            return request.NewDelivery;
+            throw new NotImplementedException();
         }
     }
 }

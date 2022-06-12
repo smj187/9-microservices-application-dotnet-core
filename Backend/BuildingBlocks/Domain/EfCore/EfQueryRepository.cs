@@ -21,17 +21,17 @@ namespace BuildingBlocks.Domain.EfCore
             _database = _context.Set<T>();
         }
 
-        public async Task<T> FindAsync(Guid id)
+        public async Task<T?> FindAsync(Guid id)
         {
             return await _database.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        public async Task<T?> FindAsync(Expression<Func<T, bool>> expression)
         {
             return await _database.AsNoTracking().FirstOrDefaultAsync(expression);
         }
 
-        public Task<T> FindAsync(string id)
+        public Task<T?> FindAsync(string id)
         {
             throw new NotImplementedException();
         }

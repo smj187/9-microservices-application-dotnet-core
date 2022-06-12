@@ -24,17 +24,17 @@ namespace BuildingBlocks.Domain.Repositories
             return await _commandRepository.AddAsync(entity);
         }
 
-        public async Task<T> FindAsync(Guid id)
+        public async Task<T?> FindAsync(Guid id)
         {
             return await _queryRepository.FindAsync(id);
         }
 
-        public async Task<T> FindAsync(Expression<Func<T, bool>> expression)
+        public async Task<T?> FindAsync(Expression<Func<T, bool>> expression)
         {
             return await _queryRepository.FindAsync(expression);
         }
 
-        public async Task<T> FindAsync(string id)
+        public async Task<T?> FindAsync(string id)
         {
             return await _queryRepository.FindAsync(id);
         }

@@ -14,8 +14,8 @@ namespace BuildingBlocks.Domain.Repositories
         Task<IReadOnlyCollection<T>> ListAsync(List<Guid> includes);
         Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression);
 
-        Task<T> FindAsync(Guid id);
-        Task<T> FindAsync(string id);
-        Task<T> FindAsync(Expression<Func<T, bool>> expression);
+        Task<T?> FindAsync(Guid id);
+        Task<T?> FindAsync(string id);
+        Task<T?> FindAsync(Expression<Func<T, bool>> expression);
     }
 }

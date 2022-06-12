@@ -15,11 +15,6 @@ namespace IdentityService.Infrastructure.Data
 {
     public class IdentityContext : IdentityDbContext<ApplicationUser>, ISecurityKeyContext
     {
-        public IdentityContext(DbContextOptions<IdentityContext> opts) 
-            : base(opts)
-        {
-
-        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,7 +24,7 @@ namespace IdentityService.Infrastructure.Data
         }
 
 
-        public DbSet<SecurityKeyWithPrivate> SecurityKeys { get; set; }
+        public DbSet<SecurityKeyWithPrivate> SecurityKeys { get; set; } = default!;
 
         //public DbSet<ApplicationUser> Users { get; set; }
 

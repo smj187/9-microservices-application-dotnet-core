@@ -15,12 +15,6 @@ namespace FileService.Core.Domain.Aggregates.Video
         private string? _description;
         private string? _tags;
 
-        public VideoAsset()
-            : base()
-        {
-
-        }
-
         public VideoAsset(Guid externalEntityId, VideoUrl videoUrl, AssetType assetType, string? title, string? description, string? tags)
             : base(externalEntityId, assetType, "video")
         {
