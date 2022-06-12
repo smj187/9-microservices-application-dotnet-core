@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.csproj" />
+    <ProjectReference Include="..\BasketService.Contracts\BasketService.Contracts.csproj" />
+    <ProjectReference Include="..\BasketService.Infrastructure\BasketService.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -31,6 +31,11 @@ namespace BuildingBlocks.Domain.EfCore
             return await _database.AsNoTracking().FirstOrDefaultAsync(expression);
         }
 
+        public Task<T> FindAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IReadOnlyCollection<T>> ListAsync()
         {
             return await _database.AsNoTracking().ToListAsync();
