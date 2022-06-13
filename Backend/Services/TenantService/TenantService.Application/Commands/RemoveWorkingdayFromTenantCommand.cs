@@ -8,7 +8,7 @@ using TenantService.Core.Domain.Aggregates;
 
 namespace TenantService.Application.Commands
 {
-    public class RemoveWorkingdayCommand : IRequest<Tenant>
+    public class RemoveWorkingdayFromTenantCommand : IRequest<Tenant>
     {
         public Guid TenantId { get; set; }
         public int Weekday { get; set; }

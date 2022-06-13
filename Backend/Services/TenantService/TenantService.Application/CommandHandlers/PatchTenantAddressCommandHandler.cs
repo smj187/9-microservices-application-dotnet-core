@@ -30,9 +30,8 @@ namespace TenantService.Application.CommandHandlers
             {
                 throw new AggregateNotFoundException(nameof(Tenant), request.TenantId);
             }
-            tenant.RemoveAddress();
-            //tenant.PatchDescription("aaa", "bvb");
-            //tenant.PatchAddress(new Address(request.Street, request.City, request.State, request.Country, request.Zip));
+
+            tenant.PatchAddress(new Address(request.Street, request.City, request.State, request.Country, request.Zip));
 
             var patched = await _tenantRepository.PatchAsync(request.TenantId, tenant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

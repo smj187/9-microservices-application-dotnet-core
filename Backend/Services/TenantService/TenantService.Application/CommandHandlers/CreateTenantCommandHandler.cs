@@ -26,7 +26,7 @@ namespace TenantService.Application.CommandHandlers
         public async Task<Tenant> Handle(CreateTenantCommand request, CancellationToken cancellationToken)
         {
             var address = new Address(request.State, request.City, request.State, request.Country, request.Zip);
-            var tenant = new Tenant(request.Name, address, request.Email, request.Phone, request.Description, request.MinimunOrderAmount, request.IsFreeDelivery, request.DeliveryCost, request.WebsiteUrl, request.Imprint);
+            var tenant = new Tenant(request.Name, address, request.Email, request.Phone);
 
             await _tenantRepository.AddAsync(tenant);
 

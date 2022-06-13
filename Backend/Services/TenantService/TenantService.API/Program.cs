@@ -1,4 +1,6 @@
 using BuildingBlocks.Extensions;
+using BuildingBlocks.MassTransit;
+using MassTransit;
 using MediatR;
 using System.Reflection;
 using TenantService.Core.Domain.Aggregates;
@@ -14,6 +16,19 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("TenantService.Application"));
 builder.Services.ConfigureMySql<TenantContext>(builder.Configuration)
     .AddTransient<ITenantRepository, TenantRepository>();
+
+
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumers(Assembly.Load("TenantService.Application"));
+    x.UsingRabbitMq((context, config) =>
+    {
+        config.Host(RabbitMqSettings.RabbitMqUri);
+        config.ConfigureEndpoints(context, new SnakeCaseEndpointNameFormatter("tenant", false));
+    });
+});
+
 
 
 var app = builder.Build();

@@ -5,21 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileService.Core.Domain.Aggregates.Avatar
+namespace FileService.Core.Domain.Aggregates.Tenant
 {
-    public class AvatarAsset : AssetFile
+    public class TenantVideoAsset : AssetFile
     {
         private string _url;
 
         // ef required (never called)
-        public AvatarAsset() 
+        public TenantVideoAsset()
             : base()
         {
             _url = default!;
         }
 
-        public AvatarAsset(Guid externalEntityId, string url, AssetType assetType)
-            : base(externalEntityId, assetType, "image")
+        public TenantVideoAsset(Guid externalEntityId, string url, AssetType assetType)
+           : base(externalEntityId, assetType, "video")
         {
             Guard.Against.NullOrWhiteSpace(url, nameof(url));
             Guard.Against.Null(assetType, nameof(assetType));

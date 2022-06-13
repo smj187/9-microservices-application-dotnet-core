@@ -11,7 +11,7 @@ using TenantService.Infrastructure.Data;
 namespace TenantService.Infrastructure.Migrations
 {
     [DbContext(typeof(TenantContext))]
-    [Migration("20220613005957_Init")]
+    [Migration("20220613163551_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,12 +28,21 @@ namespace TenantService.Infrastructure.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("BannerAssetId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("asset_banner");
+
+                    b.Property<Guid?>("BrandImageAssetId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("asset_brand_image");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
                     b.Property<decimal?>("DeliveryCost")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("delivery_cost");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext")
@@ -41,20 +50,28 @@ namespace TenantService.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("email");
 
                     b.Property<string>("Imprint")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("website_impres");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_deleted");
 
                     b.Property<bool>("IsFreeDelivery")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_free_delivery");
+
+                    b.Property<Guid?>("LogoAssetId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("asset_logo");
 
                     b.Property<decimal>("MinimunOrderAmount")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("minimum_order_amount");
 
                     b.Property<DateTimeOffset?>("ModifiedAt")
                         .HasColumnType("datetime(6)")
@@ -65,16 +82,26 @@ namespace TenantService.Infrastructure.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
+                    b.Property<string>("Payments")
+                        .HasColumnType("longtext")
+                        .HasColumnName("payments");
+
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("phone");
+
+                    b.Property<Guid?>("VideoAssetId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("asset_video");
 
                     b.Property<string>("WebsiteUrl")
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("website_url");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("tenant", (string)null);
                 });
 
             modelBuilder.Entity("TenantService.Core.Domain.Aggregates.Tenant", b =>
@@ -111,7 +138,7 @@ namespace TenantService.Infrastructure.Migrations
 
                             b1.HasKey("TenantId");
 
-                            b1.ToTable("Tenants");
+                            b1.ToTable("tenant");
 
                             b1.WithOwner()
                                 .HasForeignKey("TenantId");
@@ -120,29 +147,33 @@ namespace TenantService.Infrastructure.Migrations
                     b.OwnsMany("TenantService.Core.Domain.ValueObjects.Workingday", "Workingdays", b1 =>
                         {
                             b1.Property<Guid>("TenantId")
-                                .HasColumnType("char(36)");
+                                .HasColumnType("char(36)")
+                                .HasColumnName("tenant_id");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
+                                .HasColumnType("int")
+                                .HasColumnName("id");
 
                             b1.Property<string>("Closing")
                                 .HasColumnType("longtext")
-                                .HasColumnName("closing");
+                                .HasColumnName("closing_time");
 
                             b1.Property<bool>("IsClosedToday")
-                                .HasColumnType("tinyint(1)");
+                                .HasColumnType("tinyint(1)")
+                                .HasColumnName("is_closed_today");
 
                             b1.Property<string>("Message")
-                                .HasColumnType("longtext");
+                                .HasColumnType("longtext")
+                                .HasColumnName("extra_message");
 
                             b1.Property<string>("Opening")
                                 .HasColumnType("longtext")
-                                .HasColumnName("opening");
+                                .HasColumnName("opening_time");
 
                             b1.HasKey("TenantId", "Id");
 
-                            b1.ToTable("Workingday");
+                            b1.ToTable("tenant_working_days", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("TenantId");
@@ -157,14 +188,16 @@ namespace TenantService.Infrastructure.Migrations
 
                                     b2.Property<string>("Description")
                                         .IsRequired()
-                                        .HasColumnType("longtext");
+                                        .HasColumnType("longtext")
+                                        .HasColumnName("weekday_description");
 
                                     b2.Property<int>("Value")
-                                        .HasColumnType("int");
+                                        .HasColumnType("int")
+                                        .HasColumnName("weekday_value");
 
                                     b2.HasKey("WorkingdayTenantId", "WorkingdayId");
 
-                                    b2.ToTable("Workingday");
+                                    b2.ToTable("tenant_working_days");
 
                                     b2.WithOwner()
                                         .HasForeignKey("WorkingdayTenantId", "WorkingdayId");
@@ -174,8 +207,7 @@ namespace TenantService.Infrastructure.Migrations
                                 .IsRequired();
                         });
 
-                    b.Navigation("Address")
-                        .IsRequired();
+                    b.Navigation("Address");
 
                     b.Navigation("Workingdays");
                 });

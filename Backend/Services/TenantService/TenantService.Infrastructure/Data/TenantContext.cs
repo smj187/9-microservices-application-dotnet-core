@@ -19,6 +19,7 @@ namespace TenantService.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new TenantEntityTypeConfiguration());
+
         }
 
         public DbSet<Tenant> Tenants { get; set; } = default!;

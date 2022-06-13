@@ -8,23 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using TenantService.Application.Commands;
 using TenantService.Core.Domain.Aggregates;
-using TenantService.Core.Domain.Enumerations;
-using TenantService.Core.Domain.ValueObjects;
 
 namespace TenantService.Application.CommandHandlers
 {
-    public class AddWorkingdayCommandHandler : IRequestHandler<AddWorkingdayCommand, Tenant>
+    public class PatchTenantInformationCommandHandler : IRequestHandler<PatchTenantInformationCommand, Tenant>
     {
         private readonly ITenantRepository _tenantRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AddWorkingdayCommandHandler(ITenantRepository tenantRepository, IUnitOfWork unitOfWork)
+        public PatchTenantInformationCommandHandler(ITenantRepository tenantRepository, IUnitOfWork unitOfWork)
         {
             _tenantRepository = tenantRepository;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Tenant> Handle(AddWorkingdayCommand request, CancellationToken cancellationToken)
+        public async Task<Tenant> Handle(PatchTenantInformationCommand request, CancellationToken cancellationToken)
         {
             var tenant = await _tenantRepository.FindAsync(request.TenantId);
             if (tenant == null)
@@ -32,8 +30,7 @@ namespace TenantService.Application.CommandHandlers
                 throw new AggregateNotFoundException(nameof(Tenant), request.TenantId);
             }
 
-            var day = new Workingday(Weekday.Create(request.Weekday), request.OpeningHour, request.ClosingHour, request.OpeningMinute, request.ClosingMinute);
-            tenant.AddWorkingday(day);
+            tenant.PatchInformation(request.Name, request.Description, request.MinimunOrderAmount, request.IsFreeDelivery, request.DeliveryCost, request.WebsiteUrl, request.Imprint, request.Email, request.Phone, request.Payments);
 
             var patched = await _tenantRepository.PatchAsync(request.TenantId, tenant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

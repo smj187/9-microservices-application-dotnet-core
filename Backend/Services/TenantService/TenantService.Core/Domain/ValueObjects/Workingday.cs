@@ -44,8 +44,8 @@ namespace TenantService.Core.Domain.ValueObjects
                 throw new DomainViolationException("a workingday needs working hours");
             }
 
-            _opening = String.Format("{0:00}:{1:00}", openingHour, openingMinute);
-            _closing = String.Format("{0:00}:{1:00}", closingHour, closingMinute);
+            _opening = String.Format("{0:00}:{1:00}", openingHour, openingMinute ?? 0);
+            _closing = String.Format("{0:00}:{1:00}", closingHour, closingMinute ?? 0);
 
             _message = null;
             _isClosedToday = false;

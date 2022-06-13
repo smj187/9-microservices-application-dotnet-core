@@ -16,18 +16,25 @@ namespace TenantService.Core.Domain.Aggregates
 {
     public class Tenant : AggregateRoot
     {
-        private string _name;
-        private string? _description;
         private Address? _address;
-        private string _email;
-        private string _phone;
+
         private List<Workingday> _workingdays;
 
+        private string _name;
+        private string? _description;
         private decimal _minimunOrderAmount;
         private bool _isFreeDelivery;
         private decimal? _deliveryCost;
         private string? _websiteUrl;
         private string? _imprint;
+        private string _email;
+        private string _phone;
+        private string? _payments;
+
+        private Guid? _brandImageAssetId;
+        private Guid? _logoAssetId;
+        private Guid? _videoAssetId;
+        private Guid? _bannerAssetId;
 
 
         // ef required (never called)
@@ -41,58 +48,29 @@ namespace TenantService.Core.Domain.Aggregates
             _phone = default!;
         }
 
-        public Tenant(string name, Address address, string email, string phone, string? description, decimal minimunOrderAmount, bool isFreeDelivery, decimal? deliveryCost, string? websiteUrl, string? imprint)
+        public Tenant(string name, Address address, string email, string phone)
         {
-            Guard.Against.NullOrEmpty(name, nameof(name));
             Guard.Against.Null(address, nameof(address));
+
+            Guard.Against.NullOrEmpty(name, nameof(name));
             Guard.Against.NullOrEmpty(email, nameof(email));
             Guard.Against.NullOrEmpty(phone, nameof(phone));
-            Guard.Against.NullOrNegativ(minimunOrderAmount, nameof(minimunOrderAmount));
-            Guard.Against.Null(isFreeDelivery, nameof(isFreeDelivery));
 
-            _name = name;
-            _description = description;
             _address = address;
 
-            _minimunOrderAmount = minimunOrderAmount;
-            _isFreeDelivery = isFreeDelivery;
-            _deliveryCost = deliveryCost;
-            _websiteUrl = websiteUrl;
-            _imprint = imprint;
-
-            CreatedAt = DateTimeOffset.UtcNow;
-            ModifiedAt = null;
-
-            if (isFreeDelivery == false && deliveryCost == null)
-            {
-                throw new DomainViolationException("a delivery cost is required when offering free delivery");
-            }
-
-
+            _name = name;
             _email = email;
             _phone = phone;
 
+
+            CreatedAt = DateTimeOffset.UtcNow;
+            ModifiedAt = null;
             _workingdays = new();
-            //_workingdays = new List<Workingday>
-            //{
-            //    new Workingday(Weekday.Create(0), 11, 22, 30, 0),
-            //    new Workingday(Weekday.Create(1)),
-            //    new Workingday(Weekday.Create(6), 11, 23, 50, 0),
-            //};
-        }
 
-
-        // contact
-        public string Email
-        {
-            get => _email;
-            private set => _email = value;
-        }
-
-        public string Phone
-        {
-            get => _phone;
-            private set => _phone = value;
+            _brandImageAssetId = null;
+            _logoAssetId = null;
+            _videoAssetId = null;
+            _bannerAssetId = null;
         }
 
 
@@ -106,19 +84,26 @@ namespace TenantService.Core.Domain.Aggregates
 
         public void AddWorkingday(Workingday day)
         {
+            var existing = _workingdays.FirstOrDefault(y => y.Weekday.Value == day.Weekday.Value);
+            if (existing != null)
+            {
+                throw new DomainViolationException($"{day.Weekday.Description} ({day.Weekday.Value}) is already present");
+            }
+
             _workingdays.Add(day);
-            //_workingdays = new List<Workingday>
-            //{
-            //    new Workingday(Weekday.Create(0), 11, 22, 30, 0),
-            //    new Workingday(Weekday.Create(1)),
-            //    new Workingday(Weekday.Create(6), 11, 23, 50, 0),
-            //};
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void RemoveWorkingday(int weekday)
         {
-            var day = _workingdays.FirstOrDefault(x => x.Weekday.Value == weekday);
-            _workingdays.Remove(day);
+            var existing = _workingdays.FirstOrDefault(x => x.Weekday.Value == weekday);
+            if (existing == null)
+            {
+                throw new DomainViolationException($"{Weekday.Create(weekday).Description} is not in list");
+            }
+
+            _workingdays.Remove(existing);
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public bool IsOpen
@@ -141,7 +126,19 @@ namespace TenantService.Core.Domain.Aggregates
 
 
 
-        // company specifics
+        // tenant information
+        public string Name
+        {
+            get => _name;
+            private set => _name = value;
+        }
+
+        public string? Description
+        {
+            get => _description;
+            private set => _description = value;
+        }
+
         public decimal MinimunOrderAmount 
         { 
             get => _minimunOrderAmount;
@@ -172,19 +169,53 @@ namespace TenantService.Core.Domain.Aggregates
             private set => _imprint = value;
         }
 
-        public string Name
+        public string Email
         {
-            get => _name;
-            private set => _name = value;
+            get => _email;
+            private set => _email = value;
         }
 
-        public string? Description
+        public string Phone
         {
-            get => _description;
-            private set => _description = value;
+            get => _phone;
+            private set => _phone = value;
         }
 
-        // TODO: payment options
+        public string? Payments 
+        { 
+            get => _payments;
+            private set => _payments = value; 
+        }
+
+        public void PatchInformation(string name, string? description, decimal minimunOrderAmount, bool isFreeDelivery, decimal? deliveryCost, string? websiteUrl, string? imprint, string email, string phone, string? payments)
+        {
+            Guard.Against.NullOrWhiteSpace(name, nameof(name));
+            Guard.Against.NullOrNegativ(minimunOrderAmount, nameof(minimunOrderAmount));
+            Guard.Against.Null(isFreeDelivery, nameof(isFreeDelivery));
+            Guard.Against.NullOrWhiteSpace(email, nameof(email));
+            Guard.Against.NullOrWhiteSpace(phone, nameof(phone));
+
+            if (isFreeDelivery == false && deliveryCost == null)
+            {
+                throw new DomainViolationException("a delivery cost is required when offering free delivery");
+            }
+
+            _name = name;
+            _description = description;
+            _minimunOrderAmount = minimunOrderAmount;
+            _isFreeDelivery = isFreeDelivery;
+            _deliveryCost = deliveryCost;
+            _websiteUrl = websiteUrl;
+            _imprint = imprint;
+            _email = email;
+            _phone = phone;
+            _payments = payments;
+
+
+            ModifiedAt = DateTimeOffset.UtcNow;
+        }
+
+
 
 
         // address
@@ -193,21 +224,66 @@ namespace TenantService.Core.Domain.Aggregates
             get => _address;
             private set => _address = value;
         }
-        public void RemoveAddress()
-        {
-            _address = null;
-        }
 
         public void PatchAddress(Address address)
         {
             _address = address;
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
-
-        public void PatchDescription(string name, string? description)
+        public void PatchCompanyDetails(string name, string? description)
         {
             _name = name;
             _description = description;
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
+
+
+        // assets
+
+        public Guid? BrandImageAssetId
+        {
+            get => _brandImageAssetId;
+            private set => _brandImageAssetId = value;
+        }
+
+        public Guid? LogoAssetId
+        {
+            get => _logoAssetId;
+            private set => _logoAssetId = value;
+        }
+
+        public Guid? VideoAssetId
+        {
+            get => _videoAssetId;
+            private set => _videoAssetId = value;
+        }
+
+        public Guid? BannerAssetId
+        {
+            get => _bannerAssetId;
+            private set => _bannerAssetId = value;
+        }
+
+        public void AddBrandImage(Guid imageId)
+        {
+            _brandImageAssetId = imageId;
+        }
+
+        public void AddLogo(Guid logoId)
+        {
+            _logoAssetId = logoId;
+        }
+
+        public void AddVideo(Guid videoId)
+        {
+            _videoAssetId = videoId;
+        }
+
+        public void AddBanner(Guid bannerId)
+        {
+            _bannerAssetId = bannerId;
+        }
+
     }
 }

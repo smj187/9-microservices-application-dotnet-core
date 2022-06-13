@@ -11,18 +11,18 @@ using TenantService.Core.Domain.Aggregates;
 
 namespace TenantService.Application.CommandHandlers
 {
-    public class PatchTenantDescriptionCommandHandler : IRequestHandler<PatchTenantDescriptionCommand, Tenant>
+    public class RemoveWorkingdayFromTenantCommandHandler : IRequestHandler<RemoveWorkingdayFromTenantCommand, Tenant>
     {
         private readonly ITenantRepository _tenantRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public PatchTenantDescriptionCommandHandler(ITenantRepository tenantRepository, IUnitOfWork unitOfWork)
+        public RemoveWorkingdayFromTenantCommandHandler(ITenantRepository tenantRepository, IUnitOfWork unitOfWork)
         {
             _tenantRepository = tenantRepository;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Tenant> Handle(PatchTenantDescriptionCommand request, CancellationToken cancellationToken)
+        public async Task<Tenant> Handle(RemoveWorkingdayFromTenantCommand request, CancellationToken cancellationToken)
         {
             var tenant = await _tenantRepository.FindAsync(request.TenantId);
             if (tenant == null)
@@ -30,9 +30,9 @@ namespace TenantService.Application.CommandHandlers
                 throw new AggregateNotFoundException(nameof(Tenant), request.TenantId);
             }
 
-            tenant.PatchDescription(request.Name, request.Description);
+            tenant.RemoveWorkingday(request.Weekday);
 
-            var patched =  await _tenantRepository.PatchAsync(request.TenantId, tenant);
+            var patched = await _tenantRepository.PatchAsync(request.TenantId, tenant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return patched;

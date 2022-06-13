@@ -13,6 +13,13 @@ namespace FileService.Core.Domain.Aggregates
         private Guid _externalEntityId;
         private AssetType _assetType;
         private string _type;
+
+        // ef required (never called)
+        public AssetFile() 
+        {
+            _assetType = default!;
+            _type = default!;
+        }
     
         public AssetFile(Guid externalEntityId, AssetType assetType, string type)
         {

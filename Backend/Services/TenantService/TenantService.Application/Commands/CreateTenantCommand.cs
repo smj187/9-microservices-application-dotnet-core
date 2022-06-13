@@ -11,7 +11,6 @@ namespace TenantService.Application.Commands
     public class CreateTenantCommand : IRequest<Tenant>
     {
         public string Name { get; set; } = default!;
-        public string? Description { get; set; }
 
         public string Email { get; set; } = default!;
         public string Phone { get; set; } = default!;
@@ -21,12 +20,5 @@ namespace TenantService.Application.Commands
         public string State { get; set; } = default!;
         public string Country { get; set; } = default!;
         public string Zip { get; set; } = default!;
-
-
-        public decimal MinimunOrderAmount { get; set; }
-        public bool IsFreeDelivery { get; set; }
-        public decimal? DeliveryCost { get; set; }
-        public string? WebsiteUrl { get; set; }
-        public string? Imprint { get; set; }
     }
 }
