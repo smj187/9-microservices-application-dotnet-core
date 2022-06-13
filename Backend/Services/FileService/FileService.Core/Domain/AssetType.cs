@@ -21,6 +21,11 @@ namespace FileService.Core.Domain
         // idenity
         public static readonly AssetType IdentityAvatarImage = new(6, "Identity Avatar Image");
 
+        // tenant
+        public static readonly AssetType TenantBrandImage = new(7, "Tenant Brand Image");
+        public static readonly AssetType TenantLogo = new(8, "Tenant Logo");
+        public static readonly AssetType TenantVideo = new(9, "Tenant Video");
+        public static readonly AssetType TenantBanner = new(10, "Tenant Banner");
 
         public AssetType(int value, string description)
             : base(value, description)
@@ -36,7 +41,13 @@ namespace FileService.Core.Domain
             if (value == 3) return new AssetType(CatalogGroupVideo.Value, CatalogGroupVideo.Description);
             if (value == 4) return new AssetType(CatalogCategoryImage.Value, CatalogCategoryImage.Description);
             if (value == 5) return new AssetType(CatalogCategoryVideo.Value, CatalogCategoryVideo.Description);
+
             if (value == 6) return new AssetType(IdentityAvatarImage.Value, IdentityAvatarImage.Description);
+
+            if (value == 7) return new AssetType(TenantBrandImage.Value, TenantBrandImage.Description);
+            if (value == 8) return new AssetType(TenantLogo.Value, TenantLogo.Description);
+            if (value == 9) return new AssetType(TenantVideo.Value, TenantVideo.Description);
+            if (value == 10) return new AssetType(TenantBanner.Value, TenantBanner.Description);
 
 
             throw new NotImplementedException();

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileService.Infrastructure.Migrations
 {
     [DbContext(typeof(FileContext))]
-    [Migration("20220608211619_Init")]
+    [Migration("20220613140426_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,6 +94,30 @@ namespace FileService.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("ImageAsset");
                 });
 
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.Tenant.TenantImageAsset", b =>
+                {
+                    b.HasBaseType("FileService.Core.Domain.Aggregates.AssetFile");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("tenant_image_url");
+
+                    b.HasDiscriminator().HasValue("TenantImageAsset");
+                });
+
+            modelBuilder.Entity("FileService.Core.Domain.Aggregates.Tenant.TenantVideoAsset", b =>
+                {
+                    b.HasBaseType("FileService.Core.Domain.Aggregates.AssetFile");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("tenant_video_url");
+
+                    b.HasDiscriminator().HasValue("TenantVideoAsset");
+                });
+
             modelBuilder.Entity("FileService.Core.Domain.Aggregates.Video.VideoAsset", b =>
                 {
                     b.HasBaseType("FileService.Core.Domain.Aggregates.AssetFile");
@@ -118,7 +142,7 @@ namespace FileService.Infrastructure.Migrations
 
             modelBuilder.Entity("FileService.Core.Domain.Aggregates.AssetFile", b =>
                 {
-                    b.OwnsOne("FileService.Core.Domain.Aggregates.AssetType", "AssetType", b1 =>
+                    b.OwnsOne("FileService.Core.Domain.AssetType", "AssetType", b1 =>
                         {
                             b1.Property<Guid>("AssetFileId")
                                 .HasColumnType("char(36)");

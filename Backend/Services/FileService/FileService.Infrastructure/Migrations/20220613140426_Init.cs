@@ -34,6 +34,10 @@ namespace FileService.Infrastructure.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     tags = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    tenant_image_url = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    tenant_video_url = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     video_url = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     video_format = table.Column<string>(type: "longtext", nullable: true)

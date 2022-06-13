@@ -23,6 +23,8 @@ namespace FileService.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new ImageAssetEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new VideoAssetEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AvatarEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new TenantImageEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new TenantVideoEntityTypeConfiguration());
         }
 
         public DbSet<AssetFile> AssetFiles { get; set; } = default!;

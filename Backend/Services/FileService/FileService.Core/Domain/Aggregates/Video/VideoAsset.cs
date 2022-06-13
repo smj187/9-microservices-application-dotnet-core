@@ -15,6 +15,13 @@ namespace FileService.Core.Domain.Aggregates.Video
         private string? _description;
         private string? _tags;
 
+        // ef required (never called)
+        public VideoAsset() 
+            : base() 
+        {
+            _videoUrl = default!;
+        }
+
         public VideoAsset(Guid externalEntityId, VideoUrl videoUrl, AssetType assetType, string? title, string? description, string? tags)
             : base(externalEntityId, assetType, "video")
         {

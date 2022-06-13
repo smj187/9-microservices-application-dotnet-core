@@ -12,6 +12,7 @@ namespace BuildingBlocks.Domain
         public int Value { get; private set; }
         public string Description { get; private set; }
 
+
         public Enumeration(int value, string description)
         {
             Value = value;

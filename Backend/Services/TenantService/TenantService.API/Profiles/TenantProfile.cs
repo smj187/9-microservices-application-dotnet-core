@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TenantService.Contracts.v1.Requests;
-using TenantService.Contracts.v1.Responses;
-using TenantService.Core.Entities;
+using TenantService.Contracts.v1.Contracts;
+using TenantService.Core.Domain.Aggregates;
+using TenantService.Core.Domain.ValueObjects;
 
 namespace TenantService.API.Profiles
 {
@@ -14,8 +14,9 @@ namespace TenantService.API.Profiles
     {
         public TenantProfile()
         {
-            CreateMap<CreateTenantRequest, Tenant>();
             CreateMap<Tenant, TenantResponse>();
+            CreateMap<Workingday, TenantWorkingDayResponse>();
+            CreateMap<Address, TenantAddressResponse>();
         }
     }
 }

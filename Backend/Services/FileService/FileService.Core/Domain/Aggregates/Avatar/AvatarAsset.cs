@@ -11,6 +11,12 @@ namespace FileService.Core.Domain.Aggregates.Avatar
     {
         private string _url;
 
+        // ef required (never called)
+        public AvatarAsset() 
+            : base()
+        {
+            _url = default!;
+        }
 
         public AvatarAsset(Guid externalEntityId, string url, AssetType assetType)
             : base(externalEntityId, assetType, "image")

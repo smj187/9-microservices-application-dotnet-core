@@ -29,7 +29,10 @@ namespace FileService.Contracts.v1.Contracts
     public record UploadAvatarRequest([Required] IFormFile Image, [Required] Guid ExternalEntityId);
 
 
-
+    public record UploadTenantBrandImageRequest([Required] IFormFile Image, [Required] Guid ExternalEntityId);
+    public record UploadTenantLogoRequest([Required] IFormFile Image, [Required] Guid ExternalEntityId);
+    public record UploadTenantVideoRequest([Required] IFormFile Video, [Required] Guid ExternalEntityId);
+    public record UploadTenantBannerRequest([Required] IFormFile Image, [Required] Guid ExternalEntityId);
 
 
 
@@ -45,6 +48,7 @@ namespace FileService.Contracts.v1.Contracts
 
     public record AvatarResponse(Guid Id, Guid ExternalEntityId, int AssetTypeValue, string AssetTypeDescription, string Url, string Type, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
 
+    public record TenantResponse(Guid Id, Guid ExternalEntityId, int AssetTypeValue, string AssetTypeDescription, string Url, string Type, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
 
 
 }

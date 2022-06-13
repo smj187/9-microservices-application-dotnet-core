@@ -23,12 +23,13 @@ namespace BuildingBlocks.Domain.EfCore
 
         public async Task<T?> FindAsync(Guid id)
         {
-            return await _database.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            // https://stackoverflow.com/questions/41025338/why-use-attach-for-update-entity-framework-6
+            return await _database.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<T?> FindAsync(Expression<Func<T, bool>> expression)
         {
-            return await _database.AsNoTracking().FirstOrDefaultAsync(expression);
+            return await _database.FirstOrDefaultAsync(expression);
         }
 
         public Task<T?> FindAsync(string id)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TenantService.Core.Entities;
+using TenantService.Core.Domain.Aggregates;
 using TenantService.Infrastructure.EntityTypeConfigurations;
 
 namespace TenantService.Infrastructure.Data
@@ -18,7 +18,8 @@ namespace TenantService.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new TenantEntityTypeConfigurations());
+            modelBuilder.ApplyConfiguration(new TenantEntityTypeConfiguration());
+
         }
 
         public DbSet<Tenant> Tenants { get; set; } = default!;

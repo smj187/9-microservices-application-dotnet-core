@@ -15,10 +15,17 @@ namespace FileService.Core.Domain.Aggregates.Image
         private string? _description;
         private string? _tags;
 
+        // ef required (never called)
+        public ImageAsset() 
+            : base() 
+        {
+            _imageUrls = default!;
+        }
+
         public ImageAsset(Guid externalEntityId, List<ImageUrl> imageUrls, AssetType assetType, string? title = null, string? description = null, string? tags = null)
             : base(externalEntityId, assetType, "image")
         {
-            //Guard.Against.NullOrEmpty(imageUrls, nameof(imageUrls));
+            Guard.Against.NullOrEmpty(imageUrls, nameof(imageUrls));
 
             _imageUrls = imageUrls;
             _title = title;
