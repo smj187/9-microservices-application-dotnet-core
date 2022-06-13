@@ -5,20 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TenantService.Application.Queries;
-using TenantService.Core.Entities;
+using TenantService.Core.Domain.Aggregates;
 
 namespace TenantService.Application.QueryHandlers
 {
-    public class ListTenantsQueryHandler : IRequestHandler<ListTenantsQuery, IEnumerable<Tenant>>
+    public class ListTenantsQueryHandler : IRequestHandler<ListTenantsQuery, IReadOnlyCollection<Tenant>>
     {
-        public ListTenantsQueryHandler()
-        {
+        private readonly ITenantRepository _tenantRepository;
 
+        public ListTenantsQueryHandler(ITenantRepository tenantRepository)
+        {
+            _tenantRepository = tenantRepository;
         }
 
-        public Task<IEnumerable<Tenant>> Handle(ListTenantsQuery request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<Tenant>> Handle(ListTenantsQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _tenantRepository.ListAsync();
         }
     }
 }
