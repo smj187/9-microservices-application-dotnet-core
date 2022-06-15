@@ -22,7 +22,7 @@ namespace CatalogService.Application.Consumers
         public async Task Consume(ConsumeContext<GroupVideoUploadResponseEvent> context)
         {
             var groupId = context.Message.GroupId;
-            var assetId = context.Message.ImageId;
+            var assetId = context.Message.VideoId;
 
             var group = await _groupRepository.FindAsync(groupId);
             if (group == null)

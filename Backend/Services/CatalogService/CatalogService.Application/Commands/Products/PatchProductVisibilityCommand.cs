@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.Commands.Products
 {
-    public class PatchVisibilityCommand : IRequest<Product>
+    public class PatchProductVisibilityCommand : IRequest<Product>
     {
         public Guid ProductId { get; set; }
 

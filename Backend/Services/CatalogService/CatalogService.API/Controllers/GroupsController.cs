@@ -125,6 +125,22 @@ namespace CatalogService.API.Controllers
             return Ok(result);
         }
 
+        [HttpPatch]
+        [Route("{groupId:guid}/quantity")]
+        public async Task<IActionResult> ChangeGroupQuantityAsync([FromRoute] Guid groupId, [FromBody] PatchGroupQuantityRequest request)
+        {
+            var command = new PatchGroupQuantityCommand
+            {
+                GroupId = groupId,
+                Quantity = request.Quantity,
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<GroupResponse>(data);
+            return Ok(result);
+        }
+
 
         [HttpPatch]
         [Route("{groupid:guid}/add-product/{productid:guid}")]

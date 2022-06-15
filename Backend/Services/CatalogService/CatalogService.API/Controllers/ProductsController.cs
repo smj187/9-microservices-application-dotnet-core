@@ -111,10 +111,26 @@ namespace CatalogService.API.Controllers
         [Route("{productid:guid}/visibility")]
         public async Task<IActionResult> ChangeVisibilityAsync([FromRoute] Guid productId, [FromBody] PatchProductVisibilityRequest request)
         {
-            var command = new PatchVisibilityCommand
+            var command = new PatchProductVisibilityCommand
             {
                 ProductId = productId,
                 IsVisible = request.IsVisible
+            };
+
+            var data = await _mediator.Send(command);
+
+            var result = _mapper.Map<ProductResponse>(data);
+            return Ok(result);
+        }
+
+        [HttpPatch]
+        [Route("{productid:guid}/quantity")]
+        public async Task<IActionResult> ChangeQuantityAsync([FromRoute] Guid productId, [FromBody] PatchProductQuantityRequest request)
+        {
+            var command = new PatchProductQuantityCommand
+            {
+                ProductId = productId,
+                Quantity = request.Quantity,
             };
 
             var data = await _mediator.Send(command);

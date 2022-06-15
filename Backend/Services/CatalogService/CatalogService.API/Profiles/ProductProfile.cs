@@ -33,7 +33,7 @@ namespace CatalogService.API.Profiles
 
                     var tags = ctx.Mapper.Map<IEnumerable<string>>(src.Tags ?? new List<string>());
 
-                    return new Product(src.Name, src.Price, ingredients, allergens, nutritions, tags, src.Description, src.PriceDescription);
+                    return new Product(src.Name, src.Price, ingredients, allergens, nutritions, tags, src.Description, src.PriceDescription, src.Quantity);
                 });
 
 

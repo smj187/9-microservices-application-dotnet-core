@@ -16,7 +16,7 @@ namespace CatalogService.Contracts.v1.Contracts
 
 
     // create new group
-    public record CreateGroupRequest([Required] string Name, [Required] decimal Price, string? Description, string? PriceDescription, List<string>? Tags);
+    public record CreateGroupRequest([Required] string Name, [Required] decimal Price, string? Description, string? PriceDescription, List<string>? Tags, int? Quantity);
 
     // patch group description
     public record PatchGroupDescriptionRequest([Required] string Name, string? Description, string? PriceDescription, List<string>? Tags);
@@ -27,9 +27,12 @@ namespace CatalogService.Contracts.v1.Contracts
     // patch group visibility
     public record PatchGroupVisibilityRequest([Required] bool IsVisible);
 
+    // patch group quantity
+    public record PatchGroupQuantityRequest(int? Quantity);
+
 
     // create new product
-    public record CreateProductRequest([Required] string Name, [Required] decimal Price, List<IngredientsRequest>? Ingredients, List<AllergensRequest>? Allergens, List<NutritionsRequest>? Nutritions, string? Description, string? PriceDescription, List<string>? Tags);
+    public record CreateProductRequest([Required] string Name, [Required] decimal Price, List<IngredientsRequest>? Ingredients, List<AllergensRequest>? Allergens, List<NutritionsRequest>? Nutritions, string? Description, string? PriceDescription, List<string>? Tags, int? Quantity);
     public record IngredientsRequest([Required] string Name);
     public record AllergensRequest([Required] string Abbr, [Required] string Name);
     public record NutritionsRequest([Required] string Name, [Required] int Weight);
@@ -47,6 +50,9 @@ namespace CatalogService.Contracts.v1.Contracts
     // patch product visibility
     public record PatchProductVisibilityRequest([Required] bool IsVisible);
 
+    // patch product quantity
+    public record PatchProductQuantityRequest(int? Quantity);
+
 
 
 
@@ -56,11 +62,11 @@ namespace CatalogService.Contracts.v1.Contracts
 
 
     // general group response
-    public record GroupResponse(Guid Id, string Name, string Description, string Price, string PriceDescription, bool IsVisible, List<Guid> Assets, List<Guid> Products, List<string> Tags);
+    public record GroupResponse(Guid Id, string Name, string Description, string Price, string PriceDescription, bool IsVisible, int? Quantity, List<Guid> Assets, List<Guid> Products, List<string> Tags);
 
 
     // general product response
-    public record ProductResponse(Guid Id, string Name, decimal Price, List<IngredientsResponse> Ingredients, List<AllergensResponse> Allergens, List<NutritionsResponse> Nutritions, bool IsVisible, string Description, string PriceDescription, List<Guid> Assets, List<string> Tags);
+    public record ProductResponse(Guid Id, string Name, decimal Price, int? Quantity, List<IngredientsResponse> Ingredients, List<AllergensResponse> Allergens, List<NutritionsResponse> Nutritions, bool IsVisible, string Description, string PriceDescription, List<Guid> Assets, List<string> Tags);
 
 
     // ingredients response

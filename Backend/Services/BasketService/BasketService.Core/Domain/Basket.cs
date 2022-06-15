@@ -46,15 +46,7 @@ namespace BasketService.Core.Domain
 
         public decimal TotalPrice
         {
-            get
-            {
-                decimal total = 0;
-                foreach (var item in Items)
-                {
-                    total += item.Price * item.Quantity;
-                }
-                return total;
-            }
+            get => Items.Sum(item => item.Price * item.Quantity);
         }
 
         public void AddItem(Item item)
