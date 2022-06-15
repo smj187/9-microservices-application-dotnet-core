@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.CommandHandlers.Products
 {
-    public class PatchVisibilityCommandHandler : IRequestHandler<PatchVisibilityCommand, Product>
+    public class PatchProductVisibilityCommandHandler : IRequestHandler<PatchProductVisibilityCommand, Product>
     {
         private readonly IProductRepository _productRepository;
 
-        public PatchVisibilityCommandHandler(IProductRepository productRepository)
+        public PatchProductVisibilityCommandHandler(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
 
-        public async Task<Product> Handle(PatchVisibilityCommand request, CancellationToken cancellationToken)
+        public async Task<Product> Handle(PatchProductVisibilityCommand request, CancellationToken cancellationToken)
         {
             var product = await _productRepository.FindAsync(request.ProductId);
             if (product == null)

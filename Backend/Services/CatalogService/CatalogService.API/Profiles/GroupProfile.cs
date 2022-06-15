@@ -18,7 +18,7 @@ namespace CatalogService.API.Profiles
                 .ConstructUsing((src, ctx) =>
                 {
                     var tags = ctx.Mapper.Map<IEnumerable<string>>(src.Tags ?? new List<string>());
-                    return new Group(src.Name, src.Price, src.Description, src.PriceDescription, tags);
+                    return new Group(src.Name, src.Price, src.Description, src.PriceDescription, tags, src.Quantity);
                 });
 
 

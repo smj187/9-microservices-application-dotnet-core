@@ -22,8 +22,9 @@ namespace CatalogService.Core.Domain.Group
         private List<string>? _tags;
         private List<Guid> _products;
         private List<Guid> _assets;
+        private int? _quantity;
 
-        public Group(string name, decimal price, string? description = null, string? priceDescription = null, IEnumerable<string>? tags = null)
+        public Group(string name, decimal price, string? description = null, string? priceDescription = null, IEnumerable<string>? tags = null, int? quantity = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.NullOrNegativ(price, nameof(price));
@@ -34,6 +35,7 @@ namespace CatalogService.Core.Domain.Group
             _description = description;
             _priceDescription = priceDescription;
             _tags = tags?.ToList() ?? null;
+            _quantity = quantity;
 
             _isVisible = false;
             _products = new List<Guid>();
@@ -64,11 +66,16 @@ namespace CatalogService.Core.Domain.Group
             private set => _priceDescription = value;
         }
 
-
         public bool IsVisible
         {
             get => _isVisible;
             private set => _isVisible = value;
+        }
+
+        public int? Quantity
+        {
+            get => _quantity;
+            private set => _quantity = value;
         }
 
 
@@ -102,7 +109,6 @@ namespace CatalogService.Core.Domain.Group
             private set => _tags = value == null ? null : new List<string>(value);
         }
 
-
         public void ChangeDescription(string name, string? description = null, string? priceDesription = null, List<string>? tags = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
@@ -122,6 +128,11 @@ namespace CatalogService.Core.Domain.Group
             _isVisible = isVisible;
 
             ModifiedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void ChangeQuantity(int? quantity)
+        {
+            _quantity = quantity;
         }
 
         public void ChangePrice(decimal price)

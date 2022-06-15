@@ -22,7 +22,7 @@ namespace CatalogService.Application.Consumers
         public async Task Consume(ConsumeContext<ProductVideoUploadResponseEvent> context)
         {
             var productId = context.Message.ProductId;
-            var assetId = context.Message.ImageId;
+            var assetId = context.Message.VideoId;
 
             var product = await _productRepository.FindAsync(productId);
             if (product == null)

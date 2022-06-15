@@ -24,8 +24,9 @@ namespace CatalogService.Core.Domain.Product
         private string? _priceDescription;
         private List<string>? _tags;
         private List<Guid> _assets;
+        private int? _quantity;
 
-        public Product(string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null)
+        public Product(string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null, int? quantity = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.NullOrNegativ(price, nameof(price));
@@ -34,6 +35,7 @@ namespace CatalogService.Core.Domain.Product
             _description = description;
             _priceDescription = priceDescription;
             _tags = tags?.ToList() ?? null;
+            _quantity = quantity;
 
 
             _ingredients = ingredients?.ToList() ?? new List<Ingredient>();
@@ -79,6 +81,12 @@ namespace CatalogService.Core.Domain.Product
             private set => _isVisible = value;
         }
 
+        public int? Quantity
+        {
+            get => _quantity;
+            private set => _quantity = value;
+        }
+
 
         [BsonElement("Assets")]
         public List<Guid> Assets
@@ -92,8 +100,6 @@ namespace CatalogService.Core.Domain.Product
             Guard.Against.Null(imageId, nameof(imageId));
             _assets.Add(imageId);
         }
-
-
 
         [BsonElement("Ingredients")]
         public IEnumerable<Ingredient> Ingredients
@@ -142,6 +148,11 @@ namespace CatalogService.Core.Domain.Product
             _isVisible = isVisible;
 
             ModifiedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void ChangeQuantity(int? quantity)
+        {
+            _quantity = quantity;
         }
 
         public void ChangePrice(decimal price)
