@@ -1,11 +1,7 @@
-﻿using AutoMapper;
-using CatalogService.Application.Commands;
+﻿using BuildingBlocks.Controllers;
 using CatalogService.Application.Commands.Categories;
-using CatalogService.Application.Queries;
 using CatalogService.Application.Queries.Categories;
 using CatalogService.Contracts.v1.Contracts;
-using CatalogService.Core.Domain.Category;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,124 +11,116 @@ using System.Threading.Tasks;
 
 namespace CatalogService.API.Controllers
 {
-    [ApiController]
     [Route("api/v1/[controller]")]
-    public class CategoriesController : ControllerBase
+    public class CategoriesController : ApiBaseController<CategoriesController>
     {
-        private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
-
-        public CategoriesController(IMediator mediator, IMapper mapper)
-        {
-            _mediator = mediator;
-            _mapper = mapper;
-        }
-
         [HttpGet]
         public async Task<IActionResult> ListCategoriesAsync()
-        {
-            var query = new ListCategoryQuery();
-
-            var data = await _mediator.Send(query);
-
-            var result = _mapper.Map<IReadOnlyCollection<CategoryResponse>>(data);
-            return Ok(result);
-        }
+            => Ok(Mapper.Map<IReadOnlyCollection<CategoryResponse>>(await Mediator.Send(new ListCategoryQuery())));
 
         [HttpPost]
         public async Task<IActionResult> CreateCategoryAsync([FromBody] CreateCategoryRequest request)
         {
-            var mapped = _mapper.Map<Category>(request);
-            var command = new CreateCategoryCommand
+            var data = await Mediator.Send(new CreateCategoryCommand
             {
-                NewCategory = mapped
-            };
+                Name = request.Name,
+                Description = request.Description,
+                Products = request.Products,
+                Sets = request.Sets
+            });
 
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<CategoryResponse>(data);
-            return Ok(result);
+            return Ok(Mapper.Map<CategoryResponse>(data));
         }
 
         [HttpGet]
         [Route("{categoryid:guid}/find")]
         public async Task<IActionResult> FindCategoryAsync([FromRoute] Guid categoryId)
         {
-            var query = new FindCategoryQuery
+            var data = await Mediator.Send(new FindCategoryQuery
             {
                 CategoryId = categoryId
-            };
+            });
 
-            var data = await _mediator.Send(query);
-
-            var result = _mapper.Map<CategoryResponse>(data);
-            return Ok(result);
+            return Ok(Mapper.Map<CategoryResponse>(data));
         }
 
         [HttpPatch]
         [Route("{categoryid:guid}/visibility")]
         public async Task<IActionResult> ChangeCategoryVisibilityAsync([FromRoute] Guid categoryId, [FromBody] PatchCategoryVisibilityCommand request)
         {
-            var command = new PatchCategoryVisibilityCommand
+            var data = await Mediator.Send(new PatchCategoryVisibilityCommand
             {
                 CategoryId = categoryId,
                 IsVisible = request.IsVisible
-            };
+            });
 
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<CategoryResponse>(data);
-            return Ok(result);
+            return Ok(Mapper.Map<CategoryResponse>(data));
         }
 
         [HttpPatch]
         [Route("{categoryid:guid}/add-product/{productid:guid}")]
         public async Task<IActionResult> AddProductToCategoryAsync([FromRoute] Guid categoryId, [FromRoute] Guid productId)
         {
-            var command = new AddProductToCategoryCommand
+            var data = await Mediator.Send(new AddProductToCategoryCommand
             {
                 CategoryId = categoryId,
                 ProductId = productId
-            };
+            });
 
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<CategoryResponse>(data);
-            return Ok(result);
+            return Ok(Mapper.Map<CategoryResponse>(data));
         }
 
         [HttpPatch]
         [Route("{categoryid:guid}/remove-product/{productid:guid}")]
         public async Task<IActionResult> RemoveProductFromCategoryAsync([FromRoute] Guid categoryId, [FromRoute] Guid productId)
         {
-            var command = new RemoveProductFromCategoryCommand
+            var data = await Mediator.Send(new RemoveProductFromCategoryCommand
             {
                 CategoryId = categoryId,
                 ProductId = productId
-            };
+            });
 
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<CategoryResponse>(data);
-            return Ok(result);
+            return Ok(Mapper.Map<CategoryResponse>(data));
         }
 
         [HttpPatch]
         [Route("{categoryid:guid}/description")]
         public async Task<IActionResult> ChangeCategoryDescriptionAsync([FromRoute] Guid categoryId, [FromBody] PatchCategoryDescriptionRequest request)
         {
-            var command = new PatchCategoryDescriptionCommand
+            var data = await Mediator.Send(new PatchCategoryDescriptionCommand
             {
                 CategoryId = categoryId,
                 Name = request.Name,
                 Description = request.Description,
-            };
+            });
 
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<CategoryResponse>(data);
-            return Ok(result);
+            return Ok(Mapper.Map<CategoryResponse>(data));
         }
 
+        [HttpPatch]
+        [Route("{categoryid:guid}/add-set/{setid:guid}")]
+        public async Task<IActionResult> AddSetToCategory([FromRoute] Guid categoryId, [FromRoute] Guid setId)
+        {
+            var data = await Mediator.Send(new AddSetToCategoryCommand
+            {
+                CategoryId = categoryId,
+                SetId = setId
+            });
+
+            return Ok(Mapper.Map<CategoryResponse>(data));
+        }
+
+        [HttpPatch]
+        [Route("{categoryid:guid}/remove-set/{setid:guid}")]
+        public async Task<IActionResult> RemoveSetFromCategory([FromRoute] Guid categoryId, [FromRoute] Guid setId)
+        {
+            var data = await Mediator.Send(new RemoveSetFromCategoryCommand
+            {
+                CategoryId = categoryId,
+                SetId = setId
+            });
+
+            return Ok(Mapper.Map<CategoryResponse>(data));
+        }
     }
 }

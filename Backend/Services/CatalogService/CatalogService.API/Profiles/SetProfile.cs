@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CatalogService.Contracts.v1.Contracts;
-using CatalogService.Core.Domain.Category;
+using CatalogService.Core.Domain.Set;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +9,11 @@ using System.Threading.Tasks;
 
 namespace CatalogService.API.Profiles
 {
-    public class CategoryProfile : Profile
+    public class SetProfile : Profile
     {
-        public CategoryProfile()
+        public SetProfile()
         {
-            CreateMap<Category, CategoryResponse>();
-      
+            CreateMap<Set, SetResponse>();
         }
     }
 }

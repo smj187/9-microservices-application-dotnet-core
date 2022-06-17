@@ -16,16 +16,18 @@ namespace CatalogService.Core.Domain.Category
         private string _name;
         private string? _description;
         private List<Guid> _products;
+        private List<Guid> _sets;
         private bool _isVisible;
         private List<Guid> _assets;
 
-        public Category(string name, string? descripion = null, List<Guid>? productIds = null)
+        public Category(string name, string? descripion = null, List<Guid>? products = null, List<Guid>? sets = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             _name = name;
             _description = descripion;
 
-            _products = productIds ?? new List<Guid>();
+            _products = products ?? new List<Guid>();
+            _sets = sets ?? new List<Guid>();
             _isVisible = false;
 
             _assets = new();
@@ -84,6 +86,31 @@ namespace CatalogService.Core.Domain.Category
             Guard.Against.Null(productId, nameof(productId));
 
             _products.Remove(productId);
+
+            ModifiedAt = DateTimeOffset.UtcNow;
+        }
+
+        [BsonElement("Sets")]
+        public IEnumerable<Guid> Sets
+        {
+            get => _sets;
+            private set => _sets = new List<Guid>(value);
+        }
+
+        public void AddSet(Guid setId)
+        {
+            Guard.Against.Null(setId, nameof(setId));
+
+            _sets.Add(setId);
+
+            ModifiedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void RemoveSet(Guid setId)
+        {
+            Guard.Against.Null(setId, nameof(setId));
+
+            _sets.Remove(setId);
 
             ModifiedAt = DateTimeOffset.UtcNow;
         }

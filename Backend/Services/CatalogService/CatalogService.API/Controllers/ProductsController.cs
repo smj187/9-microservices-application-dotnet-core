@@ -1,11 +1,8 @@
-﻿using AutoMapper;
+﻿using BuildingBlocks.Controllers;
 using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
 using CatalogService.Contracts.v1.Contracts;
 using CatalogService.Core.Domain.Product;
-using FileService.Contracts.v1;
-using MassTransit;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,59 +13,33 @@ using System.Threading.Tasks;
 
 namespace CatalogService.API.Controllers
 {
-    [ApiController]
+    
     [Route("api/v1/[controller]")]
-    public class ProductsController : ControllerBase
+    public class ProductsController : ApiBaseController<ProductsController>
     {
-        private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
-
-        public ProductsController(IMediator mediator, IMapper mapper)
-        {
-            _mediator = mediator;
-            _mapper = mapper;
-        }
-
         [HttpGet]
         public async Task<IActionResult> ListProductsAsync()
-        {
-
-            var query = new ListProductsQuery();
-
-            var data = await _mediator.Send(query);
-
-            var result = _mapper.Map<IReadOnlyCollection<ProductResponse>>(data);
-            return Ok(result);
-        }
+            => Ok(Mapper.Map<IReadOnlyCollection<ProductResponse>>(await Mediator.Send(new ListProductsQuery())));
 
         [HttpPost]
         public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductRequest request)
         {
-            var mapped = _mapper.Map<Product>(request);
-            var command = new CreateProductCommand
+            var data = await Mediator.Send(new CreateProductCommand
             {
-                NewProduct = mapped
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<ProductResponse>(data);
-            return Ok(result);
+                NewProduct = Mapper.Map<Product>(request)
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
         }
 
         [HttpGet]
         [Route("{productid:guid}/find")]
         public async Task<IActionResult> FindProductAsync([FromRoute] Guid productId)
         {
-            var query = new FindProductQuery
+            var data = await Mediator.Send(new FindProductQuery
             {
                 ProductId = productId
-            };
-
-            var data = await _mediator.Send(query);
-
-            var result = _mapper.Map<ProductResponse>(data);
-            return Ok(result);
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
         }
 
 
@@ -76,85 +47,77 @@ namespace CatalogService.API.Controllers
         [Route("{productid:guid}/price")]
         public async Task<IActionResult> ChangePriceAsync([FromRoute] Guid productId, [FromBody] PatchProductPriceRequest request)
         {
-            var command = new PatchProductPriceCommand
+            var data = await Mediator.Send(new PatchProductPriceCommand
             {
                 ProductId = productId,
                 Price = request.Price
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<ProductResponse>(data);
-            return Ok(result);
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
         }
 
         [HttpPatch]
         [Route("{productid:guid}/description")]
         public async Task<IActionResult> ChangeDescriptionAsync([FromRoute] Guid productId, [FromBody] PatchProductDescriptionRequest request)
         {
-            var command = new PatchProductDescriptionCommand
+            var data = await Mediator.Send(new PatchProductDescriptionCommand
             {
                 ProductId = productId,
                 Name = request.Name,
                 Description = request.Description,
                 PriceDescription = request.PriceDescription,
                 Tags = request.Tags
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<ProductResponse>(data);
-            return Ok(result);
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
         }
 
         [HttpPatch]
         [Route("{productid:guid}/visibility")]
         public async Task<IActionResult> ChangeVisibilityAsync([FromRoute] Guid productId, [FromBody] PatchProductVisibilityRequest request)
         {
-            var command = new PatchProductVisibilityCommand
+            var data = await Mediator.Send(new PatchProductVisibilityCommand
             {
                 ProductId = productId,
                 IsVisible = request.IsVisible
-            };
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
+        }
 
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<ProductResponse>(data);
-            return Ok(result);
+        [HttpPatch]
+        [Route("{productid:guid}/availability")]
+        public async Task<IActionResult> ChangeAvailabilityAsync([FromRoute] Guid productId, [FromBody] PatchProductAvailabilityRequest request)
+        {
+            var data = await Mediator.Send(new PatchProductAvailabilityCommand
+            {
+                ProductId = productId,
+                IsAvailable = request.IsAvailable
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
         }
 
         [HttpPatch]
         [Route("{productid:guid}/quantity")]
         public async Task<IActionResult> ChangeQuantityAsync([FromRoute] Guid productId, [FromBody] PatchProductQuantityRequest request)
         {
-            var command = new PatchProductQuantityCommand
+            var data = await Mediator.Send(new PatchProductQuantityCommand
             {
                 ProductId = productId,
                 Quantity = request.Quantity,
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<ProductResponse>(data);
-            return Ok(result);
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
         }
 
         [HttpPatch]
         [Route("{productid:guid}/ingredient/add")]
         public async Task<IActionResult> AddIngredientsAsync([FromRoute] Guid productId, [FromBody] AddIngredientsRequest request)
         {
-            var command = new AddIngredientsToProductCommand
+            var data = await Mediator.Send(new AddIngredientsToProductCommand
             {
                 ProductId = productId,
-                Allergens = _mapper.Map<List<Allergen>>(request.Allergens),
-                Ingredients = _mapper.Map<List<Ingredient>>(request.Ingredients),
-                Nutritions = _mapper.Map<List<Nutrition>>(request.Nutritions),
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<ProductResponse>(data);
-            return Ok(result);
+                Allergens = Mapper.Map<List<Allergen>>(request.Allergens),
+                Ingredients = Mapper.Map<List<Ingredient>>(request.Ingredients),
+                Nutritions = Mapper.Map<List<Nutrition>>(request.Nutritions),
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
         }
 
   
@@ -163,18 +126,14 @@ namespace CatalogService.API.Controllers
         [Route("{productid:guid}/ingredient/remove")]
         public async Task<IActionResult> AddIngredientsAsync([FromRoute] Guid ProductId, [FromBody] RemoveIngredientsRequest request)
         {
-            var command = new RemoveIngredientsFromProductCommand
+            var data = await Mediator.Send(new RemoveIngredientsFromProductCommand
             {
                 ProductId = ProductId,
-                Allergens = _mapper.Map<List<Allergen>>(request.Allergens),
-                Ingredients = _mapper.Map<List<Ingredient>>(request.Ingredients),
-                Nutritions = _mapper.Map<List<Nutrition>>(request.Nutritions),
-            };
-
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<ProductResponse>(data);
-            return Ok(result);
+                Allergens = Mapper.Map<List<Allergen>>(request.Allergens),
+                Ingredients = Mapper.Map<List<Ingredient>>(request.Ingredients),
+                Nutritions = Mapper.Map<List<Nutrition>>(request.Nutritions),
+            });
+            return Ok(Mapper.Map<ProductResponse>(data));
         }
     }
 }

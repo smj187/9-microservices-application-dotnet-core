@@ -9,33 +9,32 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FileService.API.Controllers.Catalog
 {
     [Route("api/v1/[controller]")]
-    public class ProductsController : ApiBaseController<ProductsController>
+    public class SetsController : ApiBaseController<SetsController>
     {
         [HttpPost]
         [Route("upload-image")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AssetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UploadProductImageAsync([FromForm, Required] UploadProductImageRequest request)
+        public async Task<IActionResult> UploadSetImageAsync([FromForm, Required] UploadSetImageRequest request)
         {
             var data = await Mediator.Send(new UploadImageCommand
             {
-                Folder = "product_images",
+                Folder = "set_images",
                 Description = request.Description,
                 Title = request.Title,
                 Tags = request.Tags,
                 ExternalEntityId = request.ExternalEntityId,
                 Image = request.Image,
-                AssetType = AssetType.CatalogProductImage,
+                AssetType = AssetType.CatalogSetImage,
             });
 
-            await PublishEndpoint.Publish(new ProductImageUploadResponseEvent(data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new SetImageUploadResponseEvent(data.ExternalEntityId, data.Id));
             return Ok(Mapper.Map<AssetResponse>(data));
         }
 
@@ -44,20 +43,20 @@ namespace FileService.API.Controllers.Catalog
         [Route("upload-video")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AssetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UploadProductVideoAsync([FromForm, Required] UploadProductVideoRequest request)
+        public async Task<IActionResult> UploadSetVideoAsync([FromForm, Required] UploadSetVideoRequest request)
         {
             var data = await Mediator.Send(new UploadVideoCommand
             {
-                Folder = "product_videos",
+                Folder = "set_videos",
                 Description = request.Description,
                 Title = request.Title,
                 Tags = request.Tags,
                 ExternalEntityId = request.ExternalEntityId,
                 Video = request.Video,
-                AssetType = AssetType.CatalogProductVideo,
+                AssetType = AssetType.CatalogSetVideo,
             });
 
-            await PublishEndpoint.Publish(new ProductVideoUploadResponseEvent(data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new SetVideoUploadResponseEvent(data.ExternalEntityId, data.Id));
             return Ok(Mapper.Map<AssetResponse>(data));
         }
 
@@ -66,7 +65,7 @@ namespace FileService.API.Controllers.Catalog
         [Route("{externalentityid:guid}/list-assets")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<AssetResponse>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ListProductAssetsAsync([FromRoute, Required] Guid externalEntityId)
+        public async Task<IActionResult> ListSetAssetsAsync([FromRoute, Required] Guid externalEntityId)
         {
             var data = await Mediator.Send(new ListAssetsQuery
             {
@@ -82,12 +81,13 @@ namespace FileService.API.Controllers.Catalog
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AssetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> FindProductAssetAsync([FromRoute, Required] Guid assetId)
+        public async Task<IActionResult> FindSetAssetAsync([FromRoute, Required] Guid assetId)
         {
             var data = await Mediator.Send(new FindAssetQuery
             {
                 AssetId = assetId
             });
+
             return Ok(Mapper.Map<AssetResponse>(data));
         }
 
@@ -97,7 +97,7 @@ namespace FileService.API.Controllers.Catalog
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AssetResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PatchProductDescriptionAsync([FromRoute, Required] Guid assetId, [FromBody, Required] PatchProductImageDescriptionRequest request)
+        public async Task<IActionResult> PatchSetDescriptionAsync([FromRoute, Required] Guid assetId, [FromBody, Required] PatchSetImageDescriptionRequest request)
         {
             var data = await Mediator.Send(new PatchAssetDescriptionCommand
             {
