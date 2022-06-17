@@ -153,6 +153,17 @@ namespace CatalogService.Core.Domain.Product
         public void ChangeQuantity(int? quantity)
         {
             _quantity = quantity;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
+        }
+
+        public bool DecreaseQuantity()
+        {
+            if (_quantity <= 0) return false;
+
+            _quantity = Quantity - 1;
+
+            return true;
         }
 
         public void ChangePrice(decimal price)

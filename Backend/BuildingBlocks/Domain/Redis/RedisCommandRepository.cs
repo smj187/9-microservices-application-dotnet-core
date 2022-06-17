@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Domain.Repositories;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -26,6 +27,11 @@ namespace BuildingBlocks.Domain.Redis
 
             await _database.StringSetAsync($"{typeof(T).Name.ToLower()}:{entity.Id}", data);
             return entity;
+        }
+
+        public Task BulkWrite(IEnumerable<WriteModel<T>> bulk)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<T> PatchAsync(Guid id, T entity)

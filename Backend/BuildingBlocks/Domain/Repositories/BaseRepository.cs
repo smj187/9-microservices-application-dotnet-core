@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Domain;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,11 @@ namespace BuildingBlocks.Domain.Repositories
         public async Task<T> AddAsync(T entity)
         {
             return await _commandRepository.AddAsync(entity);
+        }
+
+        public async Task BulkWrite(IEnumerable<WriteModel<T>> bulk)
+        {
+            await _commandRepository.BulkWrite(bulk);
         }
 
         public async Task<T?> FindAsync(Guid id)

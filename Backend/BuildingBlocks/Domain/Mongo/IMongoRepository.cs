@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain.Interfaces;
 using BuildingBlocks.Domain.Repositories;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,5 @@ namespace BuildingBlocks.Domain.Mongo
 {
     public interface IMongoRepository<T> : IBaseRepository<T> where T : IAggregateRoot
     {
-
     }
 }

@@ -3,6 +3,7 @@ using BuildingBlocks.MassTransit;
 using MassTransit;
 using MediatR;
 using System.Reflection;
+using TenantService.Application.Consumers;
 using TenantService.Core.Domain.Aggregates;
 using TenantService.Infrastructure.Data;
 using TenantService.Infrastructure.Repositories;
@@ -21,12 +22,23 @@ builder.Services.ConfigureMySql<TenantContext>(builder.Configuration)
 
 builder.Services.AddMassTransit(x =>
 {
+    x.SetSnakeCaseEndpointNameFormatter();
     x.AddConsumers(Assembly.Load("TenantService.Application"));
-    x.UsingRabbitMq((context, config) =>
+
+    x.UsingRabbitMq((context, rabbit) =>
     {
-        config.Host(RabbitMqSettings.RabbitMqUri);
-        config.ConfigureEndpoints(context, new SnakeCaseEndpointNameFormatter("tenant", false));
+        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
+        {
+            host.Username(RabbitMqSettings.Username);
+            host.Password(RabbitMqSettings.Password);
+        });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.TenantConsumerEndpointName, e =>
+        {
+            e.ConfigureConsumer<TenantConsumer>(context);
+        });
     });
+
 });
 
 
