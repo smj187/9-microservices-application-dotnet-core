@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.EfCore.Interfaces;
+﻿using BuildingBlocks.Domain.EfCore;
 using MediatR;
 using PaymentService.Application.Commands;
 using PaymentService.Core.Entities;

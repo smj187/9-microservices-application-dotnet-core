@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain.Interfaces;
+﻿using BuildingBlocks.Domain.EfCore;
+using BuildingBlocks.Domain.Interfaces;
 using BuildingBlocks.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PaymentService.Infrastructure.Repositories
 {
-    public interface IPaymentRepository<T> : IRepository<T> where T : IAggregateRoot
+    public interface IPaymentRepository<T> : IEfRepository<T> where T : IAggregateRoot
     {
 
     }

@@ -1,5 +1,8 @@
 using BuildingBlocks.Extensions;
-using DeliveryService.Core.Entities;
+using BuildingBlocks.MassTransit;
+using BuildingBlocks.Middleware;
+using DeliveryService.Application.Consumers;
+using MassTransit;
 using MediatR;
 using System.Reflection;
 
@@ -14,6 +17,28 @@ builder.Services.ConfigureMongo(builder.Configuration);
 
 
 
+builder.Services.AddMassTransit(x =>
+{
+    x.SetSnakeCaseEndpointNameFormatter();
+    x.AddConsumers(Assembly.Load("DeliveryService.Application"));
+
+    x.UsingRabbitMq((context, rabbit) =>
+    {
+        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
+        {
+            host.Username(RabbitMqSettings.Username);
+            host.Password(RabbitMqSettings.Password);
+        });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.DeliveryConsumerEndpointName, e =>
+        {
+            e.ConfigureConsumer<DeliveryConsumer>(context);
+        });
+    });
+
+});
+
+
 var app = builder.Build();
 app.UsePathBase(new PathString("/delivery-service"));
 app.UseRouting();
@@ -22,6 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

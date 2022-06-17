@@ -7,10 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CatalogService.Contracts" Version="1.0.1" />
+    <PackageReference Include="DeliveryService.Contracts" Version="1.0.0" />
+    <PackageReference Include="MassTransit.MongoDb" Version="8.0.3" />
     <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="PaymentService.Contracts" Version="1.0.0" />
+    <PackageReference Include="TenantService.Contracts" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OrderService.Contracts\OrderService.Contracts.csproj" />
     <ProjectReference Include="..\OrderService.Core\OrderService.Core.csproj" />
     <ProjectReference Include="..\OrderService.Infrastructure\OrderService.Infrastructure.csproj" />
   </ItemGroup>

@@ -51,5 +51,11 @@ namespace BuildingBlocks.Domain.Mongo
             await _mongoCollection.ReplaceOneAsync(filter, entity);
             return entity;
         }
+
+     
+        public async Task BulkWrite(IEnumerable<WriteModel<T>> bulk)
+        {
+            await _mongoCollection.BulkWriteAsync(bulk);
+        }
     }
 }

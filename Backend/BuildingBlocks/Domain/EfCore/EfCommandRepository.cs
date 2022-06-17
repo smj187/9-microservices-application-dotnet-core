@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,11 @@ namespace BuildingBlocks.Domain.EfCore
 
             await _database.AddAsync(entity);
             return entity;
+        }
+
+        public Task BulkWrite(IEnumerable<WriteModel<T>> bulk)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<T> PatchAsync(Guid id, T entity)
