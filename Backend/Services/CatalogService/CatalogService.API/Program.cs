@@ -3,8 +3,8 @@ using BuildingBlocks.MassTransit;
 using BuildingBlocks.Middleware;
 using CatalogService.Application.Consumers;
 using CatalogService.Core.Domain.Category;
-using CatalogService.Core.Domain.Group;
 using CatalogService.Core.Domain.Product;
+using CatalogService.Core.Domain.Set;
 using CatalogService.Infrastructure.Repositories;
 using MassTransit;
 using MediatR;
@@ -21,7 +21,7 @@ builder.Services.AddMediatR(Assembly.Load("CatalogService.Application"));
 builder.Services.ConfigureMongo(builder.Configuration)
     .AddSingleton<IProductRepository, ProductRepository>()
     .AddSingleton<ICategoryRepository, CategoryRepository>()
-    .AddSingleton<IGroupRepository, GroupRepository>();
+    .AddSingleton<ISetRepository, SetRepository>();
 
 
 

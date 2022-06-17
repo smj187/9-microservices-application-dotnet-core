@@ -15,9 +15,9 @@ namespace FileService.Contracts.v1.Contracts
     public record PatchProductImageDescriptionRequest(string? Title, string? Description, string? Tags);
 
 
-    public record UploadGroupImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
-    public record UploadGroupVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
-    public record PatchGroupImageDescriptionRequest(string? Title, string? Description, string? Tags);
+    public record UploadSetImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
+    public record UploadSetVideoRequest([Required] Guid ExternalEntityId, [Required] IFormFile Video, string? Title, string? Description, string? Tags);
+    public record PatchSetImageDescriptionRequest(string? Title, string? Description, string? Tags);
 
 
     public record UploadCategoryImageRequest([Required] Guid ExternalEntityId, [Required] IFormFile Image, string? Title, string? Description, string? Tags);
