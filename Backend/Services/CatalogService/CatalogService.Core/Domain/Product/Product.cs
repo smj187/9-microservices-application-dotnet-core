@@ -18,6 +18,7 @@ namespace CatalogService.Core.Domain.Product
 
         private decimal _price;
         private bool _isVisible;
+        private bool _isAvailable;
 
         private string _name;
         private string? _description;
@@ -45,6 +46,7 @@ namespace CatalogService.Core.Domain.Product
 
             _price = price;
             _isVisible = false;
+            _isAvailable = false;
 
             _assets = new();
         }
@@ -74,11 +76,16 @@ namespace CatalogService.Core.Domain.Product
             private set => _priceDescription = value;
         }
 
-
         public bool IsVisible
         {
             get => _isVisible;
             private set => _isVisible = value;
+        }
+
+        public bool IsAvailable
+        {
+            get => _isAvailable;
+            private set => _isAvailable = value;
         }
 
         public int? Quantity
@@ -93,12 +100,6 @@ namespace CatalogService.Core.Domain.Product
         {
             get => _assets;
             private set => _assets = value;
-        }
-
-        public void AddAssetId(Guid imageId)
-        {
-            Guard.Against.Null(imageId, nameof(imageId));
-            _assets.Add(imageId);
         }
 
         [BsonElement("Ingredients")]
@@ -129,6 +130,17 @@ namespace CatalogService.Core.Domain.Product
             private set => _tags = value == null ? null : new List<string>(value);
         }
 
+
+
+
+        public void AddAssetId(Guid imageId)
+        {
+            Guard.Against.Null(imageId, nameof(imageId));
+            _assets.Add(imageId);
+
+            ModifiedAt = DateTimeOffset.UtcNow;
+        }
+
         public void ChangeDescription(string name, string? description = null, string? priceDesription = null, List<string>? tags = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
@@ -153,6 +165,17 @@ namespace CatalogService.Core.Domain.Product
         public void ChangeQuantity(int? quantity)
         {
             _quantity = quantity;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void ChangeAvailability(bool isAvailable)
+        {
+            Guard.Against.Null(isAvailable, nameof(isAvailable));
+
+            _isAvailable = isAvailable;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void ChangePrice(decimal price)

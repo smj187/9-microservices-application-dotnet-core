@@ -9,26 +9,29 @@ using System.Threading.Tasks;
 namespace CatalogService.Contracts.v1.Contracts
 {
     // create new category
-    public record CreateCategoryRequest([Required] string Name, string? Description, List<Guid>? ProductIds);
+    public record CreateCategoryRequest([Required] string Name, string? Description, List<Guid>? Products, List<Guid>? Sets);
 
     // patch category description
     public record PatchCategoryDescriptionRequest([Required] string Name, string? Description);
 
 
-    // create new group
-    public record CreateGroupRequest([Required] string Name, [Required] decimal Price, string? Description, string? PriceDescription, List<string>? Tags, int? Quantity);
+    // create new set
+    public record CreateSetRequest([Required] string Name, [Required] decimal Price, string? Description, string? PriceDescription, List<string>? Tags, int? Quantity);
 
-    // patch group description
-    public record PatchGroupDescriptionRequest([Required] string Name, string? Description, string? PriceDescription, List<string>? Tags);
+    // patch set description
+    public record PatchSetDescriptionRequest([Required] string Name, string? Description, string? PriceDescription, List<string>? Tags);
 
-    // patch group price
-    public record PatchGroupPriceRequest([Required] decimal Price);
+    // patch set price
+    public record PatchSetPriceRequest([Required] decimal Price);
 
-    // patch group visibility
-    public record PatchGroupVisibilityRequest([Required] bool IsVisible);
+    // patch set visibility
+    public record PatchSetVisibilityRequest([Required] bool IsVisible);
 
-    // patch group quantity
-    public record PatchGroupQuantityRequest(int? Quantity);
+    // patch set availability
+    public record PatchSetAvailabilityRequest([Required] bool IsAvailable);
+
+    // patch set quantity
+    public record PatchSetQuantityRequest(int? Quantity);
 
 
     // create new product
@@ -50,6 +53,9 @@ namespace CatalogService.Contracts.v1.Contracts
     // patch product visibility
     public record PatchProductVisibilityRequest([Required] bool IsVisible);
 
+    // patch product availability
+    public record PatchProductAvailabilityRequest([Required] bool IsAvailable);
+
     // patch product quantity
     public record PatchProductQuantityRequest(int? Quantity);
 
@@ -58,15 +64,15 @@ namespace CatalogService.Contracts.v1.Contracts
 
 
     // generel category response
-    public record CategoryResponse(Guid Id, string Name, string Description, bool IsVisible, List<Guid> Products, List<Guid> Assets);
+    public record CategoryResponse(Guid Id, string Name, string Description, bool IsVisible, List<Guid> Products, List<Guid> Sets, List<Guid> Assets);
 
 
-    // general group response
-    public record GroupResponse(Guid Id, string Name, string Description, string Price, string PriceDescription, bool IsVisible, int? Quantity, List<Guid> Assets, List<Guid> Products, List<string> Tags);
+    // general set response
+    public record SetResponse(Guid Id, string Name, string Description, string Price, string PriceDescription, bool IsVisible, bool IsAvailable, int? Quantity, List<Guid> Assets, List<Guid> Products, List<string> Tags);
 
 
     // general product response
-    public record ProductResponse(Guid Id, string Name, decimal Price, int? Quantity, List<IngredientsResponse> Ingredients, List<AllergensResponse> Allergens, List<NutritionsResponse> Nutritions, bool IsVisible, string Description, string PriceDescription, List<Guid> Assets, List<string> Tags);
+    public record ProductResponse(Guid Id, string Name, decimal Price, int? Quantity, bool IsAvailable, bool IsVisible, string Description, string PriceDescription, List<IngredientsResponse> Ingredients, List<AllergensResponse> Allergens, List<NutritionsResponse> Nutritions, List<Guid> Assets, List<string> Tags);
 
 
     // ingredients response
