@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Domain.Mongo;
-using CatalogService.Core.Domain.Category;
+using CatalogService.Core.Domain.Categories;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;

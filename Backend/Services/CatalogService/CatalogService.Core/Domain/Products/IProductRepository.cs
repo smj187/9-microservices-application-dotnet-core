@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Domain.Mongo;
 
-namespace CatalogService.Core.Domain.Product
+namespace CatalogService.Core.Domain.Products
 {
     public interface IProductRepository : IMongoRepository<Product>
     {

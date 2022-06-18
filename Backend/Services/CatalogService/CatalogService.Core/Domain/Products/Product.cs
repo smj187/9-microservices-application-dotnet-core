@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Domain.Product
+namespace CatalogService.Core.Domain.Products
 {
     public class Product : AggregateRoot
     {
@@ -177,7 +177,7 @@ namespace CatalogService.Core.Domain.Product
 
             return true;
         }
-        
+
         public void ChangeAvailability(bool isAvailable)
         {
             Guard.Against.Null(isAvailable, nameof(isAvailable));

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Domain.Product
+namespace CatalogService.Core.Domain.Products
 {
     public class Ingredient : ValueObject
     {

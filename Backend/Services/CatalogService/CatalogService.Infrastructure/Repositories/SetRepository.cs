@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Domain.Mongo;
-using CatalogService.Core.Domain.Set;
+using CatalogService.Core.Domain.Sets;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;

@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Domain.Mongo;
 
-namespace CatalogService.Core.Domain.Category
+namespace CatalogService.Core.Domain.Categories
 {
     public interface ICategoryRepository : IMongoRepository<Category>
     {

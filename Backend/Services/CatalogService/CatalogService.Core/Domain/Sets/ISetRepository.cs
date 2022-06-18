@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Domain.Mongo;
 
-namespace CatalogService.Core.Domain.Set
+namespace CatalogService.Core.Domain.Sets
 {
     public interface ISetRepository : IMongoRepository<Set>
     {

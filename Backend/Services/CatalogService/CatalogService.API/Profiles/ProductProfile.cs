@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CatalogService.Contracts.v1.Contracts;
-using CatalogService.Core.Domain.Product;
+using CatalogService.Core.Domain.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;

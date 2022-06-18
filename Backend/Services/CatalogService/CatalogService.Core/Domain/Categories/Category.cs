@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Domain.Category
+namespace CatalogService.Core.Domain.Categories
 {
     public class Category : AggregateRoot
     {

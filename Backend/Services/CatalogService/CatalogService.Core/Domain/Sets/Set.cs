@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogService.Core.Domain.Set
+namespace CatalogService.Core.Domain.Sets
 {
     public class Set : AggregateRoot
     {

@@ -1,7 +1,7 @@
 ﻿using CatalogService.Contracts.v1.Commands;
 using CatalogService.Contracts.v1.Events;
-using CatalogService.Core.Domain.Product;
-using CatalogService.Core.Domain.Set;
+using CatalogService.Core.Domain.Products;
+using CatalogService.Core.Domain.Sets;
 using MassTransit;
 using System;
 using System.Collections.Generic;
