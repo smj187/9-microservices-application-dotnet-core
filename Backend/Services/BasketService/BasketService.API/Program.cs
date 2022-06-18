@@ -1,6 +1,8 @@
 using BasketService.Core.Domain;
 using BasketService.Infrastructure.Repositories;
+using BuildingBlocks.MassTransit;
 using BuildingBlocks.Middleware;
+using MassTransit;
 using MediatR;
 using StackExchange.Redis;
 using System.Reflection;
@@ -20,7 +22,21 @@ builder.Services.AddSingleton<IBasketRepository, BasketRepository>();
 
 
 
+builder.Services.AddMassTransit(x =>
+{
+    x.SetSnakeCaseEndpointNameFormatter();
+    x.AddConsumers(Assembly.Load("BasketService.Application"));
 
+    x.UsingRabbitMq((context, rabbit) =>
+    {
+        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
+        {
+            host.Username(RabbitMqSettings.Username);
+            host.Password(RabbitMqSettings.Password);
+        });
+    });
+
+});
 
 
 
@@ -32,7 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

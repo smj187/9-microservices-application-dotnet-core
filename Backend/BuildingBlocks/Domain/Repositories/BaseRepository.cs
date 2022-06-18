@@ -64,5 +64,10 @@ namespace BuildingBlocks.Domain.Repositories
         {
             return await _commandRepository.PatchAsync(id, entity);
         }
+
+        public async Task RemoveAsync(T entity)
+        {
+            await _commandRepository.RemoveAsync(entity);
+        }
     }
 }

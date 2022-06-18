@@ -20,6 +20,7 @@ namespace BuildingBlocks.MassTransit
         public const string PaymentConsumerEndpointName = "payment_service_payment_process";
         public const string TenantConsumerEndpointName = "tenant_service_tenant_approval";
         public const string DeliveryConsumerEndpointName = "delivery_service_delivery_process";
+        public const string CreateNewOrderFromBasket = "basket_service_create_new_order";
 
 
 

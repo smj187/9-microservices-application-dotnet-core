@@ -16,6 +16,7 @@ namespace BuildingBlocks.Domain.Repositories
 
 
         Task BulkWrite(IEnumerable<WriteModel<T>> bulk);
+        Task RemoveAsync(T entity);
 
     }
 }

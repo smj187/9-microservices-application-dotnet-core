@@ -11,43 +11,40 @@ namespace BasketService.Core.Domain
 {
     public class Item : ValueObject
     {
-        private Guid _itemId;
-        private string _itemName;
-        private string _itemImage;
+        private Guid _id;
+        private string _name;
+        private string _image;
         private decimal _price;
-        private int _quantity;
 
-        public Item(Guid itemId, string itemName, string itemImage, decimal price, int quantity)
+        public Item(Guid id, string name, string image, decimal price)
         {
-            Guard.Against.Null(itemId, nameof(itemId));
-            Guard.Against.NullOrWhiteSpace(itemName, nameof(itemName));
-            Guard.Against.NullOrWhiteSpace(itemImage, nameof(itemImage));
+            Guard.Against.Null(id, nameof(id));
+            Guard.Against.NullOrWhiteSpace(name, nameof(name));
+            Guard.Against.NullOrWhiteSpace(image, nameof(image));
             Guard.Against.NullOrNegativ(price, nameof(price));
-            Guard.Against.NullOrNegativ(quantity, nameof(quantity));
 
-            _itemId = itemId;
-            _itemName = itemName;
-            _itemImage = itemImage;
+            _id = id;
+            _name = name;
+            _image = image;
             _price = price;
-            _quantity = quantity;
         }
 
-        public Guid ItemId
+        public Guid Id
         { 
-            get => _itemId;
-            private set => _itemId = value; 
+            get => _id;
+            private set => _id = value; 
         }
 
-        public string ItemName 
+        public string Name 
         {
-            get => _itemName;
-            private set => _itemName = value; 
+            get => _name;
+            private set => _name = value; 
         }
 
-        public string ItemImage
+        public string Image
         {
-            get => _itemImage;
-            private set => _itemImage = value;
+            get => _image;
+            private set => _image = value;
         }
 
         public decimal Price 
@@ -56,19 +53,12 @@ namespace BasketService.Core.Domain
             private set => _price = value;
         }
 
-        public int Quantity 
-        {
-            get => _quantity;
-            private set => _quantity = value;
-        }
-
         protected override IEnumerable<object> GetEqualityComponents()
         {
-            yield return ItemId;
-            yield return ItemName;
-            yield return ItemImage;
+            yield return Id;
+            yield return Name;
+            yield return Image;
             yield return Price;
-            yield return Quantity;
         }
     }
 }

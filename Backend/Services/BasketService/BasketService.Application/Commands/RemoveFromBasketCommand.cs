@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 namespace BasketService.Application.Commands
 {
-    public class RemoveItemFromBasketCommand : IRequest<Basket>
+    public class RemoveFromBasketCommand : IRequest<Basket>
     {
         public Guid BasketId { get; set; }
-        public Guid ItemId { get; set; }
+        public string Type { get; set; } = default!;
+
+        public Guid Id { get; set; }
     }
 }

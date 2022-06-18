@@ -13,13 +13,6 @@ namespace BasketService.API.Profiles
     {
         public BasketProfile()
         {
-            CreateMap<AddItemToBasketRequest, Item>()
-                .ConstructUsing((src, ctx) =>
-                {
-                    return new Item(src.ItemId, src.ItemName, src.ItemImage, src.Price, src.Quantity);
-                });
-
-
             CreateMap<Item, ItemResponse>();
             CreateMap<Basket, BasketResponse>();
         }

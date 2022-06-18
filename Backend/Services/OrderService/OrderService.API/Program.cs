@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using OrderService.Application.Consumers;
 using OrderService.Application.StateMachines;
 using OrderService.Application.StateMachines.Events;
 using OrderService.Application.StateMachines.Responses;
@@ -52,6 +53,11 @@ builder.Services.AddMassTransit(x =>
         rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaName, endpoint =>
         {
             endpoint.ConfigureSaga<OrderStateMachineInstance>(context);
+        });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.CreateNewOrderFromBasket, endpoint =>
+        {
+            endpoint.ConfigureConsumer<CreateNewOrderConsumer>(context);
         });
     });
 });

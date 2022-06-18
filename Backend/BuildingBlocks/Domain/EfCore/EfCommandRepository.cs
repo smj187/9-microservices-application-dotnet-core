@@ -48,5 +48,10 @@ namespace BuildingBlocks.Domain.EfCore
 
             return Task.FromResult(entity);
         }
+
+        public Task RemoveAsync(T entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

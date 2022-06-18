@@ -2,6 +2,9 @@
 using BasketService.Application.Commands;
 using BasketService.Application.Queries;
 using BasketService.Contracts.v1.Contracts;
+using BasketService.Core.Domain;
+using BuildingBlocks.Controllers;
+using BuildingBlocks.MassTransit.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -13,41 +16,32 @@ using System.Threading.Tasks;
 
 namespace BasketService.API.Controllers
 {
-    [ApiController]
     [Route("api/v1/[controller]")]
-    public class BasketController : ControllerBase
+    public class BasketController : ApiBaseController<BasketController>
     {
-        private readonly IMapper _mapper;
-        private readonly IMediator _mediator;
+        private readonly IBasketRepository _basketRepository;
 
-        public BasketController(IMapper mapper, IMediator mediator)
+        public BasketController(IBasketRepository basketRepository)
         {
-            _mapper = mapper;
-            _mediator = mediator;
+            _basketRepository = basketRepository;
         }
-
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<BasketResponse>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListBasketsAsync()
-        {
-            var query = new ListBasketsQuery();
-
-            var data = await _mediator.Send(query);
-            return Ok(_mapper.Map<IReadOnlyCollection<BasketResponse>>(data));
-        }
+            => Ok(Mapper.Map<IReadOnlyCollection<BasketResponse>>(await Mediator.Send(new ListBasketsQuery())));
 
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BasketResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateBasketAsync()
+        public async Task<IActionResult> CreateBasketAsync([FromBody, Required] CreateBasketRequest request)
         {
-            var command = new CreateBasketCommand();
-
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<BasketResponse>(data));
+            var data = await Mediator.Send(new CreateBasketCommand
+            {
+                UserId = request.UserId,
+            });
+            return Ok(Mapper.Map<BasketResponse>(data)); ;
         }
 
 
@@ -58,54 +52,48 @@ namespace BasketService.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> FindBasketAsync([FromRoute, Required] Guid basketId)
         {
-            var query = new FindBasketQuery
+            var data = await Mediator.Send(new FindBasketQuery
             {
                 BasketId = basketId
-            };
-
-            var data = await _mediator.Send(query);
-            return Ok(_mapper.Map<BasketResponse>(data));
+            });
+            return Ok(Mapper.Map<BasketResponse>(data));
         }
 
 
         [HttpPatch]
-        [Route("{basketid:guid}/add-item")]
+        [Route("{basketid:guid}/add")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BasketResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddItemToBasketAsync([FromRoute, Required] Guid basketId, [FromBody, Required] AddItemToBasketRequest request)
+        public async Task<IActionResult> AddToBasketAsync([FromRoute, Required] Guid basketId, [FromBody, Required] AddToBasketRequest request)
         {
-            var command = new AddItemToBasketCommand
+            var data = await Mediator.Send(new AddToBasketCommand
             {
                 BasketId = basketId,
-                ItemId = request.ItemId,
-                ItemName = request.ItemName,
-                ItemImage = request.ItemImage,
+                Id = request.Id,
+                Name = request.Name,
+                Image = request.Image,
                 Price = request.Price,
-                Quantity = request.Quantity
-            };
-
-
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<BasketResponse>(data));
+                Type = request.Type
+            });
+            return Ok(Mapper.Map<BasketResponse>(data));
         }
 
 
         [HttpPatch]
-        [Route("{basketid:guid}/remove-item")]
+        [Route("{basketid:guid}/remove")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BasketResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RemoveItemFromBasketAsync([FromRoute, Required] Guid basketId, [FromBody, Required] RemoveItemFromBasketRequest request)
+        public async Task<IActionResult> RemoveFromBasketAsync([FromRoute, Required] Guid basketId, [FromBody, Required] RemoveFromBasketRequest request)
         {
-            var command = new RemoveItemFromBasketCommand
+            var data = await Mediator.Send(new RemoveFromBasketCommand
             {
                 BasketId = basketId,
-                ItemId = request.ItemId
-            };
-
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<BasketResponse>(data));
+                Type = request.Type,
+                Id = request.Id
+            });
+            return Ok(Mapper.Map<BasketResponse>(data));
         }
 
 
@@ -116,31 +104,34 @@ namespace BasketService.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ClearBasketAsync([FromRoute, Required] Guid basketId)
         {
-            var command = new ClearBasketCommand
+            var data = await Mediator.Send(new ClearBasketCommand
             {
                 BasketId = basketId
-            };
-
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<BasketResponse>(data));
+            });
+            return Ok(Mapper.Map<BasketResponse>(data));
         }
 
 
-        [HttpPatch]
-        [Route("{basketid:guid}/assign-user/{userid:guid}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BasketResponse))]
+        [HttpPost]
+        [Route("{basketid:guid}/checkout")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AssignBasketToUserAsync([FromRoute, Required] Guid basketId, [FromRoute, Required] Guid userId)
+        public async Task<IActionResult> CheckoutBasketAsync([FromRoute] Guid basketId)
         {
-            var command = new AssignUserToBasketCommand
+            var basket = await Mediator.Send(new FindBasketQuery
             {
-                BasketId = basketId,
-                UserId = userId
-            };
+                BasketId = basketId
+            });
 
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<BasketResponse>(data));
+            var products = basket.Products.Select(x => x.Id).ToList();
+            var sets = basket.Sets.Select(x => x.Id).ToList();
+            var command = new CreateNewOrderCommand(basketId, basket.UserId, products, sets);
+
+            await PublishEndpoint.Publish(command);
+
+            await _basketRepository.RemoveAsync(basket);
+            return NoContent();
         }
     }
 }

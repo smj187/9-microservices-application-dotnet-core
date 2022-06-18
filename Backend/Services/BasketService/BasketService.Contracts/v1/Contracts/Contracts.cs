@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace BasketService.Contracts.v1.Contracts
 {
-    public record AddItemToBasketRequest(Guid ItemId, string ItemName, string? ItemImage, decimal Price, int Quantity);
-    public record RemoveItemFromBasketRequest(Guid ItemId);
+    public record CreateBasketRequest(Guid UserId);
+
+    public record AddToBasketRequest(Guid Id, string Name, string Image, decimal Price, string Type);
+    public record RemoveFromBasketRequest(Guid Id, string Type);
 
    
-    public record BasketResponse(Guid Id, Guid? UserId, List<ItemResponse> Items, int TotalItems, decimal TotalPrice, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
-    public record ItemResponse(Guid ItemId, string ItemName, string? ItemImage, decimal Price, int Quantity);
+    public record BasketResponse(Guid Id, Guid UserId, int TotalItems, decimal TotalPrice, List<ItemResponse> Products, List<ItemResponse> Sets, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
+    public record ItemResponse(Guid Id, string Name, string Image, decimal Price);
 }
