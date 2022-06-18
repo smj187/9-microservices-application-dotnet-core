@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.MassTransit.Commands;
+﻿using DeliveryService.Contracts.v1.Commands;
 using DeliveryService.Contracts.v1.Events;
 using MassTransit;
 using System;
@@ -28,11 +28,11 @@ namespace DeliveryService.Application.Consumers
 
             if (isDelivered)
             {
-                await _publishEndpoint.Publish(new DeliverySuccessEvent(context.Message.CorrelationId, context.Message.OrderId, "success"));
+                await _publishEndpoint.Publish(new DeliverySuccessSagaEvent(context.Message.CorrelationId, context.Message.OrderId, "success"));
             }
             else
             {
-                await _publishEndpoint.Publish(new DeliveryFailureEvent(context.Message.CorrelationId, context.Message.OrderId, "failure"));
+                await _publishEndpoint.Publish(new DeliveryFailureSagaEvent(context.Message.CorrelationId, context.Message.OrderId, "failure"));
             }
 
             await Task.CompletedTask;

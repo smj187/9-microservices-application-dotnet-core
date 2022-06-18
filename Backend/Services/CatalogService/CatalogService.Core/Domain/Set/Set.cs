@@ -147,6 +147,15 @@ namespace CatalogService.Core.Domain.Set
             ModifiedAt = DateTimeOffset.UtcNow;
         }
 
+        public bool DecreaseQuantity()
+        {
+            if (_quantity <= 0) return false;
+
+            _quantity = Quantity - 1;
+
+            return true;
+        }
+
         public void ChangeAvailability(bool isAvailable)
         {
             Guard.Against.Null(isAvailable, nameof(isAvailable));

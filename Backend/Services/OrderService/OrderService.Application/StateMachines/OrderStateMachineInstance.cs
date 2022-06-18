@@ -16,8 +16,9 @@ namespace OrderService.Application.StateMachines
 
         public Guid OrderId { get; set; }
         public Guid UserId { get; set; }
-        public List<Guid> Items { get; set; } = new();
-        public OrderStatus OrderStatus { get; set; }
+        public List<Guid> Products { get; set; } = new();
+        public List<Guid> Sets { get; set; } = new();
+        public OrderStatus OrderStatus { get; set; } = OrderStatus.Created;
         public decimal TotalAmount { get; set; }
 
         // meta

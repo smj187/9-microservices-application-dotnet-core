@@ -1,10 +1,10 @@
-﻿using BuildingBlocks.MassTransit.Commands;
-using MassTransit;
+﻿using MassTransit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TenantService.Contracts.v1.Commands;
 using TenantService.Contracts.v1.Events;
 using TenantService.Core.Domain.Aggregates;
 
@@ -31,11 +31,11 @@ namespace TenantService.Application.Consumers
 
             if(accepted)
             {
-                await _publishEndpoint.Publish(new TenantApproveOrderEvent(context.Message.CorrelationId, context.Message.OrderId, "all good"));
+                await _publishEndpoint.Publish(new TenantApproveOrderSagaEvent(context.Message.CorrelationId, context.Message.OrderId));
             }
             else
             {
-                await _publishEndpoint.Publish(new TenantRejectOrderEvent(context.Message.CorrelationId, context.Message.OrderId, "this user is banned"));
+                await _publishEndpoint.Publish(new TenantRejectOrderSagaEvent(context.Message.CorrelationId, context.Message.OrderId));
             }
         }
     }

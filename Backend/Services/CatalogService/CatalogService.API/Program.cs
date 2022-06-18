@@ -38,17 +38,11 @@ builder.Services.AddMassTransit(x =>
             host.Password(RabbitMqSettings.Password);
         });
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.CatalogAllocationEndpointName, e =>
-        {
-            e.ConfigureConsumer<CatalogConsumer>(context);
-        });
-
-        rabbit.ReceiveEndpoint(RabbitMqSettings.CreateNewOrderFromBasket, e =>
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaCatalogConsumerEndpointName, e =>
         {
             e.ConfigureConsumer<CatalogConsumer>(context);
         });
     });
-  
 });
 
 

@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace BasketService.Contracts.v1.Commands
 {
-    public class Commands
-    {
-
-    }
+    public record BasketCheckoutCommand(Guid BasketId, Guid UserId, List<Guid> Products, List<Guid> Sets);
 }

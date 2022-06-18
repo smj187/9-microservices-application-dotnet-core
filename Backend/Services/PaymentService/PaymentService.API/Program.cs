@@ -34,7 +34,7 @@ builder.Services.AddMassTransit(x =>
             host.Password(RabbitMqSettings.Password);
         });
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.PaymentConsumerEndpointName, e =>
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaPaymentConsumerEndpointName, e =>
         {
             e.ConfigureConsumer<PaymentConsumer>(context);
         });

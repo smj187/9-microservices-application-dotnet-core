@@ -1,5 +1,6 @@
 using BuildingBlocks.Extensions;
 using BuildingBlocks.MassTransit;
+using BuildingBlocks.Middleware;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,13 +35,14 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumers(Assembly.Load("OrderService.Application"));
 
     x.AddSagaStateMachine<OrderStateMachine, OrderStateMachineInstance>()
-        .MongoDbRepository(r =>
-        {
-            r.Connection = "mongodb://127.0.0.1";
-            r.DatabaseName = "orders";
+    .InMemoryRepository();
+        //.MongoDbRepository(r =>
+        //{
+        //    r.Connection = "mongodb://127.0.0.1";
+        //    r.DatabaseName = "orders";
 
-            r.CollectionName = "sagas";
-        });
+        //    r.CollectionName = "sagas";
+        //});
 
     x.UsingRabbitMq((context, rabbit) =>
     {
@@ -55,7 +57,7 @@ builder.Services.AddMassTransit(x =>
             endpoint.ConfigureSaga<OrderStateMachineInstance>(context);
         });
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.CreateNewOrderFromBasket, endpoint =>
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaBasketCheckoutConsumerEndpointName, endpoint =>
         {
             endpoint.ConfigureConsumer<CreateNewOrderConsumer>(context);
         });
@@ -73,6 +75,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
