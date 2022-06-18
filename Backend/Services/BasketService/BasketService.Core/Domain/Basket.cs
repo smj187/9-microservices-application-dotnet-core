@@ -11,70 +11,102 @@ namespace BasketService.Core.Domain
 {
     public class Basket : AggregateRoot
     {
-        private List<Item> _items;
-        private Guid? _userId;
+        private List<Item> _products;
+        private List<Item> _sets;
+        private Guid _userId;
 
-
-        public Basket(Guid id)
+        public Basket(Guid id, Guid userId)
         {
             Guard.Against.Null(id, nameof(id));
+            Guard.Against.Null(userId, nameof(userId));
+
+            _userId = userId;
             Id = id;
-            _items = new();
-            _userId = null;
+            _products = new();
+            _sets = new();
 
             CreatedAt = DateTimeOffset.UtcNow;
         }
 
 
         [JsonProperty]
-        public Guid? UserId 
+        public Guid UserId
         { 
             get => _userId; 
             private set => _userId = value; 
         }
 
-        public List<Item> Items 
+        public List<Item> Products 
         { 
-            get => _items;
-            private set => _items = value;
+            get => _products;
+            private set => _products = value;
+        }
+
+        public List<Item> Sets
+        {
+            get => _sets;
+            private set => _sets = value;
         }
 
         public int TotalItems
         {
-            get => _items.Count;
+            get => _products.Count;
         }
 
         public decimal TotalPrice
         {
-            get => Items.Sum(item => item.Price * item.Quantity);
+            get => _products.Sum(item => item.Price) + _sets.Sum(s => s.Price);
         }
 
-        public void AddItem(Item item)
+        public void AddProduct(Item item)
         {
-            Items.Add(item);
+            Guard.Against.Null(item, nameof(item));
+            _products.Add(item);
 
             ModifiedAt = DateTimeOffset.UtcNow;
         }
 
-        public void RemoveItem(Guid itemId)
+        public void RemoveProduct(Guid itemId)
         {
-            var item = _items.FirstOrDefault(i => i.ItemId == itemId);
-            Items.Remove(item);
+            Guard.Against.Null(itemId, nameof(itemId));
+
+            var product = _products.FirstOrDefault(i => i.Id == itemId);
+            if(product != null)
+            {
+                _products.Remove(product);
+                ModifiedAt = DateTimeOffset.UtcNow;
+            }
+
+        }
+
+        public void ClearCart()
+        {
+            _products.Clear();
+            _sets.Clear();
 
             ModifiedAt = DateTimeOffset.UtcNow;
         }
 
-        public void ClearItems()
+        public void AddSet(Item item)
         {
-            _items.Clear();
+            Guard.Against.Null(item, nameof(item));
+            _sets.Add(item);
 
             ModifiedAt = DateTimeOffset.UtcNow;
         }
 
-        public void AssignUser(Guid? userId)
+        public void RemoveSet(Guid itemId)
         {
-            _userId = userId;
+            Guard.Against.Null(itemId, nameof(itemId));
+
+            var set = _sets.FirstOrDefault(i => i.Id == itemId);
+            if (set != null)
+            {
+                _sets.Remove(set);
+                ModifiedAt = DateTimeOffset.UtcNow;
+            }
         }
+
 
     }
 }

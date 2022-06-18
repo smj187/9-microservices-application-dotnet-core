@@ -27,7 +27,7 @@ namespace BasketService.Application.CommandHandlers
                 throw new AggregateNotFoundException(nameof(Basket), request.BasketId);
             }
 
-            basket.ClearItems();
+            basket.ClearCart();
 
             return await _basketRepository.PatchAsync(request.BasketId, basket);
         }

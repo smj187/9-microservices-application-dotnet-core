@@ -41,5 +41,10 @@ namespace BuildingBlocks.Domain.Redis
             await _database.StringSetAsync($"{typeof(T).Name.ToLower()}:{entity.Id}", data);
             return entity;
         }
+
+        public async Task RemoveAsync(T entity)
+        {
+            await _database.KeyDeleteAsync($"{typeof(T).Name.ToLower()}:{entity.Id}");
+        }
     }
 }

@@ -7,4 +7,5 @@ using System.Threading.Tasks;
 namespace OrderService.Application.StateMachines.Events
 {
     public record CreateOrderSagaEvent(Guid OrderId, Guid UserId, List<Guid> Items);
+    
 }

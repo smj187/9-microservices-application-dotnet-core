@@ -57,5 +57,10 @@ namespace BuildingBlocks.Domain.Mongo
         {
             await _mongoCollection.BulkWriteAsync(bulk);
         }
+
+        public Task RemoveAsync(T entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

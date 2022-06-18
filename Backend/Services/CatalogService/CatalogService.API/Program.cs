@@ -42,6 +42,11 @@ builder.Services.AddMassTransit(x =>
         {
             e.ConfigureConsumer<CatalogConsumer>(context);
         });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.CreateNewOrderFromBasket, e =>
+        {
+            e.ConfigureConsumer<CatalogConsumer>(context);
+        });
     });
   
 });

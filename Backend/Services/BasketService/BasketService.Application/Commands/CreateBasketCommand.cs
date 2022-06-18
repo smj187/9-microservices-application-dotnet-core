@@ -10,6 +10,6 @@ namespace BasketService.Application.Commands
 {
     public class CreateBasketCommand : IRequest<Basket>
     {
-
+        public Guid UserId { get; set; }
     }
 }
