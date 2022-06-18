@@ -15,12 +15,13 @@ namespace BuildingBlocks.MassTransit
         public const string Password = "guest";
 
         // saga
-        public const string OrderSagaName = "order_service_order_saga";
-        public const string CatalogAllocationEndpointName = "catalog_service_consumer_item_allocation";
-        public const string PaymentConsumerEndpointName = "payment_service_payment_process";
-        public const string TenantConsumerEndpointName = "tenant_service_tenant_approval";
-        public const string DeliveryConsumerEndpointName = "delivery_service_delivery_process";
-        public const string CreateNewOrderFromBasket = "basket_service_create_new_order";
+        public const string OrderSagaName = "order_service_saga";
+        public const string OrderSagaCatalogConsumerEndpointName = "order_service_saga_catalog_consumer";
+        public const string OrderSagaPaymentConsumerEndpointName = "order_service_saga_payment_consumer";
+        public const string OrderSagaTenantConsumerEndpointName = "order_service_saga_tenant_consumer";
+        public const string OrderSagaDeliveryConsumerEndpointName = "order_service_saga_delivery_consumer";
+        public const string OrderSagaBasketCheckoutConsumerEndpointName = "order_service_saga_basket_checkout_consumer";
+
 
 
 

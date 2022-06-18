@@ -33,7 +33,7 @@ builder.Services.AddMassTransit(x =>
             host.Password(RabbitMqSettings.Password);
         });
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.TenantConsumerEndpointName, e =>
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaTenantConsumerEndpointName, e =>
         {
             e.ConfigureConsumer<TenantConsumer>(context);
         });

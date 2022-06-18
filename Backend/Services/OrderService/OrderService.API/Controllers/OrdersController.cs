@@ -52,29 +52,9 @@ namespace OrderService.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrderAsync([FromBody] CreateOrderRequest request)
         {
-            //var mapped = _mapper.Map<Order>(createOrderRequest);
-
-            //var command = new CreateOrderCommand
-            //{
-            //    NewOrder = mapped
-            //};
-
-            //var data = await _mediator.Send(command);
-
-            //var result = _mapper.Map<OrderResponse>(data);
-            //return Ok(result);
-
-            //var orderId = Guid.Parse("6272a465-ec7d-4dbf-b3f7-ad9b80000000");
-            var orderId = Guid.NewGuid();
-            var user = Guid.Parse("7ef12325-13e1-48c3-bb2c-e3f4979c1337");
-            var items = request.Products;
-
-            await _publishEndpoint.Publish(new CreateOrderSagaEvent(orderId, user, items));
-
-            return Ok(new
-            {
-                id = orderId
-            });
+            var command = new CreateOrderSagaEvent(Guid.NewGuid(), request.UserId, request.TenantId, request.Products, request.Sets);
+            await _publishEndpoint.Publish(command);
+            return Ok(command);
         }
 
         [HttpGet]

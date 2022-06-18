@@ -34,7 +34,6 @@ namespace CatalogService.Infrastructure.Repositories
             await BulkWrite(bulk);
 
             return products;
-
         }
     }
 }

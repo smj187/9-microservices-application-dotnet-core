@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Contracts.v1.Events
 {
-    public record DeliverySuccessEvent(Guid CorrelationId, Guid OrderId, string? Message);
-    public record DeliveryFailureEvent(Guid CorrelationId, Guid OrderId, string? Message);
+    public record DeliverySuccessSagaEvent(Guid CorrelationId, Guid OrderId, string? Message);
+    public record DeliveryFailureSagaEvent(Guid CorrelationId, Guid OrderId, string? Message);
 }

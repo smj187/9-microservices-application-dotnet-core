@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace TenantService.Contracts.v1.Events
 {
-    public record TenantApproveOrderEvent(Guid CorrelationId, Guid OrderId, string? Message);
-    public record TenantRejectOrderEvent(Guid CorrelationId, Guid OrderId, string? Message);
+    public record TenantApproveOrderSagaEvent(Guid CorrelationId, Guid OrderId, string? Message = null);
+    public record TenantRejectOrderSagaEvent(Guid CorrelationId, Guid OrderId, string? Message = null);
 }

@@ -1,17 +1,20 @@
 ﻿using BuildingBlocks.MassTransit;
-using BuildingBlocks.MassTransit.Commands;
+using CatalogService.Contracts.v1.Commands;
 using CatalogService.Contracts.v1.Events;
+using DeliveryService.Contracts.v1.Commands;
 using DeliveryService.Contracts.v1.Events;
 using MassTransit;
 using OrderService.Application.StateMachines.Events;
 using OrderService.Application.StateMachines.Responses;
 using OrderService.Core.Entities.Enumerations;
+using PaymentService.Contracts.v1.Commands;
 using PaymentService.Contracts.v1.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TenantService.Contracts.v1.Commands;
 using TenantService.Contracts.v1.Events;
 
 namespace OrderService.Application.StateMachines
@@ -41,21 +44,21 @@ namespace OrderService.Application.StateMachines
         {
             InstanceState(x => x.CurrentState);
 
-            Event(() => CreateOrderSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => CreateOrderSagaEvent, x => x.CorrelateById(context => context.Message.BasketId));
 
-            Event(() => ItemAllocationSuccessEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => ItemAllocationOutOfStockEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => ItemAllocationNotVisibleEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => CatalogAllocationSuccessSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => CatalogAllocationOutOfStockErrorSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => CatalogAllocationUnavailableErrorSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
 
-            Event(() => PaymentFailureEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => PaymentSuccessEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => PaymentFailureSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => PaymentSuccessSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
 
 
-            Event(() => TenantApproveOrderEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => TenantRejectOrderEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => TenantApproveOrderSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => TenantRejectOrderSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
 
-            Event(() => DeliverySuccessEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => DeliveryFailureEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => DeliverySuccessSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
+            Event(() => DeliveryFailureSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
 
             Event(() => CheckOrderEvent, x =>
             {
@@ -77,45 +80,51 @@ namespace OrderService.Application.StateMachines
                     .Then(context =>
                     {
                         Console.WriteLine("init");
-                        context.Saga.CorrelationId = context.Message.OrderId;
+                        context.Saga.CorrelationId = context.Message.BasketId;
+                        context.Saga.OrderId = context.Message.BasketId;
+
                         context.Saga.UserId = context.Message.UserId;
-                        context.Saga.OrderId = context.Message.OrderId;
-                        context.Saga.Items = context.Message.Items;
+                        context.Saga.Products = context.Message.Products;
+                        context.Saga.Sets = context.Message.Sets;
 
                         context.Saga.OrderStatus = OrderStatus.Created;
                     })
                     .TransitionTo(AwaitingItemAllocationState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.CatalogAllocationEndpointName}"), context => new ItemAllocationCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.Items))
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaCatalogConsumerEndpointName}"), context => new CatalogAllocationCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.Products, context.Saga.Sets))
                 );
 
 
             During(AwaitingItemAllocationState,
-                When(ItemAllocationSuccessEvent)
+                When(CatalogAllocationSuccessSagaEvent)
                     .Then(context =>
                     {
-                        var total = context.Message.Items.Sum(x => x.Quantity * x.Price);
-                        Console.WriteLine($"item is in stock | Total: {total}");
-                        context.Saga.TotalAmount = total ?? 0;
+                        Console.WriteLine($"products and sets are available.. continue");
+
+                        context.Saga.TotalAmount = context.Message.Products.Sum(x => x.Price) + context.Message.Sets.Sum(x => x.Price);
                         context.Saga.OrderStatus = OrderStatus.ItemsAllocated;
                     })
                     .TransitionTo(PaymentState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.PaymentConsumerEndpointName}"), context => new PaymentCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.TotalAmount)),
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaPaymentConsumerEndpointName}"), context => new PaymentCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.UserId, context.Saga.TotalAmount)),
 
-                When(ItemAllocationOutOfStockEvent)
+                When(CatalogAllocationOutOfStockErrorSagaEvent)
                     .Then(context =>
                     {
-                        var items = context.Message.Items.Select(x => x.ToString());
-                        Console.WriteLine($"item(s) are not in stock :( {string.Join(", ", items)}");
+                        var products = context.Message.Products.Select(x => x.ToString());
+                        var sets = context.Message.Sets.Select(x => x.ToString());
+                        Console.WriteLine($"-- out of stock -> products: {string.Join(", ", products)}");
+                        Console.WriteLine($"-- out of stock -> sets: {string.Join(", ", sets)}");
 
                         context.Saga.OrderStatus = OrderStatus.ItemsOutOfStock;
                     })
                     .Finalize(),
 
-                When(ItemAllocationNotVisibleEvent)
+                When(CatalogAllocationUnavailableErrorSagaEvent)
                     .Then(context =>
                     {
-                        var items = context.Message.Items.Select(x => x.ToString());
-                        Console.WriteLine($"the following items are not available {string.Join(", ", items)}");
+                        var products = context.Message.Products.Select(x => x.ToString());
+                        var sets = context.Message.Sets.Select(x => x.ToString());
+                        Console.WriteLine($"-- unavailable -> products: {string.Join(", ", products)}");
+                        Console.WriteLine($"-- unavailable -> sets: {string.Join(", ", sets)}");
 
                         context.Saga.OrderStatus = OrderStatus.ItemNotVisible;
                     })
@@ -124,11 +133,11 @@ namespace OrderService.Application.StateMachines
 
 
             During(PaymentState,
-                When(PaymentSuccessEvent)
+                When(PaymentSuccessSagaEvent)
                     .Then(context =>
                     {
                         Console.WriteLine($"user {context.Saga.UserId} paid a total of {context.Saga.TotalAmount} for: ");
-                        foreach (var item in context.Saga.Items)
+                        foreach (var item in context.Saga.Products)
                         {
                             Console.WriteLine($"    -> {item}");
                         }
@@ -136,9 +145,9 @@ namespace OrderService.Application.StateMachines
                         context.Saga.OrderStatus = OrderStatus.PaymentSuccess;
                     })
                     .TransitionTo(TenantState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.TenantConsumerEndpointName}"), context => new TenantCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Items, context.Saga.TotalAmount)),
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaTenantConsumerEndpointName}"), context => new TenantCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Products, context.Saga.TotalAmount)),
 
-                When(PaymentFailureEvent)
+                When(PaymentFailureSagaEvent)
                     .Then(context =>
                     {
                         Console.WriteLine("payment failed :(");
@@ -148,17 +157,17 @@ namespace OrderService.Application.StateMachines
                 );
 
             During(TenantState,
-                When(TenantApproveOrderEvent)
+                When(TenantApproveOrderSagaEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine($"tenant approved order for {context.Saga.UserId} for {context.Saga.Items.Count} items");
+                        Console.WriteLine($"tenant approved order for {context.Saga.UserId} for {context.Saga.Products.Count} items");
 
                         context.Saga.OrderStatus = OrderStatus.TenantApproved;
                     })
                     .TransitionTo(DeliveryState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.DeliveryConsumerEndpointName}"), context => new DeliveryCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Items)),
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaDeliveryConsumerEndpointName}"), context => new DeliveryCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Products)),
 
-                When(TenantRejectOrderEvent)
+                When(TenantRejectOrderSagaEvent)
                     .Then(context =>
                     {
                         Console.WriteLine("tenant approval failed :(");
@@ -169,7 +178,7 @@ namespace OrderService.Application.StateMachines
 
 
             During(DeliveryState,
-                When(DeliverySuccessEvent)
+                When(DeliverySuccessSagaEvent)
                     .Then(context =>
                     {
                         Console.WriteLine($"order {context.Saga.OrderId} was delivered successfully. this saga has ended");
@@ -178,7 +187,7 @@ namespace OrderService.Application.StateMachines
                     .TransitionTo(OrderCompleteState)
                     .Finalize(),
 
-                When(DeliveryFailureEvent)
+                When(DeliveryFailureSagaEvent)
                     .Then(context =>
                     {
                         Console.WriteLine("delviery failed :(");
@@ -194,7 +203,7 @@ namespace OrderService.Application.StateMachines
                    {
                        UserId = context.Saga.UserId,
                        OrderId = context.Saga.OrderId,
-                       Items = context.Saga.Items,
+                       Items = context.Saga.Products,
                        Status = context.Saga.OrderStatus.Description
                    }))
                 );
@@ -209,24 +218,24 @@ namespace OrderService.Application.StateMachines
 
 
         // 1st stage -> check if items are available to buy
-        public Event<CatalogAllocationSuccessEvent> ItemAllocationSuccessEvent { get; private set; }
-        public Event<CatalogAllocationOutOfStockEvent> ItemAllocationOutOfStockEvent { get; private set; }
-        public Event<CatalogAllocationNotVisibleEvent> ItemAllocationNotVisibleEvent { get; private set; }
+        public Event<CatalogAllocationSuccessSagaEvent> CatalogAllocationSuccessSagaEvent { get; private set; }
+        public Event<CatalogAllocationOutOfStockErrorSagaEvent> CatalogAllocationOutOfStockErrorSagaEvent { get; private set; }
+        public Event<CatalogAllocationUnavailableErrorSagaEvent> CatalogAllocationUnavailableErrorSagaEvent { get; private set; }
 
 
         // 2nd stage -> payment process
-        public Event<PaymentSuccessEvent> PaymentSuccessEvent { get; private set; }
-        public Event<PaymentFailureEvent> PaymentFailureEvent { get; private set; }
+        public Event<PaymentSuccessSagaEvent> PaymentSuccessSagaEvent { get; private set; }
+        public Event<PaymentFailureSagaEvent> PaymentFailureSagaEvent { get; private set; }
 
 
         // 3rd stage -> tenant approves or rejects the order
-        public Event<TenantApproveOrderEvent> TenantApproveOrderEvent { get; private set; }
-        public Event<TenantRejectOrderEvent> TenantRejectOrderEvent { get; private set; }
+        public Event<TenantApproveOrderSagaEvent> TenantApproveOrderSagaEvent { get; private set; }
+        public Event<TenantRejectOrderSagaEvent> TenantRejectOrderSagaEvent { get; private set; }
 
 
         // 4th stage -> delivery
-        public Event<DeliverySuccessEvent> DeliverySuccessEvent { get; private set; }
-        public Event<DeliveryFailureEvent> DeliveryFailureEvent { get; private set; }
+        public Event<DeliverySuccessSagaEvent> DeliverySuccessSagaEvent { get; private set; }
+        public Event<DeliveryFailureSagaEvent> DeliveryFailureSagaEvent { get; private set; }
 
 
 

@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.MassTransit.Commands;
+﻿using BasketService.Contracts.v1.Commands;
 using MassTransit;
 using System;
 using System.Collections.Generic;
@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.Consumers
 {
-    public class CreateNewOrderConsumer : IConsumer<CreateNewOrderCommand>
+    public class CreateNewOrderConsumer : IConsumer<BasketCheckoutCommand>
     {
         public CreateNewOrderConsumer()
         {
 
         }
 
-        public Task Consume(ConsumeContext<CreateNewOrderCommand> context)
+        public Task Consume(ConsumeContext<BasketCheckoutCommand> context)
         {
             throw new NotImplementedException();
         }

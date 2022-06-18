@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using BasketService.Application.Commands;
 using BasketService.Application.Queries;
+using BasketService.Contracts.v1.Commands;
 using BasketService.Contracts.v1.Contracts;
 using BasketService.Core.Domain;
 using BuildingBlocks.Controllers;
-using BuildingBlocks.MassTransit.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -126,7 +126,7 @@ namespace BasketService.API.Controllers
 
             var products = basket.Products.Select(x => x.Id).ToList();
             var sets = basket.Sets.Select(x => x.Id).ToList();
-            var command = new CreateNewOrderCommand(basketId, basket.UserId, products, sets);
+            var command = new BasketCheckoutCommand(basketId, basket.UserId, products, sets);
 
             await PublishEndpoint.Publish(command);
 

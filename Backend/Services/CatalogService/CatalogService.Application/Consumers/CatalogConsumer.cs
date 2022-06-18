@@ -1,6 +1,7 @@
-﻿using BuildingBlocks.MassTransit.Commands;
+﻿using CatalogService.Contracts.v1.Commands;
 using CatalogService.Contracts.v1.Events;
 using CatalogService.Core.Domain.Product;
+using CatalogService.Core.Domain.Set;
 using MassTransit;
 using System;
 using System.Collections.Generic;
@@ -10,80 +11,87 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.Consumers
 {
-    public class CatalogConsumer : IConsumer<ItemAllocationCommand>
+    public class CatalogConsumer : IConsumer<CatalogAllocationCommand>
     {
         private readonly IProductRepository _productRepository;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly ISetRepository _setRepository;
 
-        public CatalogConsumer(IProductRepository productRepository, IPublishEndpoint publishEndpoint)
+        public CatalogConsumer(IProductRepository productRepository, IPublishEndpoint publishEndpoint, ISetRepository setRepository)
         {
             _productRepository = productRepository;
             _publishEndpoint = publishEndpoint;
+            _setRepository = setRepository;
         }
 
-        private static List<Product>? GetReservedProducts(List<Product> items)
-        {
-            var reserved = new List<Product>();
 
-            foreach (var item in items)
+        public async Task Consume(ConsumeContext<CatalogAllocationCommand> context)
+        {
+            var products = await _productRepository.ListAsync(context.Message.Products);
+            var sets = await _setRepository.ListAsync(context.Message.Sets);
+
+            var availableProducts = new List<ItemAllocationInformation>();
+            var outOfStockProducts = new List<ItemAllocationInformation>();
+            var unavailableProducts = new List<ItemAllocationInformation>();
+
+            foreach (var product in products)
             {
-                // if quantity is less than 0, a reservation is not possible
-                if(!item.DecreaseQuantity())
+                var p = new ItemAllocationInformation(product.Id, product.Name, product.Price, product.IsVisible);
+
+                if (!product.IsAvailable)
                 {
-                    return null;
+                    unavailableProducts.Add(p);
                 }
-
-                reserved.Add(item);
-            }
-
-            return reserved;
-        }
-
-
-        public async Task Consume(ConsumeContext<ItemAllocationCommand> context)
-        {
-            var products = await _productRepository.ListAsync(context.Message.Items);
-            var productsWithQuantityLimitation = products.Where(x => x.Quantity != null).ToList();
-
-
-            var invisibleItems = productsWithQuantityLimitation
-                .Where(x => !x.IsVisible)
-                .ToList();
-
-            if (invisibleItems.Any())
-            {
-                var items = invisibleItems
-                    .Select(x => new ItemAllocationInformation(x.Id, x.Name, x.Price, x.IsVisible, x.Quantity))
-                    .ToList();
-
-                await _publishEndpoint.Publish(new CatalogAllocationNotVisibleEvent(context.Message.CorrelationId, context.Message.OrderId, items, "one or more items are not visible"));
+                else if (!product.DecreaseQuantity())
+                {
+                    outOfStockProducts.Add(p);
+                }
+                else
+                {
+                    availableProducts.Add(p);
+                }
             }
 
 
+            var availableSets = new List<ItemAllocationInformation>();
+            var outOfStockSets = new List<ItemAllocationInformation>();
+            var unavailableSets = new List<ItemAllocationInformation>();
 
-            var reservedProducts = GetReservedProducts(productsWithQuantityLimitation);
-
-            if (reservedProducts == null)
+            foreach (var set in sets)
             {
-                // get failed allocated items
-                var items = products
-                    .Where(x => x.Quantity == 0)
-                    .Select(x => new ItemAllocationInformation(x.Id, x.Name, x.Price, x.IsVisible, x.Quantity))
-                    .ToList();
+                var s = new ItemAllocationInformation(set.Id, set.Name, set.Price, set.IsVisible);
 
-                await _publishEndpoint.Publish(new CatalogAllocationOutOfStockEvent(context.Message.CorrelationId, context.Message.OrderId, items, "one or more items are out of stock"));
+                if (!set.IsAvailable)
+                {
+                    unavailableSets.Add(s);
+                }
+                else if (!set.DecreaseQuantity())
+                {
+                    outOfStockSets.Add(s);
+                }
+                else
+                {
+                    availableSets.Add(s);
+                }
+            }
+
+            if (unavailableProducts.Any() || unavailableSets.Any())
+            {
+                var command = new CatalogAllocationUnavailableErrorSagaEvent(context.Message.CorrelationId, context.Message.OrderId, unavailableProducts, unavailableSets, "available");
+                await _publishEndpoint.Publish(command);
+            }
+            else if (outOfStockProducts.Any() || outOfStockSets.Any())
+            {
+                var command = new CatalogAllocationOutOfStockErrorSagaEvent(context.Message.CorrelationId, context.Message.OrderId, outOfStockProducts, outOfStockSets, "out of stock");
+                await _publishEndpoint.Publish(command);
             }
             else
             {
-                // update quantity
-                await _productRepository.UpdateMultipleQuantities(reservedProducts);
+                await _productRepository.UpdateMultipleQuantities(products);
+                await _setRepository.UpdateMultipleQuantities(sets);
 
-                var items = reservedProducts
-                    //.Select(x => new ItemAllocationInformation(x.Id, x.Name, x.Price, x.IsVisible, x.Quantity))
-                    .Select(x => new ItemAllocationInformation(x.Id, x.Name, x.Price, x.IsVisible, 1))
-                    .ToList();
-
-                await _publishEndpoint.Publish(new CatalogAllocationSuccessEvent(context.Message.CorrelationId, context.Message.OrderId, items));
+                var command = new CatalogAllocationSuccessSagaEvent(context.Message.CorrelationId, context.Message.OrderId, availableProducts, availableSets);
+                await _publishEndpoint.Publish(command);
             }
         }
     }

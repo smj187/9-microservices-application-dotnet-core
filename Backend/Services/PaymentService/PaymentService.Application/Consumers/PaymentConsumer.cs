@@ -1,5 +1,5 @@
-﻿using BuildingBlocks.MassTransit.Commands;
-using MassTransit;
+﻿using MassTransit;
+using PaymentService.Contracts.v1.Commands;
 using PaymentService.Contracts.v1.Events;
 using System;
 using System.Collections.Generic;
@@ -28,12 +28,16 @@ namespace PaymentService.Application.Consumers
             if (success)
             {
                 Console.WriteLine($"{nameof(PaymentConsumer)}:: payment success");
-                await _publishEndpoint.Publish(new PaymentSuccessEvent(context.Message.CorrelationId, context.Message.OrderId, "success"));
+
+                var command = new PaymentSuccessSagaEvent(context.Message.CorrelationId, context.Message.OrderId, "success");
+                await _publishEndpoint.Publish(command);
             }
             else
             {
                 Console.WriteLine($"{nameof(PaymentConsumer)}:: payment failure");
-                await _publishEndpoint.Publish(new PaymentFailureEvent(context.Message.CorrelationId, context.Message.OrderId, "failure (test)"));
+
+                var command = new PaymentFailureSagaEvent(context.Message.CorrelationId, context.Message.OrderId, "failure (test)");
+                await _publishEndpoint.Publish(command);
             }
         }
     }
