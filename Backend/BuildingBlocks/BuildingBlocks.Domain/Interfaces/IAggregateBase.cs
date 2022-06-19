@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BuildingBlocks.Domain.Interfaces
+{
+    public interface IAggregateBase : IEntityBase
+    {
+        IReadOnlyCollection<IDomainEvent>? DomainEvents { get; }
+
+        void AddDomainEvent(IDomainEvent domainEvent);
+        void ClearDomainEvents();
+    }
+}

@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Domain.EfCore;
+﻿using BuildingBlocks.EfCore.Repositories;
 using FileService.Core.Domain.Aggregates;
 using FileService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

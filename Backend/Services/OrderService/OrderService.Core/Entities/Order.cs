@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OrderService.Core.Entities
 {
-    public class Order : AggregateRoot
+    public class Order : AggregateBase
     {
         public Guid UserId { get; set; }
 

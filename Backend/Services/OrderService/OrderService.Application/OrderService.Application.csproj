@@ -17,6 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Exceptions\BuildingBlocks.Exceptions.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Masstransit\BuildingBlocks.Masstransit.csproj" />
     <ProjectReference Include="..\OrderService.Contracts\OrderService.Contracts.csproj" />
     <ProjectReference Include="..\OrderService.Core\OrderService.Core.csproj" />
     <ProjectReference Include="..\OrderService.Infrastructure\OrderService.Infrastructure.csproj" />

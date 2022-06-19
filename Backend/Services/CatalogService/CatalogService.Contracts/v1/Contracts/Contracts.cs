@@ -13,6 +13,8 @@ namespace CatalogService.Contracts.v1.Contracts
 
     // patch category description
     public record PatchCategoryDescriptionRequest([Required] string Name, string? Description);
+    // patch category availability
+    public record PatchCategoryVisibilityRequest([Required] bool IsVisible);
 
 
     // create new set

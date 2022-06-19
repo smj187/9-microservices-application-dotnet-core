@@ -1,8 +1,9 @@
-﻿using BuildingBlocks.Controllers;
+﻿using BuildingBlocks.Extensions.Controllers;
 using CatalogService.Application.Commands.Sets;
 using CatalogService.Application.Queries.Sets;
 using CatalogService.Contracts.v1.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace CatalogService.API.Controllers
 {

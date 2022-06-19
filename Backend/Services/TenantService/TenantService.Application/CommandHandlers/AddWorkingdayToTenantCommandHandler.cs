@@ -1,5 +1,6 @@
-﻿using BuildingBlocks.Domain.EfCore;
+﻿using BuildingBlocks.EfCore.Repositories.Interfaces;
 using BuildingBlocks.Exceptions;
+using BuildingBlocks.Exceptions.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;

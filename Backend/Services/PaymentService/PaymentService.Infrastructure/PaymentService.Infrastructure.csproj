@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.EfCore\BuildingBlocks.EfCore.csproj" />
     <ProjectReference Include="..\PaymentService.Core\PaymentService.Core.csproj" />
   </ItemGroup>
 

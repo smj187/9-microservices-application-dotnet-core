@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.EfCore\BuildingBlocks.EfCore.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Exceptions\BuildingBlocks.Exceptions.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Masstransit\BuildingBlocks.Masstransit.csproj" />
     <ProjectReference Include="..\TenantService.Contracts\TenantService.Contracts.csproj" />
     <ProjectReference Include="..\TenantService.Core\TenantService.Core.csproj" />
     <ProjectReference Include="..\TenantService.Infrastructure\TenantService.Infrastructure.csproj" />

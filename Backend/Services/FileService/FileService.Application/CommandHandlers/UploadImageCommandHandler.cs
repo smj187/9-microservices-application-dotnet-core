@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Domain.EfCore;
+﻿using BuildingBlocks.EfCore.Repositories.Interfaces;
 using FileService.Application.Commands;
 using FileService.Application.Services;
 using FileService.Core.Domain;

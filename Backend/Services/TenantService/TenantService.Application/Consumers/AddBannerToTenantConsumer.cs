@@ -1,5 +1,5 @@
-﻿using BuildingBlocks.Domain.EfCore;
-using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.EfCore.Repositories.Interfaces;
+using BuildingBlocks.Exceptions.Domain;
 using FileService.Contracts.v1.Events;
 using MassTransit;
 using System;

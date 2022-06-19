@@ -1,8 +1,9 @@
 ﻿using CatalogService.Contracts.v1.Commands;
 using CatalogService.Contracts.v1.Events;
-using CatalogService.Core.Domain.Product;
-using CatalogService.Core.Domain.Set;
+using CatalogService.Core.Domain.Products;
+using CatalogService.Core.Domain.Sets;
 using MassTransit;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,12 +88,44 @@ namespace CatalogService.Application.Consumers
             }
             else
             {
-                await _productRepository.UpdateMultipleQuantities(products);
-                await _setRepository.UpdateMultipleQuantities(sets);
+                await _setRepository.PatchMultipleAsync(GetSetBulk(sets));
+                await _productRepository.PatchMultipleAsync(GetProductBulk(products));
 
                 var command = new CatalogAllocationSuccessSagaEvent(context.Message.CorrelationId, context.Message.OrderId, availableProducts, availableSets);
                 await _publishEndpoint.Publish(command);
             }
+        }
+
+        private List<WriteModel<Set>> GetSetBulk(IReadOnlyCollection<Set> sets)
+        {
+            var bulk = new List<WriteModel<Set>>();
+
+            foreach (var set in sets)
+            {
+                var filter = Builders<Set>.Filter.Eq(x => x.Id, set.Id);
+                var update = Builders<Set>.Update.Set(x => x.Quantity, set.Quantity);
+
+                var upsert = new UpdateOneModel<Set>(filter, update) { IsUpsert = false };
+                bulk.Add(upsert);
+            }
+
+            return bulk;
+        }
+
+        private List<WriteModel<Product>> GetProductBulk(IReadOnlyCollection<Product> products)
+        {
+            var bulk = new List<WriteModel<Product>>();
+
+            foreach (var set in products)
+            {
+                var filter = Builders<Product>.Filter.Eq(x => x.Id, set.Id);
+                var update = Builders<Product>.Update.Set(x => x.Quantity, set.Quantity);
+
+                var upsert = new UpdateOneModel<Product>(filter, update) { IsUpsert = false };
+                bulk.Add(upsert);
+            }
+
+            return bulk;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using BuildingBlocks.Controllers;
+﻿using BuildingBlocks.Extensions.Controllers;
 using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
 using CatalogService.Contracts.v1.Contracts;
-using CatalogService.Core.Domain.Product;
+using CatalogService.Core.Domain.Products;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.API.Controllers
 {
-    
+
     [Route("api/v1/[controller]")]
     public class ProductsController : ApiBaseController<ProductsController>
     {

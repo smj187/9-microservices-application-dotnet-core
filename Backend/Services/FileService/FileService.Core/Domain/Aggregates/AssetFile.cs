@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FileService.Core.Domain.Aggregates
 {
-    public abstract class AssetFile : AggregateRoot
+    public abstract class AssetFile : AggregateBase
     {
         private Guid _externalEntityId;
         private AssetType _assetType;

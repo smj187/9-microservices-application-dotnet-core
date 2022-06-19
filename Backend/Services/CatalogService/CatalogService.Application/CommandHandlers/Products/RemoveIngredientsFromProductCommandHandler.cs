@@ -1,6 +1,6 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using CatalogService.Application.Commands.Products;
-using CatalogService.Core.Domain.Product;
+using CatalogService.Core.Domain.Products;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;

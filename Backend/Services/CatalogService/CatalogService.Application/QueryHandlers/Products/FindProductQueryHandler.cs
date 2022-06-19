@@ -1,6 +1,6 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using CatalogService.Application.Queries.Products;
-using CatalogService.Core.Domain.Product;
+using CatalogService.Core.Domain.Products;
 using MediatR;
 using System;
 using System.Collections.Generic;

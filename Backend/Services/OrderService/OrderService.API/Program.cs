@@ -1,9 +1,8 @@
-using BuildingBlocks.Extensions;
-using BuildingBlocks.MassTransit;
-using BuildingBlocks.Middleware;
+using BuildingBlocks.EfCore.Extensions;
+using BuildingBlocks.Masstransit;
+using BuildingBlocks.Middleware.Exceptions;
 using MassTransit;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -24,7 +23,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("OrderService.Application"));
 
-builder.Services.ConfigureNpgsql<OrderContext>(builder.Configuration);
+builder.Services.AddPostgresDatabase<OrderContext>(builder.Configuration);
 
 BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));

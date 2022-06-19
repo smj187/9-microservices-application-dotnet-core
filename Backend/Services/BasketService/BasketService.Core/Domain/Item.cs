@@ -1,6 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
-using BuildingBlocks.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +20,7 @@ namespace BasketService.Core.Domain
             Guard.Against.Null(id, nameof(id));
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.NullOrWhiteSpace(image, nameof(image));
-            Guard.Against.NullOrNegativ(price, nameof(price));
+            Guard.Against.NegativeOrZero(price, nameof(price));
 
             _id = id;
             _name = name;

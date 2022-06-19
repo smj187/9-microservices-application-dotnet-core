@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
-using IdentityService.Application.Commands.Admins;
+﻿using IdentityService.Application.Commands.Admins;
 using IdentityService.Application.Services;
 using IdentityService.Core.Entities;
 using MediatR;

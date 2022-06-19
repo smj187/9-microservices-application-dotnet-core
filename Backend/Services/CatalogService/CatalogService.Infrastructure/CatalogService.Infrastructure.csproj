@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Mongo\BuildingBlocks.Mongo.csproj" />
     <ProjectReference Include="..\CatalogService.Core\CatalogService.Core.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,5 @@
-using BuildingBlocks.Extensions;
-using BuildingBlocks.MassTransit;
+using BuildingBlocks.EfCore.Extensions;
+using BuildingBlocks.Masstransit;
 using MassTransit;
 using MediatR;
 using System.Reflection;
@@ -15,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("TenantService.Application"));
-builder.Services.ConfigureMySql<TenantContext>(builder.Configuration)
+builder.Services.AddMySqlDatabase<TenantContext>(builder.Configuration)
     .AddTransient<ITenantRepository, TenantRepository>();
 
 

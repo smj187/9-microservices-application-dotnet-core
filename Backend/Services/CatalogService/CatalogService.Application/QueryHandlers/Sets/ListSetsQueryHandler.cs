@@ -1,5 +1,5 @@
 ﻿using CatalogService.Application.Queries.Sets;
-using CatalogService.Core.Domain.Set;
+using CatalogService.Core.Domain.Sets;
 using MediatR;
 using System;
 using System.Collections.Generic;

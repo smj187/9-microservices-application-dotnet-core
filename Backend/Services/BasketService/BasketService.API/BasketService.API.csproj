@@ -15,14 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Extensions\BuildingBlocks.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Masstransit\BuildingBlocks.Masstransit.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Middleware\BuildingBlocks.Middleware.csproj" />
     <ProjectReference Include="..\BasketService.Application\BasketService.Application.csproj" />
     <ProjectReference Include="..\BasketService.Contracts\BasketService.Contracts.csproj" />
     <ProjectReference Include="..\BasketService.Infrastructure\BasketService.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

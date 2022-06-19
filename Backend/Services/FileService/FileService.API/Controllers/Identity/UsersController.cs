@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Controllers;
+﻿using BuildingBlocks.Extensions.Controllers;
 using FileService.Application.Commands;
 using FileService.Application.Queries;
 using FileService.Contracts.v1.Contracts;

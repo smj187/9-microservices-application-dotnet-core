@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;

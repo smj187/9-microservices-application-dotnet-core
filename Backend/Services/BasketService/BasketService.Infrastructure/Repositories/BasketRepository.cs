@@ -1,7 +1,5 @@
-﻿using BasketService.Contracts.v1.Contracts;
-using BasketService.Core.Domain;
-using BuildingBlocks.Domain.Redis;
-using BuildingBlocks.Domain.Repositories;
+﻿using BasketService.Core.Domain;
+using BuildingBlocks.Redis.Repositories;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;

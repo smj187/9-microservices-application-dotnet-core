@@ -1,5 +1,4 @@
-﻿using IdentityService.Application.Commands;
-using IdentityService.Application.Commands.Users;
+﻿using IdentityService.Application.Commands.Users;
 using IdentityService.Application.Services;
 using IdentityService.Core.Models;
 using MediatR;

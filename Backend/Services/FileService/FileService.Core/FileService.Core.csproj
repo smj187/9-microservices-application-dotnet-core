@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Domain\BuildingBlocks.Domain.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.EfCore\BuildingBlocks.EfCore.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Extensions\BuildingBlocks.Extensions.csproj" />
+    <ProjectReference Include="..\BuildingBlocks.EfCore\BuildingBlocks.EfCore.csproj" />
   </ItemGroup>
 
 </Project>

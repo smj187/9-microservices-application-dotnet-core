@@ -1,6 +1,6 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using CatalogService.Application.Commands.Categories;
-using CatalogService.Core.Domain.Category;
+using CatalogService.Core.Domain.Categories;
 using MediatR;
 using System;
 using System.Collections.Generic;

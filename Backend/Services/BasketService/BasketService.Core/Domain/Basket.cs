@@ -1,6 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BasketService.Core.Domain
 {
-    public class Basket : AggregateRoot
+    public class Basket : AggregateBase
     {
         private List<Item> _products;
         private List<Item> _sets;
@@ -24,12 +23,8 @@ namespace BasketService.Core.Domain
             Id = id;
             _products = new();
             _sets = new();
-
-            CreatedAt = DateTimeOffset.UtcNow;
         }
 
-
-        [JsonProperty]
         public Guid UserId
         { 
             get => _userId; 
@@ -63,7 +58,7 @@ namespace BasketService.Core.Domain
             Guard.Against.Null(item, nameof(item));
             _products.Add(item);
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void RemoveProduct(Guid itemId)
@@ -74,9 +69,8 @@ namespace BasketService.Core.Domain
             if(product != null)
             {
                 _products.Remove(product);
-                ModifiedAt = DateTimeOffset.UtcNow;
+                Modify();
             }
-
         }
 
         public void ClearCart()
@@ -84,7 +78,7 @@ namespace BasketService.Core.Domain
             _products.Clear();
             _sets.Clear();
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void AddSet(Item item)
@@ -92,7 +86,7 @@ namespace BasketService.Core.Domain
             Guard.Against.Null(item, nameof(item));
             _sets.Add(item);
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void RemoveSet(Guid itemId)
@@ -103,7 +97,7 @@ namespace BasketService.Core.Domain
             if (set != null)
             {
                 _sets.Remove(set);
-                ModifiedAt = DateTimeOffset.UtcNow;
+                Modify();
             }
         }
 

@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.EfCore\BuildingBlocks.EfCore.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Masstransit\BuildingBlocks.Masstransit.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Middleware\BuildingBlocks.Middleware.csproj" />
     <ProjectReference Include="..\TenantService.Application\TenantService.Application.csproj" />
     <ProjectReference Include="..\TenantService.Contracts\TenantService.Contracts.csproj" />
     <ProjectReference Include="..\TenantService.Infrastructure\TenantService.Infrastructure.csproj" />

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PaymentService.Core.Entities
 {
-    public class Payment : AggregateRoot
+    public class Payment : AggregateBase
     {
         public Guid UserId { get; set; }
 

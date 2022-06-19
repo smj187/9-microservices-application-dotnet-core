@@ -1,5 +1,5 @@
 ﻿using CatalogService.Application.Commands.Products;
-using CatalogService.Core.Domain.Product;
+using CatalogService.Core.Domain.Products;
 using MediatR;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using IdentityService.Application.Queries.Users;
 using IdentityService.Application.Services;
 using IdentityService.Core.Entities;

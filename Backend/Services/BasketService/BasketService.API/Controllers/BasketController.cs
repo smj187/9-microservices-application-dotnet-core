@@ -4,7 +4,7 @@ using BasketService.Application.Queries;
 using BasketService.Contracts.v1.Commands;
 using BasketService.Contracts.v1.Contracts;
 using BasketService.Core.Domain;
-using BuildingBlocks.Controllers;
+using BuildingBlocks.Extensions.Controllers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

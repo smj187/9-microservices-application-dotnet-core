@@ -1,5 +1,5 @@
-﻿using BuildingBlocks.Exceptions;
-using CatalogService.Core.Domain.Set;
+﻿using BuildingBlocks.Exceptions.Domain;
+using CatalogService.Core.Domain.Sets;
 using FileService.Contracts.v1.Events;
 using MassTransit;
 using System;
