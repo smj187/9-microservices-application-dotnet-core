@@ -1,7 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
-using BuildingBlocks.Domain.Interfaces;
-using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Core.Domain.Categories
 {
-    public class Category : AggregateRoot
+    public class Category : AggregateBase
     {
-
         private string _name;
         private string? _description;
         private List<Guid> _products;
@@ -28,7 +25,6 @@ namespace CatalogService.Core.Domain.Categories
 
             _products = products ?? new List<Guid>();
             _sets = sets ?? new List<Guid>();
-            _isVisible = false;
 
             _assets = new();
         }
@@ -51,7 +47,6 @@ namespace CatalogService.Core.Domain.Categories
             private set => _isVisible = value;
         }
 
-        [BsonElement("Assets")]
         public List<Guid> Assets
         {
             get => _assets;
@@ -65,7 +60,6 @@ namespace CatalogService.Core.Domain.Categories
         }
 
 
-        [BsonElement("Products")]
         public IEnumerable<Guid> Products
         {
             get => _products;
@@ -90,7 +84,6 @@ namespace CatalogService.Core.Domain.Categories
             ModifiedAt = DateTimeOffset.UtcNow;
         }
 
-        [BsonElement("Sets")]
         public IEnumerable<Guid> Sets
         {
             get => _sets;

@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Exceptions;
+using BuildingBlocks.Exceptions.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;

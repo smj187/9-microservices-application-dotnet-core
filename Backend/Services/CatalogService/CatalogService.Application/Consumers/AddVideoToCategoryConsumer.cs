@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using CatalogService.Core.Domain.Categories;
 using FileService.Contracts.v1.Events;
 using MassTransit;

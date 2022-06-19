@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using IdentityService.Core.Entities;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;

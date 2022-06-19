@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain.Mongo;
+﻿
+using BuildingBlocks.Mongo.Repositories.Interfaces;
 
 namespace CatalogService.Core.Domain.Categories
 {

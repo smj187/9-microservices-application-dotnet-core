@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.csproj" />
+    <Folder Include="Entities\Aggregates\" />
+    <Folder Include="Entities\ValueObjects\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\Aggregates\" />
-    <Folder Include="Entities\ValueObjects\" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Domain\BuildingBlocks.Domain.csproj" />
   </ItemGroup>
 
 </Project>

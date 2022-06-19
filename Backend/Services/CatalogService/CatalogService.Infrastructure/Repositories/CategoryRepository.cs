@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Domain.Mongo;
+﻿using BuildingBlocks.Mongo.Repositories;
 using CatalogService.Core.Domain.Categories;
 using Microsoft.Extensions.Configuration;
 using System;

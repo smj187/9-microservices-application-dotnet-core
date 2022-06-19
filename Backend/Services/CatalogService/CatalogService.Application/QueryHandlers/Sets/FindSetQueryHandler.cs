@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using CatalogService.Application.Queries.Sets;
 using CatalogService.Core.Domain.Sets;
 using MediatR;

@@ -25,7 +25,7 @@ namespace FileService.Core.Domain.Aggregates.Video
         public VideoAsset(Guid externalEntityId, VideoUrl videoUrl, AssetType assetType, string? title, string? description, string? tags)
             : base(externalEntityId, assetType, "video")
         {
-            //Guard.Against.Null(videoUrl, nameof(videoUrl));
+            Guard.Against.Null(videoUrl, nameof(videoUrl));
 
             _videoUrl = videoUrl;
             _title = title;

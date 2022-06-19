@@ -1,7 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
-using BuildingBlocks.Extensions;
-using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Core.Domain.Sets
 {
-    public class Set : AggregateRoot
+    public class Set : AggregateBase
     {
 
         private string _name;
@@ -27,7 +25,7 @@ namespace CatalogService.Core.Domain.Sets
         public Set(string name, decimal price, string? description = null, string? priceDescription = null, IEnumerable<string>? tags = null, int? quantity = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
-            Guard.Against.NullOrNegativ(price, nameof(price));
+            Guard.Against.NegativeOrZero(price, nameof(price));
 
             _name = name;
             _price = price;
@@ -37,8 +35,6 @@ namespace CatalogService.Core.Domain.Sets
             _tags = tags?.ToList() ?? null;
             _quantity = quantity;
 
-            _isVisible = false;
-            _isAvailable = false;
             _products = new List<Guid>();
             _assets = new();
         }
@@ -85,30 +81,23 @@ namespace CatalogService.Core.Domain.Sets
             private set => _quantity = value;
         }
 
-
-
-        [BsonElement("Assets")]
         public List<Guid> Assets
         {
             get => _assets;
             private set => _assets = value;
         }
 
-        [BsonElement("Products")]
         public IEnumerable<Guid> Products
         {
             get => _products;
             private set => _products = new List<Guid>(value);
         }
 
-        [BsonElement("Tags")]
         public IEnumerable<string>? Tags
         {
             get => _tags;
             private set => _tags = value == null ? null : new List<string>(value);
         }
-
-
 
         public void AddAssetId(Guid imageId)
         {
@@ -167,7 +156,7 @@ namespace CatalogService.Core.Domain.Sets
 
         public void ChangePrice(decimal price)
         {
-            Guard.Against.NullOrNegativ(price, nameof(price));
+            Guard.Against.NegativeOrZero(price, nameof(price));
 
             _price = price;
 

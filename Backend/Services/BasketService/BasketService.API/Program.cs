@@ -1,7 +1,7 @@
 using BasketService.Core.Domain;
 using BasketService.Infrastructure.Repositories;
-using BuildingBlocks.MassTransit;
-using BuildingBlocks.Middleware;
+using BuildingBlocks.Masstransit;
+using BuildingBlocks.Middleware.Exceptions;
 using MassTransit;
 using MediatR;
 using StackExchange.Redis;
@@ -48,7 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

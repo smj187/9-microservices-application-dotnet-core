@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Core.Entities
 {
-    public class Delivery : AggregateRoot
+    public class Delivery : AggregateBase
     {
         public Guid OrderId { get; set; }
 

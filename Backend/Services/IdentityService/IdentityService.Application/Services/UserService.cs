@@ -1,8 +1,9 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Exceptions.Authentication;
+using BuildingBlocks.Exceptions.Domain;
 using IdentityService.Core.Entities;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

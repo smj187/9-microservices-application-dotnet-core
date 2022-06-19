@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Controllers;
+﻿using BuildingBlocks.Extensions.Controllers;
 using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
 using CatalogService.Contracts.v1.Contracts;

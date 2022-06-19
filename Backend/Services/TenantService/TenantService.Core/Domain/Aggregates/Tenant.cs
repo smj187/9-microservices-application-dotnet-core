@@ -1,7 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
-using BuildingBlocks.Exceptions;
-using BuildingBlocks.Extensions;
+using BuildingBlocks.Exceptions.Domain;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,7 +13,7 @@ using TenantService.Core.Domain.ValueObjects;
 
 namespace TenantService.Core.Domain.Aggregates
 {
-    public class Tenant : AggregateRoot
+    public class Tenant : AggregateBase
     {
         private Address? _address;
 
@@ -190,7 +189,7 @@ namespace TenantService.Core.Domain.Aggregates
         public void PatchInformation(string name, string? description, decimal minimunOrderAmount, bool isFreeDelivery, decimal? deliveryCost, string? websiteUrl, string? imprint, string email, string phone, string? payments)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
-            Guard.Against.NullOrNegativ(minimunOrderAmount, nameof(minimunOrderAmount));
+            Guard.Against.NegativeOrZero(minimunOrderAmount, nameof(minimunOrderAmount));
             Guard.Against.Null(isFreeDelivery, nameof(isFreeDelivery));
             Guard.Against.NullOrWhiteSpace(email, nameof(email));
             Guard.Against.NullOrWhiteSpace(phone, nameof(phone));

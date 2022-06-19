@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using FileService.Application.Queries;
 using FileService.Core.Domain.Aggregates;
 using MediatR;

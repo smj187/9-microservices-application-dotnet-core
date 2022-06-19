@@ -1,6 +1,6 @@
-using BuildingBlocks.Extensions;
-using BuildingBlocks.MassTransit;
-using BuildingBlocks.Middleware;
+using BuildingBlocks.Masstransit;
+using BuildingBlocks.Middleware.Exceptions;
+using BuildingBlocks.Mongo.Extensions;
 using DeliveryService.Application.Consumers;
 using MassTransit;
 using MediatR;
@@ -13,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("DeliveryService.Application"));
-builder.Services.ConfigureMongo(builder.Configuration);
+builder.Services.AddMongoDatabase(builder.Configuration);
 
 
 

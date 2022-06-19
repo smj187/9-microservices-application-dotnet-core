@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using BuildingBlocks.Domain.EfCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +10,6 @@ using System.Threading.Tasks;
 using TenantService.Application.Commands;
 using TenantService.Application.Queries;
 using TenantService.Contracts.v1.Contracts;
-using TenantService.Core.Domain.Aggregates;
 using TenantService.Infrastructure.Data;
 
 namespace TenantService.API.Controllers
@@ -24,14 +21,12 @@ namespace TenantService.API.Controllers
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
         private readonly TenantContext _context;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public TenantController(IMapper mapper, IMediator mediator, TenantContext context, IUnitOfWork unitOfWork)
+        public TenantController(IMapper mapper, IMediator mediator, TenantContext context)
         {
             _mapper = mapper;
             _mediator = mediator;
             _context = context;
-            _unitOfWork = unitOfWork;
         }
 
 

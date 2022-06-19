@@ -1,9 +1,10 @@
-﻿using BuildingBlocks.Domain.Mongo;
+﻿
+using BuildingBlocks.Mongo.Repositories.Interfaces;
 
 namespace CatalogService.Core.Domain.Sets
 {
     public interface ISetRepository : IMongoRepository<Set>
     {
-        Task<IEnumerable<Set>> UpdateMultipleQuantities(IEnumerable<Set> products);
+
     }
 }

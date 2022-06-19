@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Extensions\BuildingBlocks.Extensions.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Middleware\BuildingBlocks.Middleware.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Mongo\BuildingBlocks.Mongo.csproj" />
     <ProjectReference Include="..\DeliveryService.Application\DeliveryService.Application.csproj" />
     <ProjectReference Include="..\DeliveryService.Contracts\DeliveryService.Contracts.csproj" />
     <ProjectReference Include="..\DeliveryService.Infrastructure\DeliveryService.Infrastructure.csproj" />

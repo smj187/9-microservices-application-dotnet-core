@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using FileService.Contracts.v1.Events;
 using TenantService.Core.Domain.Aggregates;
-using BuildingBlocks.Domain.EfCore;
 using BuildingBlocks.Exceptions;
+using BuildingBlocks.EfCore.Repositories.Interfaces;
+using BuildingBlocks.Exceptions.Domain;
 
 namespace TenantService.Application.Consumers
 {

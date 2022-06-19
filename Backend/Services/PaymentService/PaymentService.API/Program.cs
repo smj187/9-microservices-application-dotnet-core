@@ -1,6 +1,6 @@
-using BuildingBlocks.Extensions;
-using BuildingBlocks.MassTransit;
-using BuildingBlocks.Middleware;
+using BuildingBlocks.EfCore.Extensions;
+using BuildingBlocks.Masstransit;
+using BuildingBlocks.Middleware.Exceptions;
 using MassTransit;
 using MediatR;
 using PaymentService.Application.Consumers;
@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("PaymentService.Application"));
 
-builder.Services.ConfigureNpgsql<PaymentContext>(builder.Configuration)
+builder.Services.AddPostgresDatabase<PaymentContext>(builder.Configuration)
     .AddTransient<IPaymentRepository<Payment>, PaymentRepository<Payment>>();
 
 

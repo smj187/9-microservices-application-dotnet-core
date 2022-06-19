@@ -1,10 +1,11 @@
-﻿using BuildingBlocks.Controllers;
+﻿using BuildingBlocks.Extensions.Controllers;
 using CatalogService.Application.Commands.Categories;
 using CatalogService.Application.Queries.Categories;
 using CatalogService.Contracts.v1.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,7 +47,7 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{categoryid:guid}/visibility")]
-        public async Task<IActionResult> ChangeCategoryVisibilityAsync([FromRoute] Guid categoryId, [FromBody] PatchCategoryVisibilityCommand request)
+        public async Task<IActionResult> ChangeCategoryVisibilityAsync([FromRoute, Required] Guid categoryId, [FromBody, Required] PatchCategoryVisibilityRequest request)
         {
             var data = await Mediator.Send(new PatchCategoryVisibilityCommand
             {

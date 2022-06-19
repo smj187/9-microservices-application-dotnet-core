@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
+﻿using BuildingBlocks.Exceptions.Domain;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using FileService.Core.Domain.ValueObjects;

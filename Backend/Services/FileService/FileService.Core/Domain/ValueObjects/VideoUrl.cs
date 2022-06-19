@@ -20,12 +20,12 @@ namespace FileService.Core.Domain.ValueObjects
 
         public VideoUrl(string url, string format, double duration, long size, int width, int height)
         {
-            //Guard.Against.NullOrEmpty(url, nameof(url));
-            //Guard.Against.NullOrWhiteSpace(format, nameof(format));
-            //Guard.Against.Null(duration, nameof(duration));
-            //Guard.Against.NullOrNegativ(size, nameof(size));
-            //Guard.Against.NullOrNegativ(width, nameof(width));
-            //Guard.Against.NullOrNegativ(height, nameof(height));
+            Guard.Against.NullOrEmpty(url, nameof(url));
+            Guard.Against.NullOrWhiteSpace(format, nameof(format));
+            Guard.Against.Null(duration, nameof(duration));
+            Guard.Against.NegativeOrZero(size, nameof(size));
+            Guard.Against.NegativeOrZero(width, nameof(width));
+            Guard.Against.NegativeOrZero(height, nameof(height));
 
             _url = url;
             _format = format;

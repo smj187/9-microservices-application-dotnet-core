@@ -1,6 +1,6 @@
-using BuildingBlocks.Extensions;
-using BuildingBlocks.MassTransit;
-using BuildingBlocks.Middleware;
+using BuildingBlocks.EfCore.Extensions;
+using BuildingBlocks.Masstransit;
+using BuildingBlocks.Middleware.Exceptions;
 using CloudinaryDotNet;
 using FileService.Application.Services;
 using FileService.Core.Domain.Aggregates;
@@ -20,7 +20,7 @@ builder.Services.AddMediatR(Assembly.Load("FileService.Application"));
 
 
 
-builder.Services.ConfigureMySql<FileContext>(builder.Configuration)
+builder.Services.AddMySqlDatabase<FileContext>(builder.Configuration)
     .AddTransient<IAssetRepository, AssetRepository>()
     .AddTransient<ICloudService, CloudService>();
 
@@ -42,11 +42,16 @@ builder.Services.AddSingleton(new Cloudinary(new Account(cloudName, apiKey, apiS
 
 builder.Services.AddMassTransit(x =>
 {
+    x.SetSnakeCaseEndpointNameFormatter();
     x.AddConsumers(Assembly.Load("FileService.Application"));
-    x.UsingRabbitMq((context, config) =>
+
+    x.UsingRabbitMq((context, rabbit) =>
     {
-        config.Host(RabbitMqSettings.RabbitMqUri);
-        config.ConfigureEndpoints(context, new SnakeCaseEndpointNameFormatter("file", false));
+        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
+        {
+            host.Username(RabbitMqSettings.Username);
+            host.Password(RabbitMqSettings.Password);
+        });
     });
 });
 
@@ -59,7 +64,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

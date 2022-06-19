@@ -22,9 +22,9 @@ namespace FileService.Core.Domain.ValueObjects
             Guard.Against.Null(breakpoint, nameof(breakpoint));
             Guard.Against.NullOrWhiteSpace(url, nameof(url));
             Guard.Against.NullOrWhiteSpace(format, nameof(format));
-            Guard.Against.Null(size, nameof(size));
-            Guard.Against.Null(width, nameof(width));
-            Guard.Against.Null(height, nameof(height));
+            Guard.Against.NegativeOrZero(size, nameof(size));
+            Guard.Against.NegativeOrZero(width, nameof(width));
+            Guard.Against.NegativeOrZero(height, nameof(height));
 
             _breakpoint = breakpoint;
             _url = url;

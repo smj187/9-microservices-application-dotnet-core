@@ -1,8 +1,9 @@
-using BuildingBlocks.Extensions;
-using BuildingBlocks.MassTransit;
-using BuildingBlocks.Middleware;
+using BuildingBlocks.EfCore.Extensions;
+using BuildingBlocks.Masstransit;
+using BuildingBlocks.Middleware.Exceptions;
 using IdentityService.API.Extensions;
 using IdentityService.API.Middleware;
+using IdentityService.Application.Consumers;
 using IdentityService.Application.Services;
 using IdentityService.Infrastructure.Data;
 using MassTransit;
@@ -19,7 +20,7 @@ builder.Services.AddMediatR(Assembly.Load("IdentityService.Application"));
 
 builder.Services.ConfigureIdentityServer();
 
-builder.Services.ConfigureMySql<IdentityContext>(builder.Configuration)
+builder.Services.AddMySqlDatabase<IdentityContext>(builder.Configuration)
     .ConfigureIdentity(builder.Configuration)
     .AddTransient<IUserService, UserService>()
     .AddTransient<IAdminService, AdminService>()
@@ -27,11 +28,21 @@ builder.Services.ConfigureMySql<IdentityContext>(builder.Configuration)
 
 builder.Services.AddMassTransit(x =>
 {
+    x.SetSnakeCaseEndpointNameFormatter();
     x.AddConsumers(Assembly.Load("IdentityService.Application"));
-    x.UsingRabbitMq((context, config) =>
+
+    x.UsingRabbitMq((context, rabbit) =>
     {
-        config.Host(RabbitMqSettings.RabbitMqUri);
-        config.ConfigureEndpoints(context, new SnakeCaseEndpointNameFormatter("identity", false));
+        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
+        {
+            host.Username(RabbitMqSettings.Username);
+            host.Password(RabbitMqSettings.Password);
+        });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadAvatarImageConsumerEndpointName, e =>
+        {
+            e.ConfigureConsumer<AddAvatarToUserConsumer>(context);
+        });
     });
 
 });

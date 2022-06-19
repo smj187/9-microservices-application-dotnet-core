@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.MassTransit;
+﻿using BuildingBlocks.Masstransit;
 using CatalogService.Contracts.v1.Commands;
 using CatalogService.Contracts.v1.Events;
 using DeliveryService.Contracts.v1.Commands;

@@ -1,7 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
-using BuildingBlocks.Extensions;
-using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Core.Domain.Products
 {
-    public class Product : AggregateRoot
+    public class Product : AggregateBase
     {
         private List<Ingredient> _ingredients;
         private List<Allergen> _allergens;
@@ -30,7 +28,7 @@ namespace CatalogService.Core.Domain.Products
         public Product(string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null, int? quantity = null)
         {
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
-            Guard.Against.NullOrNegativ(price, nameof(price));
+            Guard.Against.NegativeOrZero(price, nameof(price));
 
             _name = name;
             _description = description;
@@ -94,36 +92,30 @@ namespace CatalogService.Core.Domain.Products
             private set => _quantity = value;
         }
 
-
-        [BsonElement("Assets")]
         public List<Guid> Assets
         {
             get => _assets;
             private set => _assets = value;
         }
 
-        [BsonElement("Ingredients")]
         public IEnumerable<Ingredient> Ingredients
         {
             get => _ingredients;
             private set => _ingredients = new List<Ingredient>(value);
         }
 
-        [BsonElement("Allergens")]
         public IEnumerable<Allergen> Allergens
         {
             get => _allergens;
             private set => _allergens = new List<Allergen>(value);
         }
 
-        [BsonElement("Nutritions")]
         public IEnumerable<Nutrition> Nutritions
         {
             get => _nutritions;
             private set => _nutritions = new List<Nutrition>(value);
         }
 
-        [BsonElement("Tags")]
         public IEnumerable<string>? Tags
         {
             get => _tags;
@@ -132,13 +124,12 @@ namespace CatalogService.Core.Domain.Products
 
 
 
-
         public void AddAssetId(Guid imageId)
         {
             Guard.Against.Null(imageId, nameof(imageId));
             _assets.Add(imageId);
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void ChangeDescription(string name, string? description = null, string? priceDesription = null, List<string>? tags = null)
@@ -150,7 +141,7 @@ namespace CatalogService.Core.Domain.Products
             _priceDescription = priceDesription;
             _tags = tags;
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void ChangeVisibility(bool isVisible)
@@ -159,14 +150,14 @@ namespace CatalogService.Core.Domain.Products
 
             _isVisible = isVisible;
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void ChangeQuantity(int? quantity)
         {
             _quantity = quantity;
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public bool DecreaseQuantity()
@@ -184,16 +175,16 @@ namespace CatalogService.Core.Domain.Products
 
             _isAvailable = isAvailable;
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void ChangePrice(decimal price)
         {
-            Guard.Against.NullOrNegativ(price, nameof(price));
+            Guard.Against.NegativeOrZero(price, nameof(price));
 
             _price = price;
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
 
@@ -209,7 +200,7 @@ namespace CatalogService.Core.Domain.Products
                 }
             }
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void AddAllergens(IEnumerable<Allergen> allergens)
@@ -224,7 +215,7 @@ namespace CatalogService.Core.Domain.Products
                 }
             }
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void AddNutrition(IEnumerable<Nutrition> nutritions)
@@ -239,7 +230,7 @@ namespace CatalogService.Core.Domain.Products
                 }
             }
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void RemoveIngredients(IEnumerable<Ingredient> ingredients)
@@ -255,7 +246,7 @@ namespace CatalogService.Core.Domain.Products
                 }
             }
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
         public void RemoveAllergen(IEnumerable<Allergen> allergens)
         {
@@ -270,7 +261,7 @@ namespace CatalogService.Core.Domain.Products
                 }
             }
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
         public void RemoveNutrition(IEnumerable<Nutrition> nutritions)
         {
@@ -285,7 +276,7 @@ namespace CatalogService.Core.Domain.Products
                 }
             }
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
     }
 }
