@@ -1,5 +1,8 @@
-﻿using FileService.Contracts.v1.Events;
+﻿using BuildingBlocks.EfCore.Repositories.Interfaces;
+using BuildingBlocks.Exceptions.Domain;
+using FileService.Contracts.v1.Events;
 using IdentityService.Application.Services;
+using IdentityService.Core.Aggregates;
 using MassTransit;
 using System;
 using System.Collections.Generic;
@@ -11,19 +14,29 @@ namespace IdentityService.Application.Consumers
 {
     public class AddAvatarToUserConsumer : IConsumer<AvatarUploadResponseEvent>
     {
-        private readonly IUserService _userService;
+        private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AddAvatarToUserConsumer(IUserService userService)
+        public AddAvatarToUserConsumer(IApplicationUserRepository applicationUserRepository, IUnitOfWork unitOfWork)
         {
-            _userService = userService;
+            _applicationUserRepository = applicationUserRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task Consume(ConsumeContext<AvatarUploadResponseEvent> context)
         {
-            var userId = context.Message.UserId;
             var avatar = context.Message.Url;
 
-            await _userService.AddAvatarToProfileAsync(userId, avatar);
+            var applicationUser = await _applicationUserRepository.FindAsync(context.Message.UserId);
+            if (applicationUser == null)
+            {
+                throw new AggregateNotFoundException(nameof(ApplicationUser), context.Message.UserId);
+            }
+
+            applicationUser.SetAvatar(context.Message.Url);
+
+            await _applicationUserRepository.PatchAsync(applicationUser);
+            await _unitOfWork.SaveChangesAsync(default);
         }
     }
 }

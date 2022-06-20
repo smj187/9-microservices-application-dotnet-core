@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Models;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Queries.Admins
 {
-    public class ListUsersQuery : IRequest<IReadOnlyCollection<ApplicationUser>>
+    public class ListUsersQuery : IRequest<IReadOnlyCollection<InternalUserModel>>
     {
 
     }

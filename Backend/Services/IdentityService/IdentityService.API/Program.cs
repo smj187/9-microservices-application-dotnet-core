@@ -5,7 +5,9 @@ using IdentityService.API.Extensions;
 using IdentityService.API.Middleware;
 using IdentityService.Application.Consumers;
 using IdentityService.Application.Services;
+using IdentityService.Core.Aggregates;
 using IdentityService.Infrastructure.Data;
+using IdentityService.Infrastructure.Repositories;
 using MassTransit;
 using MediatR;
 using System.Reflection;
@@ -20,11 +22,12 @@ builder.Services.AddMediatR(Assembly.Load("IdentityService.Application"));
 
 builder.Services.ConfigureIdentityServer();
 
-builder.Services.AddMySqlDatabase<IdentityContext>(builder.Configuration)
+builder.Services.ConfigureMySql<IdentityContext>(builder.Configuration)
     .ConfigureIdentity(builder.Configuration)
     .AddTransient<IUserService, UserService>()
     .AddTransient<IAdminService, AdminService>()
-    .AddTransient<ITokenService, TokenService>();
+    .AddTransient<ITokenService, TokenService>()
+    .AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
 
 builder.Services.AddMassTransit(x =>
 {
@@ -56,7 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<AuthenticationMiddleware>();
 app.UseInitialDatabaseSeeding();
 app.UseHttpsRedirection();

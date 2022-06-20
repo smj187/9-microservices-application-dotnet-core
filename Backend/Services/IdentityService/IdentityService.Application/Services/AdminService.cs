@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Exceptions.Domain;
-using IdentityService.Core.Entities;
+using IdentityService.Core.Identities;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -13,89 +13,22 @@ namespace IdentityService.Application.Services
 {
     public class AdminService : IAdminService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<InternalIdentityUser> _userManager;
         private readonly IdentityContext _identityContext;
+        private readonly RoleManager<InternalRole> _roleManager;
 
-        public AdminService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IdentityContext identityContext)
+        public AdminService(UserManager<InternalIdentityUser> userManager, IdentityContext identityContext, RoleManager<InternalRole> roleManager)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _identityContext = identityContext;
-        }
-
-        private async Task<ApplicationUser> AssignRolesToUserAsync(ApplicationUser user)
-        {
-            var roles = await _userManager.GetRolesAsync(user);
-            user.SetRoles(roles.ToList());
-            return user;
+            _roleManager = roleManager;
         }
 
 
-        public async Task<ApplicationUser> AddRoleToUser(Guid userId, List<string> roles)
+        public async Task<InternalIdentityUser> AddRoleToUser(Guid userId, List<string> roles)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-            {
-                throw new AggregateNotFoundException($"no such user with id'{userId}'");
-            }
-
-
-            foreach (var role in roles)
-            {
-                if (!Enum.IsDefined(typeof(Role), role))
-                {
-                    throw new DomainViolationException($"{role} is not a valid user role");
-                }
-
-                var r = await _roleManager.GetRoleNameAsync(new IdentityRole(role));
-                await _userManager.AddToRoleAsync(user, r);
-            }
-
-            return await AssignRolesToUserAsync(user);
-        }
-
-        public async Task<ApplicationUser> FindUserAsync(Guid userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-            {
-                throw new AggregateNotFoundException($"no user with '{user}' registerd");
-            }
-
-            return await AssignRolesToUserAsync(user);
-        }
-
-        public async Task<IReadOnlyCollection<ApplicationUser>> ListUsersAsync()
-        {
-            var users = _userManager.Users.ToList();
-
-            foreach (var user in users)
-            {
-                await AssignRolesToUserAsync(user);
-            }
-
-            return users;
-        }
-
-        public async Task<ApplicationUser> LockUserAccountAsync(Guid userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-            {
-                throw new AggregateNotFoundException($"no such user with id'{userId}'");
-            }
-
-            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(99));
-            await _identityContext.SaveChangesAsync();
-
-            return await AssignRolesToUserAsync(user);
-        }
-
-        public async Task<ApplicationUser> RemoveRoleFromUser(Guid userId, List<string> roles)
-        {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
+            var identityUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (identityUser == null)
             {
                 throw new AggregateNotFoundException($"no such user with id'{userId}'");
             }
@@ -107,25 +40,73 @@ namespace IdentityService.Application.Services
                     throw new DomainViolationException($"{role} is not a valid user role");
                 }
 
-                var r = await _roleManager.GetRoleNameAsync(new IdentityRole(role));
-                await _userManager.RemoveFromRoleAsync(user, r);
+                var r = await _roleManager.GetRoleNameAsync(new InternalRole(role));
+                await _userManager.AddToRoleAsync(identityUser, r);
             }
 
-            return await AssignRolesToUserAsync(user);
+            return identityUser;
         }
 
-        public async Task<ApplicationUser> UnlockUserAccountAsync(Guid userId)
+        public async Task<InternalIdentityUser> RemoveRoleFromUser(Guid userId, List<string> roles)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
+            var identityUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (identityUser == null)
             {
                 throw new AggregateNotFoundException($"no such user with id'{userId}'");
             }
 
-            await _userManager.SetLockoutEndDateAsync(user, null);
+            foreach (var role in roles)
+            {
+                if (!Enum.IsDefined(typeof(Role), role))
+                {
+                    throw new DomainViolationException($"{role} is not a valid user role");
+                }
+
+                var r = await _roleManager.GetRoleNameAsync(new InternalRole(role));
+                await _userManager.RemoveFromRoleAsync(identityUser, r);
+            }
+
+            return identityUser;
+        }
+
+        public async Task<InternalIdentityUser> FindUserAsync(Guid userId)
+        {
+            var identityUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (identityUser == null)
+            {
+                throw new AggregateNotFoundException($"no user with '{userId}' registerd");
+            }
+
+            return identityUser;
+        }
+
+        public async Task<InternalIdentityUser> LockUserAccountAsync(Guid userId)
+        {
+            var identityUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (identityUser == null)
+            {
+                throw new AggregateNotFoundException($"no such user with id'{userId}'");
+            }
+
+            await _userManager.SetLockoutEndDateAsync(identityUser, DateTimeOffset.UtcNow.AddYears(99));
             await _identityContext.SaveChangesAsync();
 
-            return await AssignRolesToUserAsync(user);
+            return identityUser;
+        }
+
+
+        public async Task<InternalIdentityUser> UnlockUserAccountAsync(Guid userId)
+        {
+            var identityUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (identityUser == null)
+            {
+                throw new AggregateNotFoundException($"no such user with id'{userId}'");
+            }
+
+            await _userManager.SetLockoutEndDateAsync(identityUser, null);
+            await _identityContext.SaveChangesAsync();
+
+            return identityUser;
         }
     }
 }
