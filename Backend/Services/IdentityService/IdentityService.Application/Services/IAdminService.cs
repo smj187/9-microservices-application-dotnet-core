@@ -1,4 +1,5 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Identities;
+using IdentityService.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,10 @@ namespace IdentityService.Application.Services
 {
     public interface IAdminService
     {
-        Task<IReadOnlyCollection<ApplicationUser>> ListUsersAsync();
-        Task<ApplicationUser> FindUserAsync(Guid userId);
+        Task<InternalIdentityUser> AddRoleToUser(Guid userId, List<string> roles);
+        Task<InternalIdentityUser> RemoveRoleFromUser(Guid userId, List<string> roles);
 
-        Task<ApplicationUser> AddRoleToUser(Guid userId, List<string> roles);
-        Task<ApplicationUser> RemoveRoleFromUser(Guid userId, List<string> roles);
-
-        Task<ApplicationUser> LockUserAccountAsync(Guid userId);
-        Task<ApplicationUser> UnlockUserAccountAsync(Guid userId);
+        Task<InternalIdentityUser> LockUserAccountAsync(Guid userId);
+        Task<InternalIdentityUser> UnlockUserAccountAsync(Guid userId);
     }
 }

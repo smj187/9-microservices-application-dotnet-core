@@ -1,8 +1,10 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Aggregates;
+using IdentityService.Core.Identities;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NetDevPack.Security.Jwt.Core.Jwa;
@@ -36,9 +38,11 @@ namespace IdentityService.API.Extensions
                 .PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory()));
 
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<IdentityContext>();
 
+            services.AddIdentity<InternalIdentityUser, InternalRole>()
+                .AddRoles<InternalRole>()
+                .AddEntityFrameworkStores<IdentityContext>()
+                .AddDefaultTokenProviders();
 
             return services;
         }
@@ -79,49 +83,46 @@ namespace IdentityService.API.Extensions
             try
             {
                 // seed defaults
-                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = services.GetRequiredService<UserManager<InternalIdentityUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<InternalRole>>();
+                var context = services.GetRequiredService<IdentityContext>();
 
                 Task.Run(async () =>
                 {
                     if (!roleManager.Roles.Any())
                     {
-                        await roleManager.CreateAsync(new IdentityRole(Role.Administrator.ToString()));
-                        await roleManager.CreateAsync(new IdentityRole(Role.Moderator.ToString()));
-                        await roleManager.CreateAsync(new IdentityRole(Role.User.ToString()));
+                        await roleManager.CreateAsync(new InternalRole(Role.Administrator.ToString()));
+                        await roleManager.CreateAsync(new InternalRole(Role.Moderator.ToString()));
+                        await roleManager.CreateAsync(new InternalRole(Role.User.ToString()));
                     }
 
                     if (!userManager.Users.Any())
                     {
-                        var admin = new ApplicationUser
-                        {
-                            UserName = "admin",
-                            Email = "admin@mail.com",
-                        };
+                        var admin = new InternalIdentityUser(Guid.Parse("08da5217-3182-421f-86bd-000000000000"), "admin@mail.com", "admin");
+                        var appAdmin = new ApplicationUser(Guid.Parse("08da5217-3182-421f-86bd-000000000000"), admin);
 
                         await userManager.CreateAsync(admin, "passwd");
                         await userManager.AddToRoleAsync(admin, Role.Administrator.ToString());
                         await userManager.AddToRoleAsync(admin, Role.Moderator.ToString());
                         await userManager.AddToRoleAsync(admin, Role.User.ToString());
+                        await context.AddAsync(appAdmin);
 
-                        var mod = new ApplicationUser
-                        {
-                            UserName = "mod",
-                            Email = "mod@mail.com",
-                        };
+                        var mod = new InternalIdentityUser(Guid.Parse("08da5217-3182-421f-86bd-000000000001"), "mod@mail.com", "mod");
+                        var appMod = new ApplicationUser(Guid.Parse("08da5217-3182-421f-86bd-000000000001"), mod);
 
                         await userManager.CreateAsync(mod, "passwd");
                         await userManager.AddToRoleAsync(mod, Role.Moderator.ToString());
                         await userManager.AddToRoleAsync(mod, Role.User.ToString());
+                        await context.AddAsync(appMod);
 
-                        var user = new ApplicationUser
-                        {
-                            UserName = "user",
-                            Email = "user@mail.com",
-                        };
+                        var user = new InternalIdentityUser(Guid.Parse("08da5217-3182-421f-86bd-000000000002"), "user@mail.com", "user");
+                        var appUser = new ApplicationUser(Guid.Parse("08da5217-3182-421f-86bd-000000000002"), user);
 
                         await userManager.CreateAsync(user, "passwd");
                         await userManager.AddToRoleAsync(user, Role.User.ToString());
+                        await context.AddAsync(appUser);
+
+                        await context.SaveChangesAsync();
                     }
                 }).Wait();
             }

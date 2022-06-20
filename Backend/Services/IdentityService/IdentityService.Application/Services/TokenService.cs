@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Identities;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +17,11 @@ namespace IdentityService.Application.Services
 {
     public class TokenService : ITokenService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<InternalIdentityUser> _userManager;
         private readonly IJwtService _jwtService;
         private readonly IConfiguration _configuration;
 
-        public TokenService(UserManager<ApplicationUser> userManager, IJwtService jwtService, IConfiguration configuration)
+        public TokenService(UserManager<InternalIdentityUser> userManager, IJwtService jwtService, IConfiguration configuration)
         {
             _userManager = userManager;
             _jwtService = jwtService;
@@ -39,16 +39,16 @@ namespace IdentityService.Application.Services
             return token;
         }
 
-        private async Task<ClaimsIdentity> GetUserClaimsAsync(ICollection<Claim> claims, ApplicationUser user)
+        private async Task<ClaimsIdentity> GetUserClaimsAsync(ICollection<Claim> claims, InternalIdentityUser user)
         {
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTimeOffset.UtcNow).ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTimeOffset.UtcNow).ToString(), ClaimValueTypes.Integer64));
-            claims.Add(new Claim("uid", user.Id));
+            claims.Add(new Claim("uid", user.Id.ToString()));
 
             foreach (var userRole in userRoles)
             {

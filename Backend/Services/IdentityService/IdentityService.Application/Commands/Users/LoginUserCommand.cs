@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Commands.Users
 {
-    public class LoginUserCommand : IRequest<AuthenticatedUser>
+    public class LoginUserCommand : IRequest<InternalUserModel>
     {
         public string Email { get; set; } = default!;
         public string Password { get; set; } = default!;

@@ -22,13 +22,57 @@ namespace IdentityService.Contracts.v1.Contracts
 
 
 
+    public record UserResponse
+    {
+        public Guid Id { get; set; }
+        public string? Firstname { get; set; }
+        public string? Lastname { get; set; }
+        public string? AvatarUrl { get; set; }
+
+        public List<string> Roles { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+
+        public string Token { get; set; }
+    }
+
+    public class UserProfileResponse
+    {
+        public Guid Id { get; set; }
+        public string? Firstname { get; set; }
+        public string? Lastname { get; set; }
+        public string? AvatarUrl { get; set; }
+
+        public List<string> Roles { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? ModifiedAt { get; set; }
+        public DateTimeOffset? LockoutEnd { get; set; }
+    }
+
+    public class AdminUserResponse
+    {
+        public Guid Id { get; set; }
+        public string? Firstname { get; set; }
+        public string? Lastname { get; set; }
+        public string? AvatarUrl { get; set; }
+
+        public List<string> Roles { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? ModifiedAt { get; set; }
+        public DateTimeOffset? LockoutEnd { get; set; }
+    }
+
+
+
     // responses
-    public record RegisterUserResponse(UserResponse User, string Token, string RefreshToken, DateTimeOffset RefreshTokenExpiration);
-    public record LoginUserResponse(UserResponse User, string? Token, string RefreshToken, DateTimeOffset RefreshTokenExpiration);
-    public record UserResponse(Guid Id, string? Firstname, string? Lastname, string? AvatarUrl, string Username, string Email, List<string> Roles);
 
 
-    public record AdminUserResponse(Guid Id, string? Firstname, string? Lastname, string? AvatarUrl, string Username, string Email, List<string> Roles, DateTimeOffset? LockoutEnd, List<AdminRefreshTokenResponse> RefreshTokens, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
     public record AdminRefreshTokenResponse(string Token, DateTimeOffset ExpiresAt, bool IsExpired, DateTimeOffset CreatedAt, DateTimeOffset RevokedAt, bool IsActive);
 
 }

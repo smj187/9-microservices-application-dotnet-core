@@ -29,6 +29,22 @@ namespace BuildingBlocks.EfCore.Extensions
             return services;
         }
 
+        public static IServiceCollection ConfigureMySql<T>(this IServiceCollection services, IConfiguration configuration)
+            where T : DbContext
+        {
+            services.AddDbContext<T>(opts =>
+            {
+                var str = configuration.GetConnectionString("DefaultConnection");
+                opts.UseMySql(str, ServerVersion.AutoDetect(str));
+            });
+
+            services.BuildServiceProvider().GetRequiredService<T>().Database.Migrate();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork<T>>();
+
+            return services;
+        }
+
 
         public static IServiceCollection AddPostgresDatabase<T>(this IServiceCollection services, IConfiguration configuration)
             where T : DbContext

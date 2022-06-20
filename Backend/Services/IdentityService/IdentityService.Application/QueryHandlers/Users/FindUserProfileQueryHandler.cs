@@ -1,8 +1,11 @@
 ﻿using BuildingBlocks.Exceptions.Domain;
 using IdentityService.Application.Queries.Users;
 using IdentityService.Application.Services;
-using IdentityService.Core.Entities;
+using IdentityService.Core.Aggregates;
+using IdentityService.Core.Identities;
+using IdentityService.Core.Models;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,24 +14,40 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.QueryHandlers.Users
 {
-    public class FindUserProfileQueryHandler : IRequestHandler<FindUserProfileQuery, ApplicationUser>
+    public class FindUserProfileQueryHandler : IRequestHandler<FindUserProfileQuery, InternalUserModel>
     {
-        private readonly IUserService _userService;
+        private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly UserManager<InternalIdentityUser> _userManager;
 
-        public FindUserProfileQueryHandler(IUserService userService)
+        public FindUserProfileQueryHandler(IApplicationUserRepository applicationUserRepository, UserManager<InternalIdentityUser> userManager)
         {
-            _userService = userService;
-        } 
+            _applicationUserRepository = applicationUserRepository;
+            _userManager = userManager;
+        }
 
-        public async Task<ApplicationUser> Handle(FindUserProfileQuery request, CancellationToken cancellationToken)
+        public async Task<InternalUserModel> Handle(FindUserProfileQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userService.FindProfileAsync(request.UserId);
-            if (user == null)
+            var applicationUser = await _applicationUserRepository.FindAsync(request.UserId);
+
+            if (applicationUser == null)
             {
                 throw new AggregateNotFoundException(nameof(ApplicationUser), request.UserId);
             }
 
-            return user;
+            var identityUser = await _userManager.FindByIdAsync(request.UserId.ToString());
+            if (identityUser == null)
+            {
+                throw new AggregateNotFoundException(nameof(InternalUserModel), request.UserId);
+            }
+
+            var roles = await _userManager.GetRolesAsync(identityUser);
+
+            return new InternalUserModel
+            {
+                ApplicationUser = applicationUser,
+                InternalIdentityUser = identityUser,
+                Roles = roles.ToList()
+            };
         }
     }
 }

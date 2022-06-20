@@ -1,27 +1,43 @@
 ﻿using IdentityService.Application.Queries.Admins;
-using IdentityService.Application.Services;
-using IdentityService.Core.Entities;
+using IdentityService.Core.Aggregates;
+using IdentityService.Core.Identities;
+using IdentityService.Core.Models;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace IdentityService.Application.QueryHandlers.Admin
 {
-    public class ListUsersQueryHandler : IRequestHandler<ListUsersQuery, IReadOnlyCollection<ApplicationUser>>
+    public class ListUsersQueryHandler : IRequestHandler<ListUsersQuery, IReadOnlyCollection<InternalUserModel>>
     {
-        private readonly IAdminService _adminService;
+        private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly UserManager<InternalIdentityUser> _userManager;
 
-        public ListUsersQueryHandler(IAdminService adminService)
+        public ListUsersQueryHandler(IApplicationUserRepository applicationUserRepository, UserManager<InternalIdentityUser> userManager)
         {
-            _adminService = adminService;
+            _applicationUserRepository = applicationUserRepository;
+            _userManager = userManager;
         }
 
-        public async Task<IReadOnlyCollection<ApplicationUser>> Handle(ListUsersQuery request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<InternalUserModel>> Handle(ListUsersQuery request, CancellationToken cancellationToken)
         {
-            return await _adminService.ListUsersAsync();
+            var applicationUsers = await _applicationUserRepository.ListAsync();
+
+            var responseUsers = new List<InternalUserModel>();
+
+            foreach (var applicationUser in applicationUsers)
+            {
+                var identityUser = await _userManager.FindByIdAsync(applicationUser.InternalUserId.ToString());
+                var roles = await _userManager.GetRolesAsync(identityUser);
+
+                responseUsers.Add(new InternalUserModel
+                {
+                    ApplicationUser = applicationUser,
+                    InternalIdentityUser = identityUser,
+                    Roles = roles.ToList()
+                });
+            }
+
+            return responseUsers;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using IdentityService.Core.Models;
-using MediatR;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Commands.Users
 {
-    public class RevokeTokenCommand : IRequest<AuthenticatedUser>
-    {
-        public Guid UserId { get; set; }
-        public string Token { get; set; } = default!;
-    }
+    //public class RevokeTokenCommand : IRequest<AuthenticatedUser>
+    //{
+    //    public Guid UserId { get; set; }
+    //    public string Token { get; set; } = default!;
+    //}
 }

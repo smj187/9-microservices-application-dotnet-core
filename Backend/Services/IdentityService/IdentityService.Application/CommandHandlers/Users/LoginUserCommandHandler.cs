@@ -1,5 +1,7 @@
-﻿using IdentityService.Application.Commands.Users;
+﻿using BuildingBlocks.Exceptions.Domain;
+using IdentityService.Application.Commands.Users;
 using IdentityService.Application.Services;
+using IdentityService.Core.Aggregates;
 using IdentityService.Core.Models;
 using MediatR;
 using System;
@@ -10,26 +12,38 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.CommandHandlers.Users
 {
-    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthenticatedUser>
+    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, InternalUserModel>
     {
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
+        private readonly IApplicationUserRepository _applicationUserRepository;
 
-        public LoginUserCommandHandler(IUserService userService, ITokenService authService)
+        public LoginUserCommandHandler(IUserService userService, ITokenService authService, IApplicationUserRepository applicationUserRepository)
         {
             _userService = userService;
             _tokenService = authService;
+            _applicationUserRepository = applicationUserRepository;
         }
 
-        public async Task<AuthenticatedUser> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        public async Task<InternalUserModel> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userService.LoginUserAsync(request.Email, request.Password);
+            var identityUser = await _userService.LoginUserAsync(request.Email, request.Password);
+            var applicationUser = await _applicationUserRepository.FindAsync(identityUser.Id);
+            if (applicationUser == null)
+            {
+                throw new AggregateNotFoundException(nameof(ApplicationUser), identityUser.Id);
+            }
 
             var token = await _tokenService.CreateJsonWebToken(request.Email);
 
-            var refresh = await _userService.CreateRefreshTokenAsync(user);
+            //var refresh = await _userService.CreateRefreshTokenAsync(user);
 
-            return new AuthenticatedUser(user, token, refresh.Token, refresh.ExpiresAt);
+            return new InternalUserModel
+            {
+                ApplicationUser = applicationUser,
+                InternalIdentityUser = identityUser,
+                Token = token
+            };
         }
     }
 }

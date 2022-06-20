@@ -1,7 +1,11 @@
-﻿using IdentityService.Application.Commands.Admins;
+﻿using BuildingBlocks.Exceptions.Domain;
+using IdentityService.Application.Commands.Admins;
 using IdentityService.Application.Services;
-using IdentityService.Core.Entities;
+using IdentityService.Core.Aggregates;
+using IdentityService.Core.Identities;
+using IdentityService.Core.Models;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +14,39 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.CommandHandlers.Admins
 {
-    public class UnlockUserAccountCommandHandler : IRequestHandler<UnlockUserAccountCommand, ApplicationUser>
+    public class UnlockUserAccountCommandHandler : IRequestHandler<UnlockUserAccountCommand, InternalUserModel>
     {
+        private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IAdminService _adminService;
+        private readonly UserManager<InternalIdentityUser> _userManager;
 
-        public UnlockUserAccountCommandHandler(IAdminService adminService)
+        public UnlockUserAccountCommandHandler(IApplicationUserRepository applicationUserRepository, IAdminService adminService, UserManager<Core.Identities.InternalIdentityUser> userManager)
         {
+            _applicationUserRepository = applicationUserRepository;
             _adminService = adminService;
+            _userManager = userManager;
         }
 
-        public async Task<ApplicationUser> Handle(UnlockUserAccountCommand request, CancellationToken cancellationToken)
+        public async Task<InternalUserModel> Handle(UnlockUserAccountCommand request, CancellationToken cancellationToken)
         {
-            return await _adminService.UnlockUserAccountAsync(request.UserId);
+            var applicationUser = await _applicationUserRepository.FindAsync(request.UserId);
+
+            if (applicationUser == null)
+            {
+                throw new AggregateNotFoundException(nameof(ApplicationUser), request.UserId);
+            }
+
+            var identityUser = await _adminService.UnlockUserAccountAsync(applicationUser.Id);
+
+            var roles = await _userManager.GetRolesAsync(identityUser);
+
+
+            return new InternalUserModel
+            {
+                ApplicationUser = applicationUser,
+                InternalIdentityUser = identityUser,
+                Roles = roles.ToList()
+            };
         }
     }
 }

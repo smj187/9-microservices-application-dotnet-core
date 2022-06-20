@@ -1,4 +1,5 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Aggregates;
+using IdentityService.Core.Identities;
 using IdentityService.Infrastructure.EntityTypeConfigurations;
 using Jwks.Manager;
 using Jwks.Manager.Store.EntityFrameworkCore;
@@ -13,18 +14,26 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Infrastructure.Data
 {
-    public class IdentityContext : IdentityDbContext<ApplicationUser>, ISecurityKeyContext
+    public class IdentityContext : IdentityDbContext<InternalIdentityUser, InternalRole, Guid>, ISecurityKeyContext
     {
+        public IdentityContext(DbContextOptions<IdentityContext> opts)
+            : base(opts)
+        {
+
+        }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.ApplyConfiguration(new UserEntityTypeConfiguration());
+
+            builder.ApplyConfiguration(new AppUserEntityTypeConfiguration());
         }
 
 
         public DbSet<SecurityKeyWithPrivate> SecurityKeys { get; set; } = default!;
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; } = default!;
 
         //public DbSet<ApplicationUser> Users { get; set; }
 

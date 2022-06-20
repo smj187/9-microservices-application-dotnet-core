@@ -1,4 +1,5 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Aggregates;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -9,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Infrastructure.EntityTypeConfigurations
 {
-    public class UserEntityTypeConfiguration : IEntityTypeConfiguration<ApplicationUser>
+    public class AppUserEntityTypeConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.OwnsMany(x => x.RefreshTokens);
+
+            builder.HasOne(x => x.InternalIdentityUser).WithOne(x => x.AppUser).HasForeignKey<ApplicationUser>(x => x.InternalUserId);
         }
     }
 }

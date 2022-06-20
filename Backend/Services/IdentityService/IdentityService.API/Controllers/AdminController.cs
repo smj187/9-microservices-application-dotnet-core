@@ -61,8 +61,8 @@ namespace IdentityService.API.Controllers
 
             var data = await _mediator.Send(command);
             return Ok(_mapper.Map<AdminUserResponse>(data));
-        }        
-        
+        }
+
         [HttpPatch]
         [Route("{userid:guid}/roles/remove")]
         public async Task<IActionResult> RemoveRolesFromUser([FromRoute] Guid userId, [FromBody] RemoveRoleFromUserRequest request)

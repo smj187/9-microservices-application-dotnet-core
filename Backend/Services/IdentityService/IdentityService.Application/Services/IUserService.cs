@@ -1,4 +1,4 @@
-﻿using IdentityService.Core.Entities;
+﻿using IdentityService.Core.Identities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,22 +10,13 @@ namespace IdentityService.Application.Services
     public interface IUserService
     {
         // user
-        Task<ApplicationUser> RegisterUserAsync(string username, string email, string password, string? firstname, string? lastname);
-        Task<ApplicationUser> LoginUserAsync(string email, string password);
-
-        Task<ApplicationUser> UpdateUserProfileAsync(Guid userId, string? firstname, string? lastname);
-        Task AddAvatarToProfileAsync(Guid userId, string url);   
-        Task<ApplicationUser> FindProfileAsync(Guid userId);
-
+        Task<InternalIdentityUser> RegisterUserAsync(Guid id, string username, string email, string password);
+        Task<InternalIdentityUser> LoginUserAsync(string email, string password);
 
 
         // token
-        Task<RefreshToken> RenewRefreshTokenAsync(Guid userId, string token);
-        Task RevokeTokenAsync(string token);
-        
-        Task<RefreshToken> CreateRefreshTokenAsync(ApplicationUser user);
-
-
-
+        //Task<RefreshToken> RenewRefreshTokenAsync(Guid userId, string token);
+        //Task RevokeTokenAsync(string token);
+        //Task<RefreshToken> CreateRefreshTokenAsync(ApplicationUser user);
     }
 }
