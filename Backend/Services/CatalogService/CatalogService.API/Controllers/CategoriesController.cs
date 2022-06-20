@@ -1,13 +1,18 @@
 ﻿using BuildingBlocks.Extensions.Controllers;
+using BuildingBlocks.Extensions.Strings;
 using CatalogService.Application.Commands.Categories;
 using CatalogService.Application.Queries.Categories;
 using CatalogService.Contracts.v1.Contracts;
+using CatalogService.Core.Domain.Categories;
+using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CatalogService.API.Controllers
@@ -15,9 +20,34 @@ namespace CatalogService.API.Controllers
     [Route("api/v1/[controller]")]
     public class CategoriesController : ApiBaseController<CategoriesController>
     {
+        private readonly IRedisCachingProvider _cache;
+
+        public CategoriesController(IEasyCachingProviderFactory factory, IConfiguration configuration)
+        {
+            _cache = factory.GetRedisProvider(configuration.GetValue<string>("Cache:Database"));
+        }
+
         [HttpGet]
         public async Task<IActionResult> ListCategoriesAsync()
-            => Ok(Mapper.Map<IReadOnlyCollection<CategoryResponse>>(await Mediator.Send(new ListCategoryQuery())));
+        {
+            var key = nameof(ListCategoriesAsync).ToSnakeCase();
+
+            var cache = _cache.StringGet(key);
+
+            IReadOnlyCollection<Category>? response = null;
+
+            if (cache != null)
+            {
+                response = JsonConvert.DeserializeObject<List<Category>>(cache);
+            }
+            else
+            {
+                response = await Mediator.Send(new ListCategoryQuery());
+                _cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
+            }
+
+            return Ok(Mapper.Map<IReadOnlyCollection<CategoryResponse>>(response));
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateCategoryAsync([FromBody] CreateCategoryRequest request)
@@ -29,6 +59,9 @@ namespace CatalogService.API.Controllers
                 Products = request.Products,
                 Sets = request.Sets
             });
+
+            _cache.KeyDel(nameof(ListCategoriesAsync).ToSnakeCase());
+
 
             return Ok(Mapper.Map<CategoryResponse>(data));
         }
