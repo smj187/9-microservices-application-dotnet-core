@@ -1,3 +1,4 @@
+using BuildingBlocks.Cache.Extensions;
 using BuildingBlocks.Masstransit;
 using BuildingBlocks.Middleware.Exceptions;
 using BuildingBlocks.Mongo.Configurations;
@@ -30,7 +31,7 @@ builder.Services.AddMongoDatabase(builder.Configuration)
     .AddEntityBaseMongoConfiguration()
     .AddBsonClassMappings();
 
-
+builder.Services.AddCaching(builder.Configuration);
 
 
 builder.Services.AddMassTransit(x =>
@@ -96,7 +97,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

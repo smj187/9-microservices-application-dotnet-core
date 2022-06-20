@@ -13,7 +13,7 @@ namespace CatalogService.API.Profiles
     {
         public CategoryProfile()
         {
-            CreateMap<Category, CategoryResponse>();
+            CreateMap<Category, CategoryResponse>(MemberList.Destination);
       
         }
     }
