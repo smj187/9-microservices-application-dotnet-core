@@ -18,6 +18,8 @@ namespace FileService.Core.Domain.ValueObjects
         private int _width;
         private int _height;
 
+        protected VideoUrl() { }
+
         public VideoUrl(string url, string format, double duration, long size, int width, int height)
         {
             Guard.Against.NullOrEmpty(url, nameof(url));

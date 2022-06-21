@@ -1,3 +1,4 @@
+using BuildingBlocks.Cache.Extensions;
 using BuildingBlocks.EfCore.Extensions;
 using BuildingBlocks.Masstransit;
 using BuildingBlocks.Middleware.Exceptions;
@@ -18,7 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("FileService.Application"));
 
-
+builder.Services.AddCaching(builder.Configuration);
 
 builder.Services.AddMySqlDatabase<FileContext>(builder.Configuration)
     .AddTransient<IAssetRepository, AssetRepository>()
@@ -64,7 +65,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

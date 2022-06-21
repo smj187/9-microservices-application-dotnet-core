@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileService.Infrastructure.Migrations
 {
     [DbContext(typeof(FileContext))]
-    [Migration("20220619010106_Init")]
+    [Migration("20220621185559_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

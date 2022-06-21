@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.EfCore", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Redis", "..\..\BuildingBlocks\BuildingBlocks.Redis\BuildingBlocks.Redis.csproj", "{22562333-E01F-41C2-9ED9-1CAD57E3CA5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Cache", "BuildingBlocks.Cache\BuildingBlocks.Cache.csproj", "{B718C3B1-7673-4985-AB89-1A4FAAB3AA79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Cache", "..\..\BuildingBlocks\BuildingBlocks.Cache\BuildingBlocks.Cache.csproj", "{3AB27B56-5FFF-4C2A-8C5A-D123C03C294C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,10 +91,10 @@ Global
 		{22562333-E01F-41C2-9ED9-1CAD57E3CA5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22562333-E01F-41C2-9ED9-1CAD57E3CA5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22562333-E01F-41C2-9ED9-1CAD57E3CA5F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B718C3B1-7673-4985-AB89-1A4FAAB3AA79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B718C3B1-7673-4985-AB89-1A4FAAB3AA79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B718C3B1-7673-4985-AB89-1A4FAAB3AA79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B718C3B1-7673-4985-AB89-1A4FAAB3AA79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AB27B56-5FFF-4C2A-8C5A-D123C03C294C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AB27B56-5FFF-4C2A-8C5A-D123C03C294C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AB27B56-5FFF-4C2A-8C5A-D123C03C294C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AB27B56-5FFF-4C2A-8C5A-D123C03C294C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,7 +108,7 @@ Global
 		{589AAB01-2980-4E8D-8636-9A5BBB60196D} = {BB9503EE-5D8D-4E8A-8DBC-50C78DE9BAA2}
 		{7BB8F7A5-4A93-480D-B526-A7A77F24ACE0} = {BB9503EE-5D8D-4E8A-8DBC-50C78DE9BAA2}
 		{22562333-E01F-41C2-9ED9-1CAD57E3CA5F} = {BB9503EE-5D8D-4E8A-8DBC-50C78DE9BAA2}
-		{B718C3B1-7673-4985-AB89-1A4FAAB3AA79} = {BB9503EE-5D8D-4E8A-8DBC-50C78DE9BAA2}
+		{3AB27B56-5FFF-4C2A-8C5A-D123C03C294C} = {BB9503EE-5D8D-4E8A-8DBC-50C78DE9BAA2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {81B2CC86-9495-4FF1-B22A-09448B7FFA1B}
