@@ -46,6 +46,11 @@ namespace FileService.Infrastructure.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("modified_at");
 
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("tenant_id");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("longtext")

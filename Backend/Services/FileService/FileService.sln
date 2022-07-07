@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Redis", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Cache", "..\..\BuildingBlocks\BuildingBlocks.Cache\BuildingBlocks.Cache.csproj", "{C2B575A7-E235-4F3D-A5EA-352878307481}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Multitenancy", "..\..\BuildingBlocks\BuildingBlocks.Multitenancy\BuildingBlocks.Multitenancy.csproj", "{F382C396-7D02-4CE0-854F-EF31128CEB07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{C2B575A7-E235-4F3D-A5EA-352878307481}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2B575A7-E235-4F3D-A5EA-352878307481}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2B575A7-E235-4F3D-A5EA-352878307481}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F382C396-7D02-4CE0-854F-EF31128CEB07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F382C396-7D02-4CE0-854F-EF31128CEB07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F382C396-7D02-4CE0-854F-EF31128CEB07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F382C396-7D02-4CE0-854F-EF31128CEB07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{F8539F54-BF7D-491D-91A3-39AA7F392F0E} = {048AFE73-8248-4461-8251-25CBF4F6829B}
 		{944AA7D9-BD5C-42F1-A371-193F4E8EFBBD} = {048AFE73-8248-4461-8251-25CBF4F6829B}
 		{C2B575A7-E235-4F3D-A5EA-352878307481} = {048AFE73-8248-4461-8251-25CBF4F6829B}
+		{F382C396-7D02-4CE0-854F-EF31128CEB07} = {048AFE73-8248-4461-8251-25CBF4F6829B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8F360110-AA37-40D2-95D6-0586BADB4281}

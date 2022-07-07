@@ -20,6 +20,7 @@ namespace BuildingBlocks.Extensions.Controllers
         private IMediator? _mediator;
         private IMapper? _mapper;
         private IPublishEndpoint? _publishEndpoint;
+        private IHttpContextAccessor? _httpContextAccessor;
 
         protected ILogger<T> Logger
             => _logger ??= HttpContext.RequestServices.GetRequiredService<ILogger<T>>();
@@ -32,5 +33,8 @@ namespace BuildingBlocks.Extensions.Controllers
 
         protected IPublishEndpoint PublishEndpoint
             => _publishEndpoint ??= HttpContext.RequestServices.GetRequiredService<IPublishEndpoint>();
+
+        protected IHttpContextAccessor HttpContextAccessor
+            => _httpContextAccessor ??= HttpContext.RequestServices.GetRequiredService<IHttpContextAccessor>();
     }
 }

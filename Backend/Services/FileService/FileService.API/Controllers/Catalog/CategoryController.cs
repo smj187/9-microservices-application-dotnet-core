@@ -25,6 +25,7 @@ namespace FileService.API.Controllers.Catalog
         {
             var data = await Mediator.Send(new UploadImageCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Folder = "category_images",
                 Description = request.Description,
                 Title = request.Title,
@@ -34,7 +35,7 @@ namespace FileService.API.Controllers.Catalog
                 AssetType = AssetType.CatalogCategoryImage,
             });
 
-            await PublishEndpoint.Publish(new CategoryImageUploadResponseEvent(data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new CategoryImageUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
             return Ok(Mapper.Map<AssetResponse>(data));
         }
 
@@ -47,6 +48,7 @@ namespace FileService.API.Controllers.Catalog
         {
             var data = await Mediator.Send(new UploadVideoCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Folder = "category_videos",
                 Description = request.Description,
                 Title = request.Title,
@@ -56,7 +58,7 @@ namespace FileService.API.Controllers.Catalog
                 AssetType = AssetType.CatalogCategoryVideo,
             });
 
-            await PublishEndpoint.Publish(new CategoryVideoUploadResponseEvent(data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new CategoryVideoUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
             return Ok(Mapper.Map<AssetResponse>(data));
         }
 

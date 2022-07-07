@@ -26,13 +26,14 @@ namespace FileService.API.Controllers.Tenant
         {
             var data = await Mediator.Send(new UploadTenantImageCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Folder = "tenant_assets",
                 AssetType = AssetType.TenantBrandImage,
-                TenantId = request.ExternalEntityId,
+                ExternalEntityId = request.ExternalEntityId,
                 Image = request.Image
             });
 
-            await PublishEndpoint.Publish(new TenantBrandImageUploadResponseEvent(data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new TenantBrandImageUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
             return Ok(Mapper.Map<TenantResponse>(data));
         }
 
@@ -44,13 +45,14 @@ namespace FileService.API.Controllers.Tenant
         {
             var data = await Mediator.Send(new UploadTenantImageCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Folder = "tenant_assets",
                 AssetType = AssetType.TenantLogo,
-                TenantId = request.ExternalEntityId,
+                ExternalEntityId = request.ExternalEntityId,
                 Image = request.Image
             });
 
-            await PublishEndpoint.Publish(new TenantLogoUploadResponseEvent(data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new TenantLogoUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
             return Ok(Mapper.Map<TenantResponse>(data));
         }
 
@@ -62,13 +64,14 @@ namespace FileService.API.Controllers.Tenant
         {
             var data = await Mediator.Send(new UploadTenantVideoCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Folder = "tenant_assets",
                 AssetType = AssetType.TenantVideo,
-                TenantId = request.ExternalEntityId,
+                ExternalEntityId = request.ExternalEntityId,
                 Video = request.Video
             });
 
-            await PublishEndpoint.Publish(new TenantVideoUploadResponseEvent(data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new TenantVideoUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
             return Ok(Mapper.Map<TenantResponse>(data));
         }
 
@@ -80,13 +83,14 @@ namespace FileService.API.Controllers.Tenant
         {
             var data = await Mediator.Send(new UploadTenantImageCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Folder = "tenant_assets",
                 AssetType = AssetType.TenantBanner,
-                TenantId = request.ExternalEntityId,
+                ExternalEntityId = request.ExternalEntityId,
                 Image = request.Image
             });
 
-            await PublishEndpoint.Publish(new TenantBannerUploadResponseEvent(data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new TenantBannerUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
             return Ok(Mapper.Map<TenantResponse>(data));
         }
 

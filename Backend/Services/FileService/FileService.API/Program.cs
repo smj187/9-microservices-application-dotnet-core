@@ -1,7 +1,11 @@
 using BuildingBlocks.Cache.Extensions;
-using BuildingBlocks.EfCore.Extensions;
+using BuildingBlocks.EfCore.Repositories;
+using BuildingBlocks.EfCore.Repositories.Interfaces;
 using BuildingBlocks.Masstransit;
 using BuildingBlocks.Middleware.Exceptions;
+using BuildingBlocks.Multitenancy.Extensions;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Services;
 using CloudinaryDotNet;
 using FileService.Application.Services;
 using FileService.Core.Domain.Aggregates;
@@ -12,6 +16,8 @@ using MediatR;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IMultitenancyService, MultitenancyService>();
 builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -21,7 +27,10 @@ builder.Services.AddMediatR(Assembly.Load("FileService.Application"));
 
 builder.Services.AddCaching(builder.Configuration);
 
-builder.Services.AddMySqlDatabase<FileContext>(builder.Configuration)
+
+
+builder.Services.AddMySqlMultitenancy<FileContext>(builder.Configuration)
+    .AddScoped<IUnitOfWork, UnitOfWork<FileContext>>()
     .AddTransient<IAssetRepository, AssetRepository>()
     .AddTransient<ICloudService, CloudService>();
 
@@ -65,7 +74,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<MultitenancyMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

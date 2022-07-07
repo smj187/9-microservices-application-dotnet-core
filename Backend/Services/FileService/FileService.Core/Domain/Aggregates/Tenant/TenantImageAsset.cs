@@ -18,8 +18,8 @@ namespace FileService.Core.Domain.Aggregates.Tenant
             _url = default!;
         }
 
-        public TenantImageAsset(Guid externalEntityId, string url, AssetType assetType)
-            : base(externalEntityId, assetType, "image")
+        public TenantImageAsset(Guid externalEntityId, string url, AssetType assetType, string tenantId)
+            : base(externalEntityId, assetType, tenantId, "image")
         {
             Guard.Against.NullOrWhiteSpace(url, nameof(url));
             Guard.Against.Null(assetType, nameof(assetType));

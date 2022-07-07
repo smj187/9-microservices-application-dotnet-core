@@ -29,7 +29,7 @@ namespace FileService.Application.CommandHandlers
         {
             var url = await _cloudService.UploadVideoAsync(request.Folder, request.Video, null, null, null);
 
-            var asset = new TenantVideoAsset(request.TenantId, url.Url, request.AssetType);
+            var asset = new TenantVideoAsset(request.ExternalEntityId, url.Url, request.AssetType, request.TenantId);
 
             await _assetRepository.AddAsync(asset);
 

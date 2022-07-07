@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Exceptions.Authentication;
 using BuildingBlocks.Exceptions.Domain;
+using BuildingBlocks.Middleware.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,22 +12,6 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Middleware.Exceptions
 {
-    public class Problem
-    {
-
-        public string? detail { get; set; } = null!;
-        public string? instance { get; set; } = null!;
-        public int status { get; set; }
-        public string? title { get; set; } = null!;
-        public string? type { get; set; } = null!;
-        public string? traceId { get; set; } = null!;
-
-        public override string ToString()
-        {
-            return JsonSerializer.Serialize(this);
-        }
-    }
-
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
@@ -66,7 +51,7 @@ namespace BuildingBlocks.Middleware.Exceptions
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
-            await context.Response.WriteAsync(new Problem
+            await context.Response.WriteAsync(new ProblemResponse
             {
                 type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 title = "Unauthorized",
@@ -82,7 +67,7 @@ namespace BuildingBlocks.Middleware.Exceptions
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status404NotFound;
 
-            await context.Response.WriteAsync(new Problem
+            await context.Response.WriteAsync(new ProblemResponse
             {
                 type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 title = "Not Found",
@@ -98,7 +83,7 @@ namespace BuildingBlocks.Middleware.Exceptions
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-            await context.Response.WriteAsync(new Problem
+            await context.Response.WriteAsync(new ProblemResponse
             {
                 type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 title = "Bad Request",

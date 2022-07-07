@@ -12,10 +12,11 @@ namespace FileService.Application.Commands
 {
     public class UploadTenantVideoCommand : IRequest<TenantVideoAsset>
     {
-        public Guid TenantId { get; set; }
+        public Guid ExternalEntityId { get; set; }
 
         public IFormFile Video { get; set; } = default!;
         public AssetType AssetType { get; set; } = default!;
+        public string TenantId { get; set; } = default!;
 
         public string Folder { get; set; } = default!;
     }

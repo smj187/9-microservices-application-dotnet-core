@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Multitenancy\BuildingBlocks.Multitenancy.csproj" />
     <ProjectReference Include="..\FileService.Core\FileService.Core.csproj" />
   </ItemGroup>
 

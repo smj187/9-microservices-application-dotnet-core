@@ -16,6 +16,7 @@ namespace FileService.Infrastructure.EntityTypeConfigurations
             builder.ToTable("asset");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).HasColumnName("id");
+            builder.Property(x => x.TenantId).HasColumnName("tenant_id");
             builder.Property(x => x.ExternalEntityId).HasColumnName("external_entity_id");
 
             builder.OwnsOne(x => x.AssetType, y =>
@@ -28,7 +29,6 @@ namespace FileService.Infrastructure.EntityTypeConfigurations
             builder.Property(x => x.ModifiedAt).HasColumnName("modified_at");
             builder.Property(x => x.IsDeleted).HasColumnName("is_deleted");
             builder.Property(x => x.ExternalEntityId).HasColumnName("external_entity_id");
-            
         }
     }
 }

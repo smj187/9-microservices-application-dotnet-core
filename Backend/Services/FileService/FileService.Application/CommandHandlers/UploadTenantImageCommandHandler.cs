@@ -27,9 +27,9 @@ namespace FileService.Application.CommandHandlers
 
         public async Task<TenantImageAsset> Handle(UploadTenantImageCommand request, CancellationToken cancellationToken)
         {
-            var url = await _cloudService.UploadUserAvatarAsync(request.Folder, request.Image, request.TenantId);
+            var url = await _cloudService.UploadUserAvatarAsync(request.Folder, request.Image, request.ExternalEntityId);
 
-            var asset = new TenantImageAsset(request.TenantId, url, request.AssetType);
+            var asset = new TenantImageAsset(request.ExternalEntityId, url, request.AssetType, request.TenantId);
 
             await _assetRepository.AddAsync(asset);
 
