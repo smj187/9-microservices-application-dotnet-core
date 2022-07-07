@@ -16,6 +16,7 @@ namespace FileService.Application.Commands
 
         public IFormFile Image { get; set; } = default!;
         public AssetType AssetType { get; set; } = default!;
+        public string TenantId { get; set; } = default!;
 
         public string Folder { get; set; } = default!;
     }

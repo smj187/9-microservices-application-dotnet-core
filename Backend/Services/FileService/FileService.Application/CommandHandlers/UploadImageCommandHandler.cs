@@ -30,7 +30,7 @@ namespace FileService.Application.CommandHandlers
         {
             var urls = await _cloudService.UploadImageAsync(request.Folder, request.Image, request.Title, request.Description, request.Tags);
 
-            var asset = new ImageAsset(request.ExternalEntityId, urls.ToList(), request.AssetType, request.Title, request.Description, request.Tags);
+            var asset = new ImageAsset(request.ExternalEntityId, urls.ToList(), request.AssetType, request.TenantId, request.Title, request.Description, request.Tags);
 
             await _assetRepository.AddAsync(asset);
 

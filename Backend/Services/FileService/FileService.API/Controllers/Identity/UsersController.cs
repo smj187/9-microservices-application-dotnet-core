@@ -25,6 +25,7 @@ namespace FileService.API.Controllers.Identity
         {
             var data = await Mediator.Send(new UploadAvatarCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Folder = "avatar_assets",
                 AssetType = AssetType.IdentityAvatarImage,
                 UserId = request.ExternalEntityId,
@@ -32,7 +33,7 @@ namespace FileService.API.Controllers.Identity
             });
 
 
-            await PublishEndpoint.Publish(new AvatarUploadResponseEvent(data.ExternalEntityId, data.Url));
+            await PublishEndpoint.Publish(new AvatarUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Url));
             return Ok(Mapper.Map<AvatarResponse>(data));
         }
 

@@ -29,7 +29,7 @@ namespace FileService.Application.CommandHandlers
         {
             var url = await _cloudService.UploadUserAvatarAsync(request.Folder, request.Image, request.UserId);
 
-            var asset = new AvatarAsset(request.UserId, url, request.AssetType);
+            var asset = new AvatarAsset(request.UserId, url, request.AssetType, request.TenantId);
 
             await _assetRepository.AddAsync(asset);
 

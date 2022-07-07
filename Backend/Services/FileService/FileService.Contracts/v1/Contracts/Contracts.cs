@@ -37,7 +37,7 @@ namespace FileService.Contracts.v1.Contracts
 
 
     // responses
-    public record AssetResponse(Guid Id, Guid ExternalEntityId, int AssetTypeValue, string AssetTypeDescription, string Type, string? Title, string? Description, string? Tags, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt)
+    public record AssetResponse(Guid Id, Guid ExternalEntityId, int AssetTypeValue, string AssetTypeDescription, string Type, string TenantId, string? Title, string? Description, string? Tags, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt)
     {
         public VideoAssetUrlResponse? Video { get; private set; } = null!;
         public IEnumerable<ImageAssetUrlResponse>? Images { get; private set; } = null!;
@@ -46,9 +46,9 @@ namespace FileService.Contracts.v1.Contracts
     public record VideoAssetUrlResponse(string Url, string Format, int Duration, long Size, int Width, int Height);
 
 
-    public record AvatarResponse(Guid Id, Guid ExternalEntityId, int AssetTypeValue, string AssetTypeDescription, string Url, string Type, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
+    public record AvatarResponse(Guid Id, Guid ExternalEntityId, string TenantId, int AssetTypeValue, string AssetTypeDescription, string Url, string Type, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
 
-    public record TenantResponse(Guid Id, Guid ExternalEntityId, int AssetTypeValue, string AssetTypeDescription, string Url, string Type, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
+    public record TenantResponse(Guid Id, Guid ExternalEntityId, string TenantId, int AssetTypeValue, string AssetTypeDescription, string Url, string Type, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
 
 
 }

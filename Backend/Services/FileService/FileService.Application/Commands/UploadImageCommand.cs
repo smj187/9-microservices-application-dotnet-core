@@ -17,6 +17,7 @@ namespace FileService.Application.Commands
         public Guid ExternalEntityId { get; set; }
         public IFormFile Image { get; set; } = default!;
         public AssetType AssetType { get; set; } = default!;
+        public string TenantId { get; set; } = default!;
 
         public string? Title { get; set; }
         public string? Description { get; set; }

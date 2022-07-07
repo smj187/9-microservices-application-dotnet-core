@@ -22,8 +22,8 @@ namespace FileService.Core.Domain.Aggregates.Image
             _imageUrls = default!;
         }
 
-        public ImageAsset(Guid externalEntityId, List<ImageUrl> imageUrls, AssetType assetType, string? title = null, string? description = null, string? tags = null)
-            : base(externalEntityId, assetType, "image")
+        public ImageAsset(Guid externalEntityId, List<ImageUrl> imageUrls, AssetType assetType, string tenantId, string? title = null, string? description = null, string? tags = null)
+            : base(externalEntityId, assetType, tenantId, "image")
         {
             Guard.Against.NullOrEmpty(imageUrls, nameof(imageUrls));
 

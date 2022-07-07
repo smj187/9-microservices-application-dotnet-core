@@ -24,6 +24,8 @@ namespace FileService.Infrastructure.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     type = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    tenant_id = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Discriminator = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     avatar_url = table.Column<string>(type: "longtext", nullable: true)

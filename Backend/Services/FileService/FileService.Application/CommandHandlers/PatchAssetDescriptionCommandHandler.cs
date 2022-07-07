@@ -28,7 +28,7 @@ namespace FileService.Application.CommandHandlers
 
             asset.PatchDescription(request.Title, request.Description, request.Tags);
 
-            var patched = await _assetRepository.PatchAsync(request.AssetId, asset);
+            var patched = await _assetRepository.PatchAsync(asset);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return patched;
