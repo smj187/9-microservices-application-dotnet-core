@@ -12,8 +12,7 @@ dotnet user-secrets -p .\IdentityService.API.csproj set "Kestrel:Certificates:De
 ```
 
 ```
-
-dotnet ef migrations add Init --project IdentityService.Infrastructure -s IdentityService.API
+rmdir .\IdentityService.Infrastructure\Migrations\ -r ; dotnet ef migrations add Init --project IdentityService.Infrastructure -s IdentityService.API
 dotnet ef database update --project IdentityService.Infrastructure -s IdentityService.API
 ```
 

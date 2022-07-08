@@ -50,6 +50,7 @@ namespace IdentityService.API.Controllers
 
             var command = new RegisterUserCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Username = request.Username,
                 Email = request.Email,
                 Password = request.Password,

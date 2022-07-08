@@ -30,17 +30,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.6" />
     <PackageReference Include="NetDevPack.Security.Jwt.AspNetCore" Version="6.0.6" />
     <PackageReference Include="NetDevPack.Security.Jwt.Core" Version="6.0.6" />
     <PackageReference Include="NetDevPack.Security.Jwt.IdentityServer4" Version="6.0.6" />
     <PackageReference Include="NetDevPack.Security.Jwt.Store.EntityFrameworkCore" Version="6.0.6" />
     <PackageReference Include="NetDevPack.Security.JwtExtensions" Version="6.0.2" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.19.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,10 @@
-using BuildingBlocks.EfCore.Extensions;
+using BuildingBlocks.EfCore.Repositories;
+using BuildingBlocks.EfCore.Repositories.Interfaces;
 using BuildingBlocks.Masstransit;
 using BuildingBlocks.Middleware.Exceptions;
+using BuildingBlocks.Multitenancy.Extensions;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Services;
 using IdentityService.API.Extensions;
 using IdentityService.API.Middleware;
 using IdentityService.Application.Consumers;
@@ -13,6 +17,8 @@ using MediatR;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IMultitenancyService, MultitenancyService>();
 builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -22,7 +28,8 @@ builder.Services.AddMediatR(Assembly.Load("IdentityService.Application"));
 
 builder.Services.ConfigureIdentityServer();
 
-builder.Services.ConfigureMySql<IdentityContext>(builder.Configuration)
+builder.Services.AddPostgresMultitenancy<IdentityContext>(builder.Configuration)
+    .AddScoped<IUnitOfWork, UnitOfWork<IdentityContext>>()
     .ConfigureIdentity(builder.Configuration)
     .AddTransient<IUserService, UserService>()
     .AddTransient<IAdminService, AdminService>()
@@ -59,9 +66,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<MultitenancyMiddleware>();
 app.UseMiddleware<AuthenticationMiddleware>();
-app.UseInitialDatabaseSeeding();
+app.UseIdentitySeeding(builder.Configuration);
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -8,6 +8,6 @@ namespace BuildingBlocks.Multitenancy.Interfaces
 {
     public interface IMultitenantAggregate
     {
-        string TenantId { get; }
+        string TenantId { get; set; }
     }
 }

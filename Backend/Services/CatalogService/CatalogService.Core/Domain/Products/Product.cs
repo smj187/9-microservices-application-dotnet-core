@@ -55,7 +55,7 @@ namespace CatalogService.Core.Domain.Products
         public string TenantId
         {
             get => _tenantId;
-            private set => _tenantId = value;
+            set => _tenantId = Guard.Against.NullOrWhiteSpace(value, nameof(value));
         }
 
         public string Name
