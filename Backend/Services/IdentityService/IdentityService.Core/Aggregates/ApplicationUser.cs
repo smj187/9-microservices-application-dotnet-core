@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
+using BuildingBlocks.Multitenancy.Interfaces;
 using IdentityService.Core.Identities;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Core.Aggregates
 {
-    public class ApplicationUser : AggregateBase
+    public class ApplicationUser : AggregateBase, IMultitenantAggregate
     {
         private InternalIdentityUser _internalIdentityUser;
 
@@ -20,24 +21,34 @@ namespace IdentityService.Core.Aggregates
         private string? _firstname = null;
         private string? _lastname = null;
         private string? _avatarUrl = null;
+        private string _tenantId;
 
         // ef required (never called)
         public ApplicationUser() 
         {
             _internalIdentityUser = default!;
+            _tenantId = default!;
         }
 
-        public ApplicationUser(Guid id, InternalIdentityUser identityUser, string? firstname = null, string? lastname = null)
+        public ApplicationUser(string tenantId, Guid id, InternalIdentityUser identityUser, string? firstname = null, string? lastname = null)
         {
             Id = id;
             Guard.Against.Null(identityUser, nameof(identityUser));
+            Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             _internalIdentityUser = identityUser;
 
+            _tenantId = tenantId;
             _firstname = firstname;
             _lastname = lastname;
             _avatarUrl = null;
 
             CreatedAt = DateTimeOffset.UtcNow;
+        }
+
+        public string TenantId
+        {
+            get => _tenantId;
+            set => _tenantId = Guard.Against.NullOrWhiteSpace(value, nameof(value));
         }
 
         public InternalIdentityUser InternalIdentityUser
@@ -69,11 +80,15 @@ namespace IdentityService.Core.Aggregates
         {
             _firstname = firstname;
             _lastname = lastname;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
 
         public void SetAvatar(string? url = null)
         {
             _avatarUrl = url;
+
+            ModifiedAt = DateTimeOffset.UtcNow;
         }
     }
 }

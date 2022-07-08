@@ -37,7 +37,7 @@ namespace IdentityService.Application.CommandHandlers.Users
 
             var identityUser = await _userService.RegisterUserAsync(newUserId, request.Username, request.Email, request.Password);
 
-            var applicationUser = await _applicationUserRepository.AddAsync(new ApplicationUser(newUserId, identityUser, request.Firstname, request.Lastname));
+            var applicationUser = await _applicationUserRepository.AddAsync(new ApplicationUser(request.TenantId, newUserId, identityUser, request.Firstname, request.Lastname));
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

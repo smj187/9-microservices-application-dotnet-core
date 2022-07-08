@@ -1,4 +1,7 @@
-﻿using IdentityService.Core.Aggregates;
+﻿using BuildingBlocks.Multitenancy.Configurations;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Services;
+using IdentityService.Core.Aggregates;
 using IdentityService.Core.Identities;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,7 +29,6 @@ namespace IdentityService.API.Extensions
                 .AddInMemoryApiScopes(Config.GetApiScope())
                 .AddInMemoryClients(Config.GetClients());
 
-
             services.AddJwksManager(opts =>
             {
                 opts.Jws = Algorithm.Create(AlgorithmType.RSA, JwtType.Jws);
@@ -36,8 +38,6 @@ namespace IdentityService.API.Extensions
 
             services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory()));
-
-
 
             services.AddIdentity<InternalIdentityUser, InternalRole>()
                 .AddRoles<InternalRole>()
@@ -72,17 +72,47 @@ namespace IdentityService.API.Extensions
             return services;
         }
 
-
-        public static void UseInitialDatabaseSeeding(this WebApplication app)
+        public static void UseIdentitySeeding(this WebApplication app, IConfiguration config)
         {
-            using var scope = app.Services.CreateScope();
+            var tenants = config.GetSection("tenants").Get<IEnumerable<TenantConfiguration>>();
 
-            var services = scope.ServiceProvider;
-            var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-
-            try
+            foreach (var tenant in tenants)
             {
-                // seed defaults
+                var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
+
+                var serviceCollection = new ServiceCollection();
+                serviceCollection.AddTransient<IEnvironmentService, EnvironmentService>();
+                serviceCollection.AddTransient<IConfigurationService, ConfigurationService>(serviceProvider =>
+                {
+                    return new ConfigurationService(serviceProvider.GetRequiredService<IEnvironmentService>(), Directory.GetCurrentDirectory());
+                });
+
+                serviceCollection.AddTransient(serviceProvider =>
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
+                    optionsBuilder.UseNpgsql(tenant.ConnectionString);
+                    var tenantService = new MultitenancyService(tenant.TenantId, config);
+                    return new IdentityContext(optionsBuilder.Options, config, tenantService);
+                });
+
+                serviceCollection.ConfigureIdentity(config);
+                serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+                serviceCollection.AddTransient<IMultitenancyService>(serviceProvider =>
+                {
+                    var httpContext = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                    return new MultitenancyService(httpContext, config);
+                });
+
+                serviceCollection.AddIdentity<InternalIdentityUser, InternalRole>()
+                    .AddRoles<InternalRole>()
+                    .AddEntityFrameworkStores<IdentityContext>()
+                    .AddDefaultTokenProviders();
+
+                serviceCollection.AddLogging();
+                var services = serviceCollection.BuildServiceProvider();
+
+
+                using var scope = app.Services.CreateScope();
                 var userManager = services.GetRequiredService<UserManager<InternalIdentityUser>>();
                 var roleManager = services.GetRequiredService<RoleManager<InternalRole>>();
                 var context = services.GetRequiredService<IdentityContext>();
@@ -98,41 +128,39 @@ namespace IdentityService.API.Extensions
 
                     if (!userManager.Users.Any())
                     {
-                        var admin = new InternalIdentityUser(Guid.Parse("08da5217-3182-421f-86bd-000000000000"), "admin@mail.com", "admin");
-                        var appAdmin = new ApplicationUser(Guid.Parse("08da5217-3182-421f-86bd-000000000000"), admin);
+                        var admin = new InternalIdentityUser(Guid.Parse("11111111-2222-3333-4444-000000000000"), "admin@mail.com", "admin");
+                        var appAdmin = new ApplicationUser(tenant.TenantId, Guid.Parse("11111111-2222-3333-4444-000000000000"), admin);
 
                         await userManager.CreateAsync(admin, "passwd");
                         await userManager.AddToRoleAsync(admin, Role.Administrator.ToString());
                         await userManager.AddToRoleAsync(admin, Role.Moderator.ToString());
                         await userManager.AddToRoleAsync(admin, Role.User.ToString());
-                        await context.AddAsync(appAdmin);
+                        context.Add(appAdmin);
+                        context.Entry(admin).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                        await context.SaveChangesAsync();
 
-                        var mod = new InternalIdentityUser(Guid.Parse("08da5217-3182-421f-86bd-000000000001"), "mod@mail.com", "mod");
-                        var appMod = new ApplicationUser(Guid.Parse("08da5217-3182-421f-86bd-000000000001"), mod);
+
+                        var mod = new InternalIdentityUser(Guid.Parse("11111111-2222-3333-4444-000000000001"), "mod@mail.com", "mod");
+                        var appMod = new ApplicationUser(tenant.TenantId, Guid.Parse("11111111-2222-3333-86bd-000000000001"), mod);
 
                         await userManager.CreateAsync(mod, "passwd");
                         await userManager.AddToRoleAsync(mod, Role.Moderator.ToString());
                         await userManager.AddToRoleAsync(mod, Role.User.ToString());
-                        await context.AddAsync(appMod);
+                        context.Add(appMod);
+                        context.Entry(mod).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                        await context.SaveChangesAsync();
 
-                        var user = new InternalIdentityUser(Guid.Parse("08da5217-3182-421f-86bd-000000000002"), "user@mail.com", "user");
-                        var appUser = new ApplicationUser(Guid.Parse("08da5217-3182-421f-86bd-000000000002"), user);
+                        var user = new InternalIdentityUser(Guid.Parse("11111111-2222-3333-4444-000000000002"), "user@mail.com", "user");
+                        var appUser = new ApplicationUser(tenant.TenantId, Guid.Parse("11111111-2222-3333-86bd-000000000002"), user);
 
                         await userManager.CreateAsync(user, "passwd");
                         await userManager.AddToRoleAsync(user, Role.User.ToString());
-                        await context.AddAsync(appUser);
-
+                        context.Add(appUser);
+                        context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                         await context.SaveChangesAsync();
                     }
                 }).Wait();
             }
-            catch (Exception ex)
-            {
-                var logger = loggerFactory.CreateLogger<Program>();
-                logger.LogError(ex, "error seeding database");
-            }
         }
-
-
     }
 }

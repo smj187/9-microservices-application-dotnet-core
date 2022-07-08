@@ -59,7 +59,7 @@ namespace FileService.Core.Domain.Aggregates
         public string TenantId
         {
             get => _tenantId;
-            private set => _tenantId = value;
+            set => _tenantId = Guard.Against.NullOrWhiteSpace(value, nameof(value));
         }
 
         public abstract void PatchDescription(string? title, string? description, string? tags);

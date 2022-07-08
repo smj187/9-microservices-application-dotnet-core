@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Multitenancy.Interfaces.Services;
+﻿using BuildingBlocks.Multitenancy.Interfaces;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
 using FileService.Core.Domain.Aggregates;
 using FileService.Infrastructure.EntityTypeConfigurations;
 using Microsoft.EntityFrameworkCore;
@@ -43,5 +44,20 @@ namespace FileService.Infrastructure.Data
         }
 
         public DbSet<AssetFile> AssetFiles { get; set; } = default!;
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (var entry in ChangeTracker.Entries<IMultitenantAggregate>().ToList())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                    case EntityState.Modified:
+                        entry.Entity.TenantId = _tenantId;
+                        break;
+                }
+            }
+            return await base.SaveChangesAsync(cancellationToken);
+        }
     }
 }
