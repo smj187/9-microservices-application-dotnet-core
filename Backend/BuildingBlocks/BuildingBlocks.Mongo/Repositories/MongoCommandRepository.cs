@@ -1,6 +1,5 @@
 ﻿using BuildingBlocks.Domain;
 using BuildingBlocks.Mongo.Repositories.Interfaces;
-using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -17,13 +16,10 @@ namespace BuildingBlocks.Mongo.Repositories
         private readonly IMongoCollection<T> _mongoCollection;
         private readonly FilterDefinitionBuilder<T> _filterBuilder = Builders<T>.Filter;
 
-        public MongoCommandRepository(IConfiguration configuration)
+        public MongoCommandRepository(string connectionString, string databaseName)
         {
-            var str = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
-            var name = configuration.GetValue<string>("ConnectionStrings:Database");
-
-            var client = new MongoClient(str);
-            var database = client.GetDatabase(name);
+            var client = new MongoClient(connectionString);
+            var database = client.GetDatabase(databaseName);
 
             var pl = new EnglishPluralizationService();
             var collectionName = pl.Pluralize(typeof(T).Name.ToLower());

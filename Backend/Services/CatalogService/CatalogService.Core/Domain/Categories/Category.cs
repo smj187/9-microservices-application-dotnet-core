@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
+using BuildingBlocks.Multitenancy.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Core.Domain.Categories
 {
-    public class Category : AggregateBase
+    public class Category : AggregateBase, IMultitenantAggregate
     {
         private string _name;
         private string? _description;
@@ -16,10 +17,13 @@ namespace CatalogService.Core.Domain.Categories
         private List<Guid> _sets;
         private bool _isVisible;
         private List<Guid> _assets;
+        private string _tenantId;
 
-        public Category(string name, string? descripion = null, List<Guid>? products = null, List<Guid>? sets = null)
+        public Category(string tenantId, string name, string? descripion = null, List<Guid>? products = null, List<Guid>? sets = null)
         {
+            Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
+            _tenantId = tenantId;
             _name = name;
             _description = descripion;
 
@@ -27,6 +31,12 @@ namespace CatalogService.Core.Domain.Categories
             _sets = sets ?? new List<Guid>();
 
             _assets = new();
+        }
+
+        public string TenantId
+        {
+            get => _tenantId;
+            private set => _tenantId = value;
         }
 
         public string Name
@@ -89,6 +99,8 @@ namespace CatalogService.Core.Domain.Categories
             get => _sets;
             private set => _sets = new List<Guid>(value);
         }
+
+        
 
         public void AddSet(Guid setId)
         {

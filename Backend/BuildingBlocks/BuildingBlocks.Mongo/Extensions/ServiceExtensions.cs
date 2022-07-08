@@ -16,14 +16,14 @@ namespace BuildingBlocks.Mongo.Extensions
     {
         public static IServiceCollection AddMongoDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient(serviceProvider =>
-            {
-                var str = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
-                var db = configuration.GetValue<string>("ConnectionStrings:Database");
+            //services.AddTransient(serviceProvider =>
+            //{
+            //    var str = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
+            //    var db = configuration.GetValue<string>("ConnectionStrings:Database");
 
-                var mongoClient = new MongoClient(str);
-                return mongoClient.GetDatabase(db);
-            });
+            //    var mongoClient = new MongoClient(str);
+            //    return mongoClient.GetDatabase(db);
+            //});
 
             return services;
         }

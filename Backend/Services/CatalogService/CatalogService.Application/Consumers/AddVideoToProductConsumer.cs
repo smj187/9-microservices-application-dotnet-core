@@ -1,7 +1,10 @@
 ﻿using BuildingBlocks.Exceptions.Domain;
+using BuildingBlocks.Multitenancy.Services;
 using CatalogService.Core.Domain.Products;
+using CatalogService.Infrastructure.Repositories;
 using FileService.Contracts.v1.Events;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +15,23 @@ namespace CatalogService.Application.Consumers
 {
     public class AddVideoToProductConsumer : IConsumer<ProductVideoUploadResponseEvent>
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IConfiguration _configuration;
 
-        public AddVideoToProductConsumer(IProductRepository productRepository)
+        public AddVideoToProductConsumer(IConfiguration configuration)
         {
-            _productRepository = productRepository;
+            _configuration = configuration;
         }
 
         public async Task Consume(ConsumeContext<ProductVideoUploadResponseEvent> context)
         {
+            var tenantId = context.Message.TenantId;
             var productId = context.Message.ProductId;
             var assetId = context.Message.VideoId;
 
-            var product = await _productRepository.FindAsync(productId);
+
+            var repository = new ProductRepository(new MultitenancyService(tenantId, _configuration));
+
+            var product = await repository.FindAsync(productId);
             if (product == null)
             {
                 throw new AggregateNotFoundException(nameof(Product), productId);
@@ -32,7 +39,7 @@ namespace CatalogService.Application.Consumers
 
             product.AddAssetId(assetId);
 
-            await _productRepository.PatchAsync(productId, product);
+            await repository.PatchAsync(productId, product);
         }
     }
 }

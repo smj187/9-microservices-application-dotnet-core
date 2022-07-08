@@ -10,6 +10,7 @@ namespace CatalogService.Application.Commands.Sets
 {
     public class CreateSetCommand : IRequest<Set>
     {
+        public string TenantId { get; set; } = default!;
         public string Name { get; set; } = default!;
         public decimal Price { get; set; } = default!;
         public string? Description { get; set; } = null!;

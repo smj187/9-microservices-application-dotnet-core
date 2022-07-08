@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.Consumers
 {
-    public class CatalogConsumer : IConsumer<CatalogAllocationCommand>
+    public class CatalogSagaConsumer : IConsumer<CatalogAllocationCommand>
     {
         private readonly IProductRepository _productRepository;
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly ISetRepository _setRepository;
 
-        public CatalogConsumer(IProductRepository productRepository, IPublishEndpoint publishEndpoint, ISetRepository setRepository)
+        public CatalogSagaConsumer(IProductRepository productRepository, IPublishEndpoint publishEndpoint, ISetRepository setRepository)
         {
             _productRepository = productRepository;
             _publishEndpoint = publishEndpoint;

@@ -1,7 +1,10 @@
 ﻿using BuildingBlocks.Exceptions.Domain;
+using BuildingBlocks.Multitenancy.Services;
 using CatalogService.Core.Domain.Categories;
+using CatalogService.Infrastructure.Repositories;
 using FileService.Contracts.v1.Events;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +15,22 @@ namespace CatalogService.Application.Consumers
 {
     public class AddImageToCategoryConsumer : IConsumer<CategoryImageUploadResponseEvent>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IConfiguration _configuration;
 
-        public AddImageToCategoryConsumer(ICategoryRepository categoryRepository)
+        public AddImageToCategoryConsumer(IConfiguration configuration)
         {
-            _categoryRepository = categoryRepository;
+            _configuration = configuration;
         }
 
         public async Task Consume(ConsumeContext<CategoryImageUploadResponseEvent> context)
         {
+            var tenantId = context.Message.TenantId;
             var categoryId = context.Message.CategoryId;
             var assetId = context.Message.ImageId;
 
-            var category = await _categoryRepository.FindAsync(categoryId);
+            var repository = new CategoryRepository(new MultitenancyService(tenantId, _configuration));
+
+            var category = await repository.FindAsync(categoryId);
             if (category == null)
             {
                 throw new AggregateNotFoundException(nameof(Category), categoryId);
@@ -32,7 +38,7 @@ namespace CatalogService.Application.Consumers
 
             category.AddAssetId(assetId);
 
-            await _categoryRepository.PatchAsync(categoryId, category);
+            await repository.PatchAsync(categoryId, category);
         }
     }
 }

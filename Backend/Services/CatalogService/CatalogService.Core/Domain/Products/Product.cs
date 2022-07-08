@@ -24,12 +24,15 @@ namespace CatalogService.Core.Domain.Products
         private List<string>? _tags;
         private List<Guid> _assets;
         private int? _quantity;
+        private string _tenantId;
 
-        public Product(string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null, int? quantity = null)
+        public Product(string tenantId, string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null, int? quantity = null)
         {
+            Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.NegativeOrZero(price, nameof(price));
 
+            _tenantId = tenantId;
             _name = name;
             _description = description;
             _priceDescription = priceDescription;
@@ -49,6 +52,11 @@ namespace CatalogService.Core.Domain.Products
             _assets = new();
         }
 
+        public string TenantId
+        {
+            get => _tenantId;
+            private set => _tenantId = value;
+        }
 
         public string Name
         {

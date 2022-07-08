@@ -21,12 +21,15 @@ namespace CatalogService.Core.Domain.Sets
         private List<Guid> _products;
         private List<Guid> _assets;
         private int? _quantity;
+        private string _tenantId;
 
-        public Set(string name, decimal price, string? description = null, string? priceDescription = null, IEnumerable<string>? tags = null, int? quantity = null)
+        public Set(string tenantId, string name, decimal price, string? description = null, string? priceDescription = null, IEnumerable<string>? tags = null, int? quantity = null)
         {
+            Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.NegativeOrZero(price, nameof(price));
 
+            _tenantId = tenantId;
             _name = name;
             _price = price;
 
@@ -37,6 +40,12 @@ namespace CatalogService.Core.Domain.Sets
 
             _products = new List<Guid>();
             _assets = new();
+        }
+
+        public string TenantId
+        {
+            get => _tenantId;
+            private set => _tenantId = value;
         }
 
         public string Name

@@ -43,7 +43,7 @@ namespace CatalogService.API.Controllers
             else
             {
                 response = await Mediator.Send(new ListCategoryQuery());
-                _cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
+                //_cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
             }
 
             return Ok(Mapper.Map<IReadOnlyCollection<CategoryResponse>>(response));
@@ -54,6 +54,7 @@ namespace CatalogService.API.Controllers
         {
             var data = await Mediator.Send(new CreateCategoryCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Name = request.Name,
                 Description = request.Description,
                 Products = request.Products,

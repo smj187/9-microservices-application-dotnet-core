@@ -14,6 +14,7 @@ namespace CatalogService.Infrastructure.BsonClassMapDefinitions.BsonClassMapping
         {
             BsonClassMap.RegisterClassMap<Category>(x =>
             {
+                x.MapProperty(x => x.TenantId).SetElementName("tenant_id").SetIsRequired(true);
                 x.MapProperty(x => x.Name).SetElementName("name").SetIsRequired(true);
                 x.MapProperty(x => x.Description).SetElementName("description").SetIsRequired(false);
                 x.MapProperty(x => x.IsVisible).SetElementName("is_visible").SetIsRequired(true);
