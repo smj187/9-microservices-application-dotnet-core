@@ -10,6 +10,7 @@ namespace CatalogService.Application.Commands.Categories
 {
     public class CreateCategoryCommand : IRequest<Category>
     {
+        public string TenantId { get; set; } = default!;
         public string Name { get; set; } = default!;
         public string? Description { get; set; } = null!;
         public List<Guid>? Products { get; set; } = null!;

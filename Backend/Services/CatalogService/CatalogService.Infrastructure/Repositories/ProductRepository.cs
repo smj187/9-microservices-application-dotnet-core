@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Mongo.Repositories;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
 using CatalogService.Core.Domain.Products;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
@@ -12,8 +13,8 @@ namespace CatalogService.Infrastructure.Repositories
 {
     public class ProductRepository : MongoRepository<Product>, IProductRepository
     {
-        public ProductRepository(IConfiguration configuration) 
-            : base(configuration)
+        public ProductRepository(IMultitenancyService multitenancyService)
+            : base(multitenancyService.GetConnectionString(), $"catalog_{multitenancyService.GetTenantId()}")
         {
 
         }

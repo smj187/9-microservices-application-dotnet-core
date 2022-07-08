@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Mongo.Repositories;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
 using CatalogService.Core.Domain.Sets;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
@@ -13,8 +14,8 @@ namespace CatalogService.Infrastructure.Repositories
 {
     public class SetRepository : MongoRepository<Set>, ISetRepository
     {
-        public SetRepository(IConfiguration configuration) 
-            : base(configuration)
+        public SetRepository(IMultitenancyService multitenancyService)
+            : base(multitenancyService.GetConnectionString(), $"catalog_{multitenancyService.GetTenantId()}")
         {
 
         }

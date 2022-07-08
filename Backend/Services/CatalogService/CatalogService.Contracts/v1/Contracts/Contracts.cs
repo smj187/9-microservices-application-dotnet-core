@@ -66,15 +66,15 @@ namespace CatalogService.Contracts.v1.Contracts
 
 
     // generel category response
-    public record CategoryResponse(Guid Id, string Name, string Description, bool IsVisible, List<Guid> Products, List<Guid> Sets, List<Guid> Assets);
+    public record CategoryResponse(Guid Id, string TenantId, string Name, string Description, bool IsVisible, List<Guid> Products, List<Guid> Sets, List<Guid> Assets);
 
 
     // general set response
-    public record SetResponse(Guid Id, string Name, string Description, string Price, string PriceDescription, bool IsVisible, bool IsAvailable, int? Quantity, List<Guid> Assets, List<Guid> Products, List<string> Tags);
+    public record SetResponse(Guid Id, string TenantId, string Name, string Description, string Price, string PriceDescription, bool IsVisible, bool IsAvailable, int? Quantity, List<Guid> Assets, List<Guid> Products, List<string> Tags);
 
 
     // general product response
-    public record ProductResponse(Guid Id, string Name, decimal Price, int? Quantity, bool IsAvailable, bool IsVisible, string Description, string PriceDescription, List<IngredientsResponse> Ingredients, List<AllergensResponse> Allergens, List<NutritionsResponse> Nutritions, List<Guid> Assets, List<string> Tags);
+    public record ProductResponse(Guid Id, string TenantId, string Name, decimal Price, int? Quantity, bool IsAvailable, bool IsVisible, string Description, string PriceDescription, List<IngredientsResponse> Ingredients, List<AllergensResponse> Allergens, List<NutritionsResponse> Nutritions, List<Guid> Assets, List<string> Tags);
 
 
     // ingredients response

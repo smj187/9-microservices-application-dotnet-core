@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Mongo.Repositories;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
 using CatalogService.Core.Domain.Categories;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,8 +12,8 @@ namespace CatalogService.Infrastructure.Repositories
 {
     public class CategoryRepository : MongoRepository<Category>, ICategoryRepository
     {
-        public CategoryRepository(IConfiguration configuration) 
-            : base(configuration)
+        public CategoryRepository(IMultitenancyService multitenancyService) 
+            : base(multitenancyService.GetConnectionString(), $"catalog_{multitenancyService.GetTenantId()}")
         {
 
         }

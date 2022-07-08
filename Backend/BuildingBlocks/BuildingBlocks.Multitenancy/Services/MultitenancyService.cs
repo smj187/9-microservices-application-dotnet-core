@@ -15,6 +15,22 @@ namespace BuildingBlocks.Multitenancy.Services
         private readonly string _tenantId = default!;
         private readonly string _connectionString = default!;
 
+        public MultitenancyService(string tenantId, IConfiguration configuration)
+        {
+            _tenantId = tenantId;
+
+            var tenants = configuration.GetSection("tenants").Get<IEnumerable<TenantConfiguration>>();
+            var tenant = tenants.FirstOrDefault(t => t.TenantId == tenantId);
+            if (tenant != null)
+            {
+                _connectionString = tenant.ConnectionString;
+            }
+            else
+            {
+                throw new Exception($"no such tenant {tenantId}");
+            }
+        }
+
         public MultitenancyService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)

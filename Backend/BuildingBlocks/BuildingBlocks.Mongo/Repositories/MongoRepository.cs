@@ -16,10 +16,10 @@ namespace BuildingBlocks.Mongo.Repositories
         private readonly IMongoCommandRepository<T> _commandRepository;
         private readonly IMongoQueryRepository<T> _queryRepository;
 
-        public MongoRepository(IConfiguration configuration)
+        public MongoRepository(string connectionString, string databaseName)
         {
-            _commandRepository = new MongoCommandRepository<T>(configuration);
-            _queryRepository = new MongoQueryRepository<T>(configuration);
+            _commandRepository = new MongoCommandRepository<T>(connectionString, databaseName);
+            _queryRepository = new MongoQueryRepository<T>(connectionString, databaseName);
         }
 
         public async Task<T> AddAsync(T entity)

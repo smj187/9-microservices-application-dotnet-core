@@ -3,6 +3,8 @@ using BuildingBlocks.Masstransit;
 using BuildingBlocks.Middleware.Exceptions;
 using BuildingBlocks.Mongo.Configurations;
 using BuildingBlocks.Mongo.Extensions;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Services;
 using CatalogService.Application.Consumers;
 using CatalogService.Core.Domain.Categories;
 using CatalogService.Core.Domain.Products;
@@ -17,6 +19,8 @@ using MongoDB.Bson.Serialization.Serializers;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IMultitenancyService, MultitenancyService>();
 builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -25,9 +29,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("CatalogService.Application"));
 
 builder.Services.AddMongoDatabase(builder.Configuration)
-    .AddSingleton<IProductRepository, ProductRepository>()
-    .AddSingleton<ICategoryRepository, CategoryRepository>()
-    .AddSingleton<ISetRepository, SetRepository>()
+    .AddTransient<IProductRepository, ProductRepository>()
+    .AddTransient<ICategoryRepository, CategoryRepository>()
+    .AddTransient<ISetRepository, SetRepository>()
     .AddEntityBaseMongoConfiguration()
     .AddBsonClassMappings();
 
@@ -49,7 +53,7 @@ builder.Services.AddMassTransit(x =>
 
         rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaCatalogConsumerEndpointName, e =>
         {
-            e.ConfigureConsumer<CatalogConsumer>(context);
+            e.ConfigureConsumer<CatalogSagaConsumer>(context);
         });
 
         // category
@@ -98,6 +102,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<MultitenancyMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

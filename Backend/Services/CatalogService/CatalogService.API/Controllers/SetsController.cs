@@ -19,6 +19,7 @@ namespace CatalogService.API.Controllers
         {
             var data = await Mediator.Send(new CreateSetCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Name = request.Name,
                 Description = request.Description,
                 PriceDescription = request.PriceDescription,

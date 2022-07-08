@@ -1,7 +1,10 @@
 ﻿using BuildingBlocks.Exceptions.Domain;
+using BuildingBlocks.Multitenancy.Services;
 using CatalogService.Core.Domain.Sets;
+using CatalogService.Infrastructure.Repositories;
 using FileService.Contracts.v1.Events;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +15,23 @@ namespace CatalogService.Application.Consumers
 {
     public class AddImageToSetConsumer : IConsumer<SetImageUploadResponseEvent>
     {
-        private readonly ISetRepository _setRepository;
+        private readonly IConfiguration _configuration;
 
-        public AddImageToSetConsumer(ISetRepository setRepository)
+        public AddImageToSetConsumer(IConfiguration configuration)
         {
-            _setRepository = setRepository;
+            _configuration = configuration;
         }
 
         public async Task Consume(ConsumeContext<SetImageUploadResponseEvent> context)
         {
+            var tenantId = context.Message.TenantId;
             var setId = context.Message.SetId;
             var assetId = context.Message.ImageId;
 
-            var set = await _setRepository.FindAsync(setId);
+
+            var repository = new SetRepository(new MultitenancyService(tenantId, _configuration));
+
+            var set = await repository.FindAsync(setId);
             if (set == null)
             {
                 throw new AggregateNotFoundException(nameof(Set), setId);
@@ -32,7 +39,7 @@ namespace CatalogService.Application.Consumers
 
             set.AddAssetId(assetId);
 
-            await _setRepository.PatchAsync(setId, set);
+            await repository.PatchAsync(setId, set);
         }
     }
 }
