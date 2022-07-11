@@ -24,6 +24,11 @@ namespace BuildingBlocks.Domain
             return await _commandRepository.AddAsync(entity);
         }
 
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _queryRepository.ExistsAsync(expression);
+        }
+
         public async Task<T?> FindAsync(Guid id)
         {
             return await _queryRepository.FindAsync(id);

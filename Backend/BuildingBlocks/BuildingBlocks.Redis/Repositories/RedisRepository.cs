@@ -26,6 +26,11 @@ namespace BuildingBlocks.Redis.Repositories
             return await _commandRepository.AddAsync(entity);
         }
 
+        public Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<T?> FindAsync(Guid id)
         {
             return await _queryRepository.FindAsync(id);

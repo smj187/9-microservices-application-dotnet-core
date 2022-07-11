@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.EfCore.Repositories.Interfaces;
+using BuildingBlocks.Exceptions.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -25,8 +26,14 @@ namespace TenantService.Application.CommandHandlers
 
         public async Task<Tenant> Handle(CreateTenantCommand request, CancellationToken cancellationToken)
         {
+            var existingTenant = await _tenantRepository.ExistsAsync(expression => expression.TenantId == request.TenantId);
+            if (existingTenant)
+            {
+                throw new DuplicateAggregateException($"this client already has a tenant");
+            }
+
             var address = new Address(request.State, request.City, request.State, request.Country, request.Zip);
-            var tenant = new Tenant(request.Name, address, request.Email, request.Phone);
+            var tenant = new Tenant(request.TenantId, request.Name, address, request.Email, request.Phone);
 
             await _tenantRepository.AddAsync(tenant);
 

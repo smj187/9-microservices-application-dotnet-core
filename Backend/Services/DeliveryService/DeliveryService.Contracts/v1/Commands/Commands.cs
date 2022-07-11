@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Contracts.v1.Commands
 {
-    public record DeliveryCommand(Guid CorrelationId, Guid OrderId, Guid UserId, List<Guid> Items);
+    public record DeliveryCommand(Guid CorrelationId, string TenantId, Guid OrderId, Guid UserId, List<Guid> Products, List<Guid> Sets);
 }

@@ -31,6 +31,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Mongo", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Redis", "..\..\BuildingBlocks\BuildingBlocks.Redis\BuildingBlocks.Redis.csproj", "{6B85380B-210F-4D02-B933-35F7A72682ED}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Cache", "..\..\BuildingBlocks\BuildingBlocks.Cache\BuildingBlocks.Cache.csproj", "{5F53C795-E81F-438D-A3C2-C01F4F43946A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Multitenancy", "..\..\BuildingBlocks\BuildingBlocks.Multitenancy\BuildingBlocks.Multitenancy.csproj", "{A7F4B08E-6EB1-4460-B244-343768C5DA5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +93,14 @@ Global
 		{6B85380B-210F-4D02-B933-35F7A72682ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B85380B-210F-4D02-B933-35F7A72682ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B85380B-210F-4D02-B933-35F7A72682ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F53C795-E81F-438D-A3C2-C01F4F43946A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F53C795-E81F-438D-A3C2-C01F4F43946A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F53C795-E81F-438D-A3C2-C01F4F43946A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F53C795-E81F-438D-A3C2-C01F4F43946A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7F4B08E-6EB1-4460-B244-343768C5DA5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7F4B08E-6EB1-4460-B244-343768C5DA5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7F4B08E-6EB1-4460-B244-343768C5DA5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7F4B08E-6EB1-4460-B244-343768C5DA5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +114,8 @@ Global
 		{99B50159-1984-44F4-8D6C-094B511B588B} = {CEF1A439-3237-4F22-8210-28EFD4DDD0CC}
 		{CCF5611A-6E42-4B08-85F2-36268A328774} = {CEF1A439-3237-4F22-8210-28EFD4DDD0CC}
 		{6B85380B-210F-4D02-B933-35F7A72682ED} = {CEF1A439-3237-4F22-8210-28EFD4DDD0CC}
+		{5F53C795-E81F-438D-A3C2-C01F4F43946A} = {CEF1A439-3237-4F22-8210-28EFD4DDD0CC}
+		{A7F4B08E-6EB1-4460-B244-343768C5DA5C} = {CEF1A439-3237-4F22-8210-28EFD4DDD0CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {14AEA329-92AC-465C-A856-B03FD7ACB162}

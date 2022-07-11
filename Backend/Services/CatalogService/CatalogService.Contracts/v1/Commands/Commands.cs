@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Contracts.v1.Commands
 {
-    public record CatalogAllocationCommand(Guid CorrelationId, Guid OrderId, List<Guid> Products, List<Guid> Sets);
+    public record CatalogSagaAllocationCommand(Guid CorrelationId, string TenantId, Guid OrderId, List<Guid> Products, List<Guid> Sets);
 }

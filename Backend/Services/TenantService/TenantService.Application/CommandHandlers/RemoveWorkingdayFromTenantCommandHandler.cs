@@ -33,7 +33,7 @@ namespace TenantService.Application.CommandHandlers
 
             tenant.RemoveWorkingday(request.Weekday);
 
-            var patched = await _tenantRepository.PatchAsync(request.TenantId, tenant);
+            var patched = await _tenantRepository.PatchAsync(tenant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return patched;

@@ -10,6 +10,7 @@ namespace TenantService.Application.Commands
 {
     public class CreateTenantCommand : IRequest<Tenant>
     {
+        public string TenantId { get; set; } = default!;
         public string Name { get; set; } = default!;
 
         public string Email { get; set; } = default!;

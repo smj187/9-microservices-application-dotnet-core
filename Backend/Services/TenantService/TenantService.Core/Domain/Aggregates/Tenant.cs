@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
 using BuildingBlocks.Exceptions.Domain;
+using BuildingBlocks.Multitenancy.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,8 +14,9 @@ using TenantService.Core.Domain.ValueObjects;
 
 namespace TenantService.Core.Domain.Aggregates
 {
-    public class Tenant : AggregateBase
+    public class Tenant : AggregateBase, IMultitenantAggregate
     {
+        private string _tenantId;
         private Address? _address;
 
         private List<Workingday> _workingdays;
@@ -39,6 +41,7 @@ namespace TenantService.Core.Domain.Aggregates
         // ef required (never called)
         public Tenant()
         {
+            _tenantId = default!;
             _name = default!;
             _description = null!;
             _address = default!;
@@ -47,14 +50,16 @@ namespace TenantService.Core.Domain.Aggregates
             _phone = default!;
         }
 
-        public Tenant(string name, Address address, string email, string phone)
+        public Tenant(string tenantId, string name, Address address, string email, string phone)
         {
+            Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             Guard.Against.Null(address, nameof(address));
 
             Guard.Against.NullOrEmpty(name, nameof(name));
             Guard.Against.NullOrEmpty(email, nameof(email));
             Guard.Against.NullOrEmpty(phone, nameof(phone));
 
+            _tenantId = tenantId;
             _address = address;
 
             _name = name;
@@ -72,7 +77,11 @@ namespace TenantService.Core.Domain.Aggregates
             _bannerAssetId = null;
         }
 
-
+        public string TenantId
+        {
+            get => _tenantId;
+            set => _tenantId = Guard.Against.NullOrWhiteSpace(value, nameof(value));
+        }
 
         // working days
         public List<Workingday> Workingdays
@@ -90,7 +99,7 @@ namespace TenantService.Core.Domain.Aggregates
             }
 
             _workingdays.Add(day);
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void RemoveWorkingday(int weekday)
@@ -102,7 +111,7 @@ namespace TenantService.Core.Domain.Aggregates
             }
 
             _workingdays.Remove(existing);
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public bool IsOpen
@@ -211,7 +220,7 @@ namespace TenantService.Core.Domain.Aggregates
             _payments = payments;
 
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
 
@@ -227,14 +236,16 @@ namespace TenantService.Core.Domain.Aggregates
         public void PatchAddress(Address address)
         {
             _address = address;
-            ModifiedAt = DateTimeOffset.UtcNow;
+
+            Modify();
         }
 
         public void PatchCompanyDetails(string name, string? description)
         {
             _name = name;
             _description = description;
-            ModifiedAt = DateTimeOffset.UtcNow;
+
+            Modify();
         }
 
 

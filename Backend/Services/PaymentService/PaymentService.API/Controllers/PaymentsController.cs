@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using PaymentService.Application.Commands;
 using PaymentService.Application.Queries;
 using PaymentService.Contracts.v1.Requests;
 using PaymentService.Contracts.v1.Responses;
-using PaymentService.Core.Entities;
+using PaymentService.Core.Domain.Aggregates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,20 +26,18 @@ namespace PaymentService.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreatePaymentAsync([FromBody] CreatePaymentRequest createOrderRequest)
-        {
-            var mapped = _mapper.Map<Payment>(createOrderRequest);
 
-            var command = new CreatePaymentCommand
+        [HttpGet]
+        [Route("{paymentid:guid}")]
+        public async Task<IActionResult> FindPaymentAsync([FromRoute] Guid paymentId)
+        {
+            var query = new FindPaymentQuery
             {
-                NewPayment = mapped
+                PaymentId = paymentId
             };
 
-            var data = await _mediator.Send(command);
-
-            var result = _mapper.Map<PaymentResponse>(data);
-            return Ok(result);
+            var data = await _mediator.Send(query);
+            return Ok(data);
         }
 
         [HttpGet]
@@ -49,9 +46,9 @@ namespace PaymentService.API.Controllers
             var query = new ListPaymentsQuery();
 
             var data = await _mediator.Send(query);
+            return Ok(data);
 
-            var result = _mapper.Map<IEnumerable<Payment>>(data);
-            return Ok(result);
+            //var result = _mapper.Map<IEnumerable<Payment>>(data);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BuildingBlocks.Extensions.Controllers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,29 +17,18 @@ namespace TenantService.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class TenantController : ControllerBase
+    public class TenantController : ApiBaseController<TenantController>
     {
-        private readonly IMapper _mapper;
-        private readonly IMediator _mediator;
-        private readonly TenantContext _context;
-
-        public TenantController(IMapper mapper, IMediator mediator, TenantContext context)
-        {
-            _mapper = mapper;
-            _mediator = mediator;
-            _context = context;
-        }
-
-
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<TenantResponse>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TenantResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ListTenantsAsync()
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetTenantInformationAsync()
         {
-            var query = new ListTenantsQuery();
+            var query = new GetTenantInformationQuery();
 
-            var data = await _mediator.Send(query);
-            return Ok(_mapper.Map<IReadOnlyCollection<TenantResponse>>(data));
+            var data = await Mediator.Send(query);
+            return Ok(Mapper.Map<TenantResponse>(data));
         }
 
 
@@ -50,6 +40,7 @@ namespace TenantService.API.Controllers
         {
             var command = new CreateTenantCommand
             {
+                TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
                 Name = request.Name,
                 Email = request.Email,
                 Phone = request.Phone,
@@ -60,27 +51,9 @@ namespace TenantService.API.Controllers
                 State = request.State,
             };
 
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<TenantResponse>(data));
+            var data = await Mediator.Send(command);
+            return Ok(Mapper.Map<TenantResponse>(data));
         }
-
-        [HttpGet]
-        [Route("{tenantid:guid}/find")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TenantResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ListTenantsAsync([FromRoute, Required] Guid tenantId)
-        {
-            var query = new FindTenantQuery
-            {
-                TenantId = tenantId
-            };
-
-            var data = await _mediator.Send(query);
-            //return Ok(data);
-            return Ok(_mapper.Map<TenantResponse>(data));
-        }
-
 
 
         [HttpPatch]
@@ -100,8 +73,8 @@ namespace TenantService.API.Controllers
                 TenantId = tenantId
             };
 
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<TenantResponse>(data));
+            var data = await Mediator.Send(command);
+            return Ok(Mapper.Map<TenantResponse>(data));
         }
 
         [HttpPatch]
@@ -117,8 +90,8 @@ namespace TenantService.API.Controllers
                 TenantId = tenantId
             };
 
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<TenantResponse>(data));
+            var data = await Mediator.Send(command);
+            return Ok(Mapper.Map<TenantResponse>(data));
         }
 
 
@@ -141,8 +114,8 @@ namespace TenantService.API.Controllers
             };
 
 
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<TenantResponse>(data));
+            var data = await Mediator.Send(command);
+            return Ok(Mapper.Map<TenantResponse>(data));
         }
 
         [HttpPatch]
@@ -168,8 +141,8 @@ namespace TenantService.API.Controllers
                 WebsiteUrl = request.WebsiteUrl,
             };
 
-            var data = await _mediator.Send(command);
-            return Ok(_mapper.Map<TenantResponse>(data));
+            var data = await Mediator.Send(command);
+            return Ok(Mapper.Map<TenantResponse>(data));
         }
     }
 }

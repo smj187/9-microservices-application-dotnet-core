@@ -36,7 +36,7 @@ namespace TenantService.Application.CommandHandlers
             var day = new Workingday(Weekday.Create(request.Workingday), request.OpeningHour, request.ClosingHour, request.OpeningMinute, request.ClosingMinute);
             tenant.AddWorkingday(day);
 
-            var patched = await _tenantRepository.PatchAsync(request.TenantId, tenant);
+            var patched = await _tenantRepository.PatchAsync(tenant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return patched;
