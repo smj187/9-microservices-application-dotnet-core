@@ -17,6 +17,6 @@ Run this command at the root level inside ./Services/PaymentService
 
 ```
 
-dotnet ef migrations add Init --project PaymentService.Infrastructure -s PaymentService.API
+rmdir .\PaymentService.Infrastructure\Migrations\ -r ; dotnet ef migrations add Init --project PaymentService.Infrastructure -s PaymentService.API
 dotnet ef database update --project PaymentService.Infrastructure -s PaymentService.API
 ```

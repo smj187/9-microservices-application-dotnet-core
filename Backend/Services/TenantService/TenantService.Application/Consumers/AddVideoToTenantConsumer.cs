@@ -6,21 +6,24 @@ using System.Threading.Tasks;
 using BuildingBlocks.EfCore.Repositories.Interfaces;
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Exceptions.Domain;
+using BuildingBlocks.Multitenancy.Services;
 using FileService.Contracts.v1.Events;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TenantService.Core.Domain.Aggregates;
+using TenantService.Infrastructure.Data;
+using TenantService.Infrastructure.Repositories;
 
 namespace TenantService.Application.Consumers
 {
     public class AddVideoToTenantConsumer : IConsumer<TenantVideoUploadResponseEvent>
     {
-        private readonly ITenantRepository _tenantRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _configuration;
 
-        public AddVideoToTenantConsumer(ITenantRepository tenantRepository, IUnitOfWork unitOfWork)
+        public AddVideoToTenantConsumer(IConfiguration configuration)
         {
-            _tenantRepository = tenantRepository;
-            _unitOfWork = unitOfWork;
+            _configuration = configuration;
         }
 
         public async Task Consume(ConsumeContext<TenantVideoUploadResponseEvent> context)
@@ -28,16 +31,20 @@ namespace TenantService.Application.Consumers
             var tenantId = context.Message.TenantId;
             var videoId = context.Message.VideoId;
 
-            var tenant = await _tenantRepository.FindAsync(tenantId);
+            var optionsBuilder = new DbContextOptionsBuilder<TenantContext>();
+            var tenantContext = new TenantContext(optionsBuilder.Options, _configuration, new MultitenancyService(tenantId, _configuration));
+            var tenantRepository = new TenantRepository(tenantContext);
+
+            var tenant = await tenantRepository.FindAsync(x => x.TenantId == tenantId);
             if (tenant == null)
             {
-                throw new AggregateNotFoundException(nameof(Tenant), tenantId);
+                throw new AggregateNotFoundException($"{tenantId} does not exist");
             }
 
             tenant.AddVideo(videoId);
 
-            await _tenantRepository.PatchAsync(tenantId, tenant);
-            await _unitOfWork.SaveChangesAsync(default);
+            await tenantRepository.PatchAsync(tenant);
+            await tenantContext.SaveChangesAsync();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace TenantService.Application.CommandHandlers
 
             tenant.PatchInformation(request.Name, request.Description, request.MinimunOrderAmount, request.IsFreeDelivery, request.DeliveryCost, request.WebsiteUrl, request.Imprint, request.Email, request.Phone, request.Payments);
 
-            var patched = await _tenantRepository.PatchAsync(request.TenantId, tenant);
+            var patched = await _tenantRepository.PatchAsync(tenant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return patched;

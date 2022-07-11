@@ -22,6 +22,8 @@ namespace BuildingBlocks.Masstransit
         public const string OrderSagaDeliveryConsumerEndpointName = "order_service_saga_delivery_consumer";
         public const string OrderSagaBasketCheckoutConsumerEndpointName = "order_service_saga_basket_checkout_consumer";
 
+        public const string OrderSagaCompletionConsumerEndpointName = "order_service_saga_completion_consumer";
+
         // file upload
         public const string FileUploadCategoryImageConsumerEndpointName = "catalog_service_category_image_consumer";
         public const string FileUploadCategoryVideoConsumerEndpointName = "catalog_service_category_video_consumer";
@@ -31,6 +33,11 @@ namespace BuildingBlocks.Masstransit
         public const string FileUploadSetVideoConsumerEndpointName = "catalog_service_set_video_consumer";
 
         public const string FileUploadAvatarImageConsumerEndpointName = "catalog_service_avatar_image_consumer";
+
+        public const string FileUploadAddBannerToTenantConsumerEndpointName = "tenant_service_add_banner_image_consumer";
+        public const string FileUploadAddBrandImageToTenantConsumerEndpointName = "tenant_service_add_brand_image_consumer";
+        public const string FileUploadAddLogoToTenantConsumerEndpointName = "tenant_service_add_logo_image_consumer";
+        public const string FileUploadAddVideoToTenantConsumerEndpointName = "tenant_service_add_video_consumer";
 
 
         public const string RabbitMqUri = "rabbitmq://localhost";

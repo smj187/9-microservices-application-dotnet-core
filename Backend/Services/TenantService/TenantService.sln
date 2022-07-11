@@ -31,6 +31,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Mongo", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Redis", "..\..\BuildingBlocks\BuildingBlocks.Redis\BuildingBlocks.Redis.csproj", "{ADED6BE0-6C1F-47ED-9499-AA85CB45DCE5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Cache", "..\..\BuildingBlocks\BuildingBlocks.Cache\BuildingBlocks.Cache.csproj", "{6126EC06-2E01-4E4E-B1CC-132C1AE969D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Multitenancy", "..\..\BuildingBlocks\BuildingBlocks.Multitenancy\BuildingBlocks.Multitenancy.csproj", "{17EEFD00-ABF5-4803-AFD4-DFE837DE258F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +93,14 @@ Global
 		{ADED6BE0-6C1F-47ED-9499-AA85CB45DCE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADED6BE0-6C1F-47ED-9499-AA85CB45DCE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADED6BE0-6C1F-47ED-9499-AA85CB45DCE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6126EC06-2E01-4E4E-B1CC-132C1AE969D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6126EC06-2E01-4E4E-B1CC-132C1AE969D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6126EC06-2E01-4E4E-B1CC-132C1AE969D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6126EC06-2E01-4E4E-B1CC-132C1AE969D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17EEFD00-ABF5-4803-AFD4-DFE837DE258F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17EEFD00-ABF5-4803-AFD4-DFE837DE258F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17EEFD00-ABF5-4803-AFD4-DFE837DE258F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17EEFD00-ABF5-4803-AFD4-DFE837DE258F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +114,8 @@ Global
 		{B4A37056-DCDC-43E0-94C7-EEBCF79B4917} = {51D8BF8B-A1AA-4855-979A-7B7126C46A7A}
 		{9C6D7E2F-CB65-40B8-AA57-11A60B17CD32} = {51D8BF8B-A1AA-4855-979A-7B7126C46A7A}
 		{ADED6BE0-6C1F-47ED-9499-AA85CB45DCE5} = {51D8BF8B-A1AA-4855-979A-7B7126C46A7A}
+		{6126EC06-2E01-4E4E-B1CC-132C1AE969D2} = {51D8BF8B-A1AA-4855-979A-7B7126C46A7A}
+		{17EEFD00-ABF5-4803-AFD4-DFE837DE258F} = {51D8BF8B-A1AA-4855-979A-7B7126C46A7A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8032ACA3-CBCE-4DDB-AA73-0FF74AF318A5}

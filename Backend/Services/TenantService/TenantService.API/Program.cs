@@ -1,5 +1,10 @@
-using BuildingBlocks.EfCore.Extensions;
+using BuildingBlocks.EfCore.Repositories;
+using BuildingBlocks.EfCore.Repositories.Interfaces;
 using BuildingBlocks.Masstransit;
+using BuildingBlocks.Middleware.Exceptions;
+using BuildingBlocks.Multitenancy.Extensions;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Services;
 using MassTransit;
 using MediatR;
 using System.Reflection;
@@ -9,16 +14,21 @@ using TenantService.Infrastructure.Data;
 using TenantService.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IMultitenancyService, MultitenancyService>();
 builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("TenantService.Application"));
-builder.Services.AddMySqlDatabase<TenantContext>(builder.Configuration)
-    .AddTransient<ITenantRepository, TenantRepository>();
 
 
+
+builder.Services.AddMySqlMultitenancy<TenantContext>(builder.Configuration)
+    .AddScoped<IUnitOfWork, UnitOfWork<TenantContext>>()
+    .AddTransient<ITenantRepository, TenantRepository>()
+    .AddTransient<IOrderRepository, OrderRepository>();
 
 builder.Services.AddMassTransit(x =>
 {
@@ -35,7 +45,31 @@ builder.Services.AddMassTransit(x =>
 
         rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaTenantConsumerEndpointName, e =>
         {
-            e.ConfigureConsumer<TenantConsumer>(context);
+            e.ConfigureConsumer<TenantSagaConsumer>(context);
+        });
+
+        // add banner to tenant
+        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadAddBannerToTenantConsumerEndpointName, e =>
+        {
+            e.ConfigureConsumer<AddBannerToTenantConsumer>(context);
+        });
+
+        // add brand image to tenant
+        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadAddBrandImageToTenantConsumerEndpointName, e =>
+        {
+            e.ConfigureConsumer<AddBrandImageToTenantConsumer>(context);
+        });
+
+        // add logo to tenant
+        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadAddLogoToTenantConsumerEndpointName, e =>
+        {
+            e.ConfigureConsumer<AddLogoToTenantConsumer>(context);
+        });
+
+        // add video to tenant
+        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadAddVideoToTenantConsumerEndpointName, e =>
+        {
+            e.ConfigureConsumer<AddVideoToTenantConsumer>(context);
         });
     });
 
@@ -51,7 +85,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<MultitenancyMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

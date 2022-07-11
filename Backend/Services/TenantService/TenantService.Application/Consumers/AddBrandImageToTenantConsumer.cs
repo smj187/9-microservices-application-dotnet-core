@@ -9,18 +9,21 @@ using TenantService.Core.Domain.Aggregates;
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.EfCore.Repositories.Interfaces;
 using BuildingBlocks.Exceptions.Domain;
+using TenantService.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using BuildingBlocks.Multitenancy.Services;
+using TenantService.Infrastructure.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace TenantService.Application.Consumers
 {
     public class AddBrandImageToTenantConsumer : IConsumer<TenantBrandImageUploadResponseEvent>
     {
-        private readonly ITenantRepository _tenantRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _configuration;
 
-        public AddBrandImageToTenantConsumer(ITenantRepository tenantRepository, IUnitOfWork unitOfWork)
+        public AddBrandImageToTenantConsumer(IConfiguration configuration)
         {
-            _tenantRepository = tenantRepository;
-            _unitOfWork = unitOfWork;
+            _configuration = configuration;
         }
 
         public async Task Consume(ConsumeContext<TenantBrandImageUploadResponseEvent> context)
@@ -28,16 +31,20 @@ namespace TenantService.Application.Consumers
             var tenantId = context.Message.TenantId;
             var imageId = context.Message.ImageId;
 
-            var tenant = await _tenantRepository.FindAsync(tenantId);
+            var optionsBuilder = new DbContextOptionsBuilder<TenantContext>();
+            var tenantContext = new TenantContext(optionsBuilder.Options, _configuration, new MultitenancyService(tenantId, _configuration));
+            var tenantRepository = new TenantRepository(tenantContext);
+
+            var tenant = await tenantRepository.FindAsync(x => x.TenantId == tenantId);
             if (tenant == null)
             {
-                throw new AggregateNotFoundException(nameof(Tenant), tenantId);
+                throw new AggregateNotFoundException($"{tenantId} does not exist");
             }
 
             tenant.AddBrandImage(imageId);
 
-            await _tenantRepository.PatchAsync(tenantId, tenant);
-            await _unitOfWork.SaveChangesAsync(default);
+            await tenantRepository.PatchAsync(tenant);
+            await tenantContext.SaveChangesAsync();
         }
     }
 }

@@ -17,6 +17,6 @@ Run this command at the root level inside ./Services/TenantService
 
 ```
 
-dotnet ef migrations add Init --project TenantService.Infrastructure -s TenantService.API
+rmdir .\TenantService.Infrastructure\Migrations\ -r ; dotnet ef migrations add Init --project TenantService.Infrastructure -s TenantService.API
 dotnet ef database update --project TenantService.Infrastructure -s TenantService.API
 ```

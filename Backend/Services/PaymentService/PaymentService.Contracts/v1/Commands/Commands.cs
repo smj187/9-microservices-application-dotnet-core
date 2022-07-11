@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace PaymentService.Contracts.v1.Commands
 {
-    public record PaymentCommand(Guid CorrelationId, Guid OrderId, Guid UserId, decimal Amount);
+    public record PaymentCommand(Guid CorrelationId, string TenantId, Guid OrderId, Guid UserId, decimal Amount, List<Guid> Products, List<Guid> Sets);
 }

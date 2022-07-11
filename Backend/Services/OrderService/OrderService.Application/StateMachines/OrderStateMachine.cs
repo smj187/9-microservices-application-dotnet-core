@@ -4,9 +4,11 @@ using CatalogService.Contracts.v1.Events;
 using DeliveryService.Contracts.v1.Commands;
 using DeliveryService.Contracts.v1.Events;
 using MassTransit;
+using OrderService.Application.Consumers;
 using OrderService.Application.StateMachines.Events;
 using OrderService.Application.StateMachines.Responses;
 using OrderService.Core.Entities.Enumerations;
+using OrderService.Core.StateMachines;
 using PaymentService.Contracts.v1.Commands;
 using PaymentService.Contracts.v1.Events;
 using System;
@@ -60,6 +62,8 @@ namespace OrderService.Application.StateMachines
             Event(() => DeliverySuccessSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
             Event(() => DeliveryFailureSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
 
+            Event(() => CompleteOrderSagaSuccessEvent, x => x.CorrelateById(context => context.Message.OrderId));
+
             Event(() => CheckOrderEvent, x =>
             {
                 x.CorrelateById(context => context.Message.OrderId);
@@ -69,7 +73,7 @@ namespace OrderService.Application.StateMachines
                     await context.RespondAsync(new OrderNotFoundResponse
                     {
                         OrderId = context.Message.OrderId,
-                        Message = $"the order is already complete"
+                        Message = $"no order with that id was found"
                     });
                 }));
             });
@@ -79,9 +83,12 @@ namespace OrderService.Application.StateMachines
                 When(CreateOrderSagaEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine("init");
-                        context.Saga.CorrelationId = context.Message.BasketId;
-                        context.Saga.OrderId = context.Message.BasketId;
+                        Console.WriteLine("init saga state machine instance...");
+                        context.Saga.TenantId = context.Message.TenantId;
+
+                        context.Saga.CorrelationId = context.Message.OrderId;
+                        context.Saga.OrderId = context.Message.OrderId;
+                        context.Saga.BasketId = context.Message.BasketId;
 
                         context.Saga.UserId = context.Message.UserId;
                         context.Saga.Products = context.Message.Products;
@@ -90,7 +97,7 @@ namespace OrderService.Application.StateMachines
                         context.Saga.OrderStatus = OrderStatus.Created;
                     })
                     .TransitionTo(AwaitingItemAllocationState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaCatalogConsumerEndpointName}"), context => new CatalogAllocationCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.Products, context.Saga.Sets))
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaCatalogConsumerEndpointName}"), context => new CatalogSagaAllocationCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.Products, context.Saga.Sets))
                 );
 
 
@@ -104,7 +111,7 @@ namespace OrderService.Application.StateMachines
                         context.Saga.OrderStatus = OrderStatus.ItemsAllocated;
                     })
                     .TransitionTo(PaymentState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaPaymentConsumerEndpointName}"), context => new PaymentCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.UserId, context.Saga.TotalAmount)),
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaPaymentConsumerEndpointName}"), context => new PaymentCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.UserId, context.Saga.TotalAmount, context.Saga.Products, context.Saga.Sets)),
 
                 When(CatalogAllocationOutOfStockErrorSagaEvent)
                     .Then(context =>
@@ -145,7 +152,7 @@ namespace OrderService.Application.StateMachines
                         context.Saga.OrderStatus = OrderStatus.PaymentSuccess;
                     })
                     .TransitionTo(TenantState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaTenantConsumerEndpointName}"), context => new TenantCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Products, context.Saga.TotalAmount)),
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaTenantConsumerEndpointName}"), context => new TenantCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Products, context.Saga.Sets, context.Saga.TotalAmount)),
 
                 When(PaymentFailureSagaEvent)
                     .Then(context =>
@@ -165,7 +172,7 @@ namespace OrderService.Application.StateMachines
                         context.Saga.OrderStatus = OrderStatus.TenantApproved;
                     })
                     .TransitionTo(DeliveryState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaDeliveryConsumerEndpointName}"), context => new DeliveryCommand(context.Saga.CorrelationId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Products)),
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaDeliveryConsumerEndpointName}"), context => new DeliveryCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Products, context.Saga.Sets)),
 
                 When(TenantRejectOrderSagaEvent)
                     .Then(context =>
@@ -181,11 +188,11 @@ namespace OrderService.Application.StateMachines
                 When(DeliverySuccessSagaEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine($"order {context.Saga.OrderId} was delivered successfully. this saga has ended");
+                        Console.WriteLine($"order {context.Saga.OrderId} was delivered successfully");
                         context.Saga.OrderStatus = OrderStatus.DeliverySuccess;
                     })
                     .TransitionTo(OrderCompleteState)
-                    .Finalize(),
+                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaCompletionConsumerEndpointName}"), context => new CompleteOrderSagaCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.UserId, context.Saga.BasketId, context.Saga.Products, context.Saga.Sets, context.Saga.TotalAmount)),
 
                 When(DeliveryFailureSagaEvent)
                     .Then(context =>
@@ -196,6 +203,15 @@ namespace OrderService.Application.StateMachines
                     .Finalize()
                 );
 
+            During(OrderCompleteState,
+                When(CompleteOrderSagaSuccessEvent)
+                    .Then(context =>
+                    {
+                        Console.WriteLine($"order {context.Saga.OrderId} complete [this saga is complete]");
+                        context.Saga.OrderStatus = OrderStatus.OrderComplete;
+                    })
+                    .Finalize()
+                );
 
             DuringAny(
                When(CheckOrderEvent)
@@ -237,6 +253,8 @@ namespace OrderService.Application.StateMachines
         public Event<DeliverySuccessSagaEvent> DeliverySuccessSagaEvent { get; private set; }
         public Event<DeliveryFailureSagaEvent> DeliveryFailureSagaEvent { get; private set; }
 
+        // 5th stage -> completion
+        public Event<CompleteOrderSagaSuccessEvent> CompleteOrderSagaSuccessEvent { get; private set; }
 
 
         public Event<CheckOrderStatusEvent> CheckOrderEvent { get; private set; }
