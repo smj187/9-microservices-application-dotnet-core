@@ -9,14 +9,14 @@ namespace OrderService.Core.Entities.Enumerations
 {
     public class OrderStatus : Enumeration
     {
-        public static OrderStatus Created = new(0, "Order created, awaiting catalog's product and set allocation");
+        public static OrderStatus OrderCreatedStatus = new(0, "Order created, awaiting catalog's product and set allocation");
 
-        public static OrderStatus ItemsAllocated = new(1, "Products and sets allocated, awaiting payment");
-        public static OrderStatus ItemsOutOfStock = new(2, "Items Out Of Stock");
-        public static OrderStatus ItemNotVisible = new(3, "Items Out Of Stock");
+        public static OrderStatus CatalogProductsAndSetsAllocationSuccess = new(1, "catalog products and sets allocation success");
+        public static OrderStatus CatalogProductsAndSetsOutOfStockFailure = new(2, "catalog products and sets out of stock failure");
+        public static OrderStatus CatalogProductsAndSetsUnavailableFailure = new(3, "catalog products and sets unavailable failure");
 
-        public static OrderStatus PaymentSuccess = new(4, "Payment success, awaiting tenant approval");
-        public static OrderStatus PaymentFailure = new(5, "Payment Failure");
+        public static OrderStatus PaymentProcessSuccess = new(4, "payment process success");
+        public static OrderStatus PaymentProcessFailure = new(5, "payment process failure");
 
         public static OrderStatus TenantApproved = new(6, "Tenant approved, awaiting delivery");
         public static OrderStatus TenantRejected = new(7, "Tenant Rejected");
@@ -36,14 +36,14 @@ namespace OrderService.Core.Entities.Enumerations
 
         public static OrderStatus Create(int value)
         {
-            if (value == 0) return new OrderStatus(Created.Value, Created.Description);
+            if (value == 0) return new OrderStatus(OrderCreatedStatus.Value, OrderCreatedStatus.Description);
 
-            if (value == 1) return new OrderStatus(ItemsAllocated.Value, ItemsAllocated.Description);
-            if (value == 2) return new OrderStatus(ItemsOutOfStock.Value, ItemsOutOfStock.Description);
-            if (value == 3) return new OrderStatus(ItemNotVisible.Value, ItemNotVisible.Description);
+            if (value == 1) return new OrderStatus(CatalogProductsAndSetsAllocationSuccess.Value, CatalogProductsAndSetsAllocationSuccess.Description);
+            if (value == 2) return new OrderStatus(CatalogProductsAndSetsOutOfStockFailure.Value, CatalogProductsAndSetsOutOfStockFailure.Description);
+            if (value == 3) return new OrderStatus(CatalogProductsAndSetsUnavailableFailure.Value, CatalogProductsAndSetsUnavailableFailure.Description);
 
-            if (value == 4) return new OrderStatus(PaymentSuccess.Value, PaymentSuccess.Description);
-            if (value == 5) return new OrderStatus(PaymentFailure.Value, PaymentFailure.Description);
+            if (value == 4) return new OrderStatus(PaymentProcessSuccess.Value, PaymentProcessSuccess.Description);
+            if (value == 5) return new OrderStatus(PaymentProcessFailure.Value, PaymentProcessFailure.Description);
 
             if (value == 6) return new OrderStatus(TenantApproved.Value, TenantApproved.Description);
             if (value == 7) return new OrderStatus(TenantRejected.Value, TenantRejected.Description);

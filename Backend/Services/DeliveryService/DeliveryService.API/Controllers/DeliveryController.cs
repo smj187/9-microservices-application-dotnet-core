@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BuildingBlocks.Extensions.Controllers;
 using DeliveryService.Application.Queries;
-using DeliveryService.Contracts.v1.Requests;
 using DeliveryService.Core.Domain.Aggregates;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

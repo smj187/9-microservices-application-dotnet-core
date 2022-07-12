@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.CommandHandlers
 {
-    public class CreateSagaCommandHandler : IRequestHandler<CreateSagaCommand>
+    public class InitializeSagaCommandHandler : IRequestHandler<InitializeSagaCommand>
     {
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public CreateSagaCommandHandler(IPublishEndpoint publishEndpoint)
+        public InitializeSagaCommandHandler(IPublishEndpoint publishEndpoint)
         {
             _publishEndpoint = publishEndpoint;
         }
 
-        public async Task<Unit> Handle(CreateSagaCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(InitializeSagaCommand request, CancellationToken cancellationToken)
         {
-            var saga = new CreateOrderSagaEvent(request.OrderId, request.BasketId, request.UserId, request.TenantId, request.Products, request.Sets);
+            var saga = new InitializeOrderSagaEvent(request.OrderId, request.BasketId, request.UserId, request.TenantId, request.Products, request.Sets);
 
             await _publishEndpoint.Publish(saga, cancellationToken);
 

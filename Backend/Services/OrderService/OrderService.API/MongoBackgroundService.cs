@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using OrderService.Application.Commands;
 using OrderService.Core.Entities.Aggregates;
+using OrderService.Core.Entities.Enumerations;
 using OrderService.Core.StateMachines;
 using OrderService.Infrastructure.Repositories;
 using System;
@@ -60,6 +61,13 @@ namespace OrderService.API
             {
                 foreach (var info in cursor.Current)
                 {
+                    if (info.FullDocument != null)
+                    {
+                        if (info.FullDocument.OrderStatus == OrderStatus.CatalogProductsAndSetsUnavailableFailure)
+                        {
+
+                        }
+                    }
                     var command = new UpdateOrderCommand
                     {
                         TenantId = info.FullDocument.TenantId,

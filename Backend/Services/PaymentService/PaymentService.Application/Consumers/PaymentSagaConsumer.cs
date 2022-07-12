@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace PaymentService.Application.Consumers
 {
-    public class PaymentSagaConsumer : IConsumer<PaymentCommand>
+    public class PaymentSagaConsumer : IConsumer<PaymentProcessorCommand>
     {
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly IConfiguration _configuration;
@@ -26,12 +26,12 @@ namespace PaymentService.Application.Consumers
             _configuration = configuration;
         }
 
-        public async Task Consume(ConsumeContext<PaymentCommand> context)
+        public async Task Consume(ConsumeContext<PaymentProcessorCommand> context)
         {
             var tenantId = context.Message.TenantId;
             var success = true;
 
-            Console.WriteLine($"{nameof(PaymentSagaConsumer)}:: payment for {context.Message.OrderId} with {context.Message.Amount}");
+            Console.WriteLine($"{nameof(PaymentSagaConsumer)}:: payment for {context.Message.CorrelationId} with {context.Message.TotalAmount}");
 
             if (success)
             {
@@ -40,20 +40,20 @@ namespace PaymentService.Application.Consumers
                 var optionsBuilder = new DbContextOptionsBuilder<PaymentContext>();
                 var paymentContext = new PaymentContext(optionsBuilder.Options, _configuration, new MultitenancyService(tenantId, _configuration));
 
-                var payment = new Payment(tenantId, context.Message.UserId, context.Message.OrderId, context.Message.Amount, context.Message.Products, context.Message.Sets);
+                var payment = new Payment(tenantId, context.Message.UserId, context.Message.CorrelationId, context.Message.TotalAmount, context.Message.Products, context.Message.Sets);
 
                 await paymentContext.Payments.AddAsync(payment);
                 await paymentContext.SaveChangesAsync();
 
 
-                var command = new PaymentSuccessSagaEvent(context.Message.CorrelationId, context.Message.OrderId, "success");
+                var command = new PaymentProcessSagaSuccessEvent(context.Message.CorrelationId, "success");
                 await _publishEndpoint.Publish(command);
             }
             else
             {
                 Console.WriteLine($"{nameof(PaymentSagaConsumer)}:: payment failure");
 
-                var command = new PaymentFailureSagaEvent(context.Message.CorrelationId, context.Message.OrderId, "failure (test)");
+                var command = new PaymentProcessSagaFailureEvent(context.Message.CorrelationId, "failure (test)");
                 await _publishEndpoint.Publish(command);
             }
         }

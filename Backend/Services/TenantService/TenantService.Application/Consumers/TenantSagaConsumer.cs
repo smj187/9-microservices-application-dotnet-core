@@ -16,7 +16,7 @@ using TenantService.Infrastructure.Repositories;
 
 namespace TenantService.Application.Consumers
 {
-    public class TenantSagaConsumer : IConsumer<TenantCommand>
+    public class TenantSagaConsumer : IConsumer<TenantApprovalCommand>
     {
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly IConfiguration _configuration;
@@ -27,7 +27,7 @@ namespace TenantService.Application.Consumers
             _configuration = configuration;
         }
 
-        public async Task Consume(ConsumeContext<TenantCommand> context)
+        public async Task Consume(ConsumeContext<TenantApprovalCommand> context)
         {
             var tenantId = context.Message.TenantId;
             var accepted = true;
@@ -37,7 +37,7 @@ namespace TenantService.Application.Consumers
             var orderContext = new TenantContext(optionsBuilder.Options, _configuration, new MultitenancyService(tenantId, _configuration));
             var orderRepository = new OrderRepository(orderContext);
 
-            var order = new Order(tenantId, context.Message.UserId, context.Message.OrderId, context.Message.Amount, context.Message.Products, context.Message.Sets);
+            var order = new Order(tenantId, context.Message.UserId, context.Message.CorrelationId, context.Message.TotalAmount, context.Message.Products, context.Message.Sets);
             await orderContext.Orders.AddAsync(order);
             await orderContext.SaveChangesAsync();
 
@@ -49,13 +49,13 @@ namespace TenantService.Application.Consumers
             {
                 order.AcceptOrder();
                 await orderContext.SaveChangesAsync();
-                await _publishEndpoint.Publish(new TenantApproveOrderSagaEvent(context.Message.CorrelationId, context.Message.OrderId));
+                await _publishEndpoint.Publish(new TenantApproveOrderSagaEvent(context.Message.CorrelationId));
             }
             else
             {
                 order.RejectOrder();
                 await orderContext.SaveChangesAsync();
-                await _publishEndpoint.Publish(new TenantRejectOrderSagaEvent(context.Message.CorrelationId, context.Message.OrderId));
+                await _publishEndpoint.Publish(new TenantRejectOrderSagaEvent(context.Message.CorrelationId));
             }
 
            

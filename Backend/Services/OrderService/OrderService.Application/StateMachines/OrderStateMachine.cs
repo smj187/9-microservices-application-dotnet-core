@@ -23,47 +23,42 @@ namespace OrderService.Application.StateMachines
 {
     public class OrderStateMachine : MassTransitStateMachine<OrderStateMachineInstance>
     {
-        // states
-        public State AwaitingItemAllocationState { get; set; }
-        public State ItemOutOfStockFailureState { get; set; }
-
-        public State PaymentState { get; set; }
-        public State PaymentFailureState { get; set; }
-
-        public State TenantState { get; set; }
-        public State TenantRejectionState { get; set; }
+        // saga
+        public Event<InitializeOrderSagaEvent> InitializeOrderSagaEvent { get; private set; }
+        public Event<CheckOrderStatusEvent> CheckOrderEvent { get; private set; }
 
 
-        public State DeliveryState { get; set; }
+        // catalog service
+        public State AwaitingCatalogProductsAndSetsAllocationState { get; set; }
+        public Event<CatalogProductsAndSetsAllocationSagaSuccessEvent> CatalogProductsAndSetsAllocationSagaSuccessEvent { get; private set; }
+        public Event<CatalogProductsAndSetsOutOfStockSagaErrorEvent> CatalogProductsAndSetsOutOfStockSagaErrorEvent { get; private set; }
+        public Event<CatalogProductsAndSetsUnavailableSagaErrorEvent> CatalogProductsAndSetsUnavailableSagaErrorEvent { get; private set; }
 
 
-        public State OrderCompleteState { get; set; }
+        // payment service
+        public State AwaitingPaymentCompletionState { get; set; }
+        public Event<PaymentProcessSagaSuccessEvent> PaymentProcessSagaSuccessEvent { get; private set; }
+        public Event<PaymentProcessSagaFailureEvent> PaymentProcessSagaFailureEvent { get; private set; }
 
 
+        // tenant service
+        public State AwaitingTenantApprovalState { get; set; }
+        public Event<TenantApproveOrderSagaEvent> TenantApproveOrderSagaEvent { get; private set; }
+        public Event<TenantRejectOrderSagaEvent> TenantRejectOrderSagaEvent { get; private set; }
+
+
+        // delivery service
+        public State AwaitingDeliveryCompletionState { get; set; }
+        public Event<DeliverySuccessSagaEvent> DeliverySuccessSagaEvent { get; private set; }
+        public Event<DeliveryFailureSagaEvent> DeliveryFailureSagaEvent { get; private set; }
+
+        
 
 
         public OrderStateMachine()
         {
             InstanceState(x => x.CurrentState);
-
-            Event(() => CreateOrderSagaEvent, x => x.CorrelateById(context => context.Message.BasketId));
-
-            Event(() => CatalogAllocationSuccessSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => CatalogAllocationOutOfStockErrorSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => CatalogAllocationUnavailableErrorSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-
-            Event(() => PaymentFailureSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => PaymentSuccessSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-
-
-            Event(() => TenantApproveOrderSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => TenantRejectOrderSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-
-            Event(() => DeliverySuccessSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-            Event(() => DeliveryFailureSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
-
-            Event(() => CompleteOrderSagaSuccessEvent, x => x.CorrelateById(context => context.Message.OrderId));
-
+            Event(() => InitializeOrderSagaEvent, x => x.CorrelateById(context => context.Message.OrderId));
             Event(() => CheckOrderEvent, x =>
             {
                 x.CorrelateById(context => context.Message.OrderId);
@@ -78,140 +73,153 @@ namespace OrderService.Application.StateMachines
                 }));
             });
 
+            // catalog service
+            Event(() => CatalogProductsAndSetsAllocationSagaSuccessEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+            Event(() => CatalogProductsAndSetsOutOfStockSagaErrorEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+            Event(() => CatalogProductsAndSetsUnavailableSagaErrorEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+
+            // payment service
+            Event(() => PaymentProcessSagaSuccessEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+            Event(() => PaymentProcessSagaFailureEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+
+            // tenant service
+            Event(() => TenantApproveOrderSagaEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+            Event(() => TenantRejectOrderSagaEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+
+            // delivery service
+            Event(() => DeliverySuccessSagaEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+            Event(() => DeliveryFailureSagaEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+
 
             Initially(
-                When(CreateOrderSagaEvent)
+                When(InitializeOrderSagaEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine("init saga state machine instance...");
-                        context.Saga.TenantId = context.Message.TenantId;
-
                         context.Saga.CorrelationId = context.Message.OrderId;
                         context.Saga.OrderId = context.Message.OrderId;
-                        context.Saga.BasketId = context.Message.BasketId;
 
+                        Console.WriteLine($"New Saga was created [{context.Message.TenantId}] '{context.Message.OrderId}'");
+
+                        context.Saga.TenantId = context.Message.TenantId;
+                        context.Saga.BasketId = context.Message.BasketId;
                         context.Saga.UserId = context.Message.UserId;
                         context.Saga.Products = context.Message.Products;
                         context.Saga.Sets = context.Message.Sets;
 
-                        context.Saga.OrderStatus = OrderStatus.Created;
+                        context.Saga.OrderStatus = OrderStatus.OrderCreatedStatus;
+
                     })
-                    .TransitionTo(AwaitingItemAllocationState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaCatalogConsumerEndpointName}"), context => new CatalogSagaAllocationCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.Products, context.Saga.Sets))
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaCatalogConsumerEndpointName}"), context => context.Init<CatalogProductsAndSetsAllocationCommand>(new { context.Saga.CorrelationId, context.Saga.Products, context.Saga.Sets, context.Saga.TenantId }))
+                    .TransitionTo(AwaitingCatalogProductsAndSetsAllocationState)
                 );
 
 
-            During(AwaitingItemAllocationState,
-                When(CatalogAllocationSuccessSagaEvent)
+
+            #region catalog service
+
+            During(AwaitingCatalogProductsAndSetsAllocationState,
+                When(CatalogProductsAndSetsAllocationSagaSuccessEvent)
                     .Then(context =>
                     {
                         Console.WriteLine($"products and sets are available.. continue");
 
                         context.Saga.TotalAmount = context.Message.Products.Sum(x => x.Price) + context.Message.Sets.Sum(x => x.Price);
-                        context.Saga.OrderStatus = OrderStatus.ItemsAllocated;
+                        context.Saga.OrderStatus = OrderStatus.CatalogProductsAndSetsAllocationSuccess;
                     })
-                    .TransitionTo(PaymentState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaPaymentConsumerEndpointName}"), context => new PaymentCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.UserId, context.Saga.TotalAmount, context.Saga.Products, context.Saga.Sets)),
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaPaymentConsumerEndpointName}"), context => context.Init<PaymentProcessorCommand>(new { context.Saga.CorrelationId, context.Saga.Products, context.Saga.Sets, context.Saga.TenantId, context.Saga.TotalAmount, context.Saga.UserId }))
+                    .TransitionTo(AwaitingPaymentCompletionState),
 
-                When(CatalogAllocationOutOfStockErrorSagaEvent)
+                When(CatalogProductsAndSetsUnavailableSagaErrorEvent)
                     .Then(context =>
                     {
-                        var products = context.Message.Products.Select(x => x.ToString());
-                        var sets = context.Message.Sets.Select(x => x.ToString());
-                        Console.WriteLine($"-- out of stock -> products: {string.Join(", ", products)}");
-                        Console.WriteLine($"-- out of stock -> sets: {string.Join(", ", sets)}");
-
-                        context.Saga.OrderStatus = OrderStatus.ItemsOutOfStock;
+                        context.Saga.OrderStatus = OrderStatus.CatalogProductsAndSetsUnavailableFailure;
                     })
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaCatalogUnavailableErrorConsumerEndpointName}"), context => context.Init<HandleCatalogUnavailableSagaErrorCommand>(new { context.Saga.CorrelationId, context.Saga.Products, context.Saga.Sets, context.Saga.TenantId }))
                     .Finalize(),
 
-                When(CatalogAllocationUnavailableErrorSagaEvent)
+                When(CatalogProductsAndSetsOutOfStockSagaErrorEvent)
                     .Then(context =>
                     {
-                        var products = context.Message.Products.Select(x => x.ToString());
-                        var sets = context.Message.Sets.Select(x => x.ToString());
-                        Console.WriteLine($"-- unavailable -> products: {string.Join(", ", products)}");
-                        Console.WriteLine($"-- unavailable -> sets: {string.Join(", ", sets)}");
-
-                        context.Saga.OrderStatus = OrderStatus.ItemNotVisible;
+                        context.Saga.OrderStatus = OrderStatus.CatalogProductsAndSetsOutOfStockFailure;
                     })
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaCatalogOutOfStockErrorConsumerEndpointName}"), context => context.Init<HandleCatalogOutOfStockSagaErrorCommand>(new { context.Saga.CorrelationId, context.Saga.Products, context.Saga.Sets, context.Saga.TenantId }))
                     .Finalize()
                 );
 
+            #endregion
 
-            During(PaymentState,
-                When(PaymentSuccessSagaEvent)
+
+            #region payment service
+
+            During(AwaitingPaymentCompletionState,
+                When(PaymentProcessSagaSuccessEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine($"user {context.Saga.UserId} paid a total of {context.Saga.TotalAmount} for: ");
-                        foreach (var item in context.Saga.Products)
-                        {
-                            Console.WriteLine($"    -> {item}");
-                        }
-
-                        context.Saga.OrderStatus = OrderStatus.PaymentSuccess;
+                        Console.WriteLine($"payment successfully... continue");
+                        context.Saga.OrderStatus = OrderStatus.PaymentProcessSuccess;
                     })
-                    .TransitionTo(TenantState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaTenantConsumerEndpointName}"), context => new TenantCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Products, context.Saga.Sets, context.Saga.TotalAmount)),
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaTenantConsumerEndpointName}"), context => context.Init<TenantApprovalCommand>(new { context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.Products, context.Saga.Sets, context.Saga.TotalAmount, context.Saga.UserId }))
+                    .TransitionTo(AwaitingTenantApprovalState),
 
-                When(PaymentFailureSagaEvent)
+                When(PaymentProcessSagaFailureEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine("payment failed :(");
-                        context.Saga.OrderStatus = OrderStatus.PaymentFailure;
+                        context.Saga.OrderStatus = OrderStatus.PaymentProcessFailure;
                     })
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaPaymentFailureErrorConsumerEndpointName}"), context => context.Init<HandleCatalogUnavailableSagaErrorCommand>(new { context.Saga.CorrelationId, context.Saga.Products, context.Saga.Sets, context.Saga.TenantId }))
                     .Finalize()
                 );
 
-            During(TenantState,
+            #endregion
+
+
+            #region tenant service
+
+            During(AwaitingTenantApprovalState,
                 When(TenantApproveOrderSagaEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine($"tenant approved order for {context.Saga.UserId} for {context.Saga.Products.Count} items");
-
+                        Console.WriteLine($"tenant approved order... continue");
                         context.Saga.OrderStatus = OrderStatus.TenantApproved;
                     })
-                    .TransitionTo(DeliveryState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaDeliveryConsumerEndpointName}"), context => new DeliveryCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.UserId, context.Saga.Products, context.Saga.Sets)),
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaDeliveryConsumerEndpointName}"), context => context.Init<DeliveryProcessCommand>(new { context.Saga.UserId, context.Saga.CorrelationId, context.Saga.Products, context.Saga.Sets, context.Saga.TenantId }))
+                    .TransitionTo(AwaitingDeliveryCompletionState),
 
                 When(TenantRejectOrderSagaEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine("tenant approval failed :(");
                         context.Saga.OrderStatus = OrderStatus.TenantRejected;
                     })
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaTenantRejectionErrorConsumerEndpointName}"), context => context.Init<HandleTenantRejectionSagaErrorCommand>(new { context.Saga.CorrelationId, context.Saga.Products, context.Saga.Sets, context.Saga.TenantId }))
                     .Finalize()
                 );
 
+            #endregion
 
-            During(DeliveryState,
+
+            #region delivery service
+
+            During(AwaitingDeliveryCompletionState,
                 When(DeliverySuccessSagaEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine($"order {context.Saga.OrderId} was delivered successfully");
+                        Console.WriteLine($"order {context.Saga.CorrelationId} was delivered successfully");
                         context.Saga.OrderStatus = OrderStatus.DeliverySuccess;
                     })
-                    .TransitionTo(OrderCompleteState)
-                    .Send(new Uri($"queue:{RabbitMqSettings.OrderSagaCompletionConsumerEndpointName}"), context => new CompleteOrderSagaCommand(context.Saga.CorrelationId, context.Saga.TenantId, context.Saga.OrderId, context.Saga.UserId, context.Saga.BasketId, context.Saga.Products, context.Saga.Sets, context.Saga.TotalAmount)),
+                    .Finalize(),
 
                 When(DeliveryFailureSagaEvent)
                     .Then(context =>
                     {
-                        Console.WriteLine("delviery failed :(");
                         context.Saga.OrderStatus = OrderStatus.DeliveryFailed;
                     })
+                    .SendAsync(new Uri($"queue:{RabbitMqSettings.OrderSagaTenantRejectionErrorConsumerEndpointName}"), context => context.Init<HandleDeliveryFailureSagaErrorCommand>(new { context.Saga.CorrelationId, context.Saga.Products, context.Saga.Sets, context.Saga.TenantId }))
                     .Finalize()
                 );
 
-            During(OrderCompleteState,
-                When(CompleteOrderSagaSuccessEvent)
-                    .Then(context =>
-                    {
-                        Console.WriteLine($"order {context.Saga.OrderId} complete [this saga is complete]");
-                        context.Saga.OrderStatus = OrderStatus.OrderComplete;
-                    })
-                    .Finalize()
-                );
+            #endregion
+
+
 
             DuringAny(
                When(CheckOrderEvent)
@@ -229,34 +237,6 @@ namespace OrderService.Application.StateMachines
         }
 
 
-        // 0 stage -> create order saga
-        public Event<CreateOrderSagaEvent> CreateOrderSagaEvent { get; private set; }
 
-
-        // 1st stage -> check if items are available to buy
-        public Event<CatalogAllocationSuccessSagaEvent> CatalogAllocationSuccessSagaEvent { get; private set; }
-        public Event<CatalogAllocationOutOfStockErrorSagaEvent> CatalogAllocationOutOfStockErrorSagaEvent { get; private set; }
-        public Event<CatalogAllocationUnavailableErrorSagaEvent> CatalogAllocationUnavailableErrorSagaEvent { get; private set; }
-
-
-        // 2nd stage -> payment process
-        public Event<PaymentSuccessSagaEvent> PaymentSuccessSagaEvent { get; private set; }
-        public Event<PaymentFailureSagaEvent> PaymentFailureSagaEvent { get; private set; }
-
-
-        // 3rd stage -> tenant approves or rejects the order
-        public Event<TenantApproveOrderSagaEvent> TenantApproveOrderSagaEvent { get; private set; }
-        public Event<TenantRejectOrderSagaEvent> TenantRejectOrderSagaEvent { get; private set; }
-
-
-        // 4th stage -> delivery
-        public Event<DeliverySuccessSagaEvent> DeliverySuccessSagaEvent { get; private set; }
-        public Event<DeliveryFailureSagaEvent> DeliveryFailureSagaEvent { get; private set; }
-
-        // 5th stage -> completion
-        public Event<CompleteOrderSagaSuccessEvent> CompleteOrderSagaSuccessEvent { get; private set; }
-
-
-        public Event<CheckOrderStatusEvent> CheckOrderEvent { get; private set; }
     }
 }
