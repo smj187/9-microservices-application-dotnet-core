@@ -44,12 +44,13 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumers(Assembly.Load("OrderService.Application"));
 
     x.AddSagaStateMachine<OrderStateMachine, OrderStateMachineInstance>()
-        .MongoDbRepository(r =>
-        {
-            r.Connection = builder.Configuration.GetSection("SagaPersistence:ConnectionString").Value;
-            r.DatabaseName = builder.Configuration.GetSection("SagaPersistence:DatabaseName").Value;
-            r.CollectionName = builder.Configuration.GetSection("SagaPersistence:CollectionName").Value;
-        });
+        .InMemoryRepository();
+    //.MongoDbRepository(r =>
+    //{
+    //    r.Connection = builder.Configuration.GetSection("SagaPersistence:ConnectionString").Value;
+    //    r.DatabaseName = builder.Configuration.GetSection("SagaPersistence:DatabaseName").Value;
+    //    r.CollectionName = builder.Configuration.GetSection("SagaPersistence:CollectionName").Value;
+    //});
 
 
     x.UsingRabbitMq((context, rabbit) =>
@@ -65,9 +66,34 @@ builder.Services.AddMassTransit(x =>
             endpoint.ConfigureSaga<OrderStateMachineInstance>(context);
         });
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaBasketCheckoutConsumerEndpointName, endpoint =>
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaCompletionConsumerEndpointName, endpoint =>
         {
-            endpoint.ConfigureConsumer<CreateNewOrderConsumer>(context);
+            endpoint.ConfigureConsumer<CompleteOrderSagaConsumer>(context);
+        });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaCatalogUnavailableErrorConsumerEndpointName, endpoint =>
+        {
+            endpoint.ConfigureConsumer<HandleCatalogUnavailableSagaErrorConsumer>(context);
+        });
+        
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaCatalogOutOfStockErrorConsumerEndpointName, endpoint =>
+        {
+            endpoint.ConfigureConsumer<HandleCatalogOutOfStockSagaErrorConsumer>(context);
+        });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaPaymentFailureErrorConsumerEndpointName, endpoint =>
+        {
+            endpoint.ConfigureConsumer<HandlePaymentFailureSagaErrorConsumer>(context);
+        });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaTenantRejectionErrorConsumerEndpointName, endpoint =>
+        {
+            endpoint.ConfigureConsumer<HandleTenantRejectionSagaErrorConsumer>(context);
+        });
+
+        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaDeliveryFailedErrorConsumerEndpointName, endpoint =>
+        {
+            endpoint.ConfigureConsumer<HandleDeliveryFailureSagaErrorConsumer>(context);
         });
     });
 });

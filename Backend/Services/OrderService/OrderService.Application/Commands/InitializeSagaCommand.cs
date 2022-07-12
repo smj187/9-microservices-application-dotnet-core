@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.Commands
 {
-    public class CreateSagaCommand : IRequest
+    public class InitializeSagaCommand : IRequest
     {
         public string TenantId { get; set; } = default!;
         public Guid OrderId { get; set; }

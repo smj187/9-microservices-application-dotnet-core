@@ -51,7 +51,7 @@ namespace OrderService.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrderAsync([FromBody] CreateOrderRequest request)
         {
-            var command = new CreateSagaCommand
+            var command = new InitializeSagaCommand
             {
                 OrderId = Guid.NewGuid(),
                 //OrderId = Guid.Parse("58ea4c2e-0000-0000-0000-28c4c1d5e40e"),

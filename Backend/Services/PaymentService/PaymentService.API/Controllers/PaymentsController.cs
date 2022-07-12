@@ -2,8 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PaymentService.Application.Queries;
-using PaymentService.Contracts.v1.Requests;
-using PaymentService.Contracts.v1.Responses;
 using PaymentService.Core.Domain.Aggregates;
 using System;
 using System.Collections.Generic;

@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.StateMachines.Events
 {
-    public record CreateOrderSagaEvent(Guid OrderId, Guid BasketId, Guid UserId, string TenantId, List<Guid> Products, List<Guid> Sets);
+    public record InitializeOrderSagaEvent(Guid OrderId, Guid BasketId, Guid UserId, string TenantId, List<Guid> Products, List<Guid> Sets);
     
 }

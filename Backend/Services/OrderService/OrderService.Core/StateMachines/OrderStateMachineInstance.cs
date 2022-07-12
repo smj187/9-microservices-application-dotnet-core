@@ -22,7 +22,7 @@ namespace OrderService.Core.StateMachines
         public Guid BasketId { get; set; }
         public List<Guid> Products { get; set; } = new();
         public List<Guid> Sets { get; set; } = new();
-        public OrderStatus OrderStatus { get; set; } = OrderStatus.Created;
+        public OrderStatus OrderStatus { get; set; } = OrderStatus.OrderCreatedStatus;
         public decimal TotalAmount { get; set; }
 
         // meta

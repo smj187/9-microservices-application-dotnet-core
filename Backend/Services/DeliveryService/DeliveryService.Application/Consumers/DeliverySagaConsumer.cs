@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace DeliveryService.Application.Consumers
 {
-    public class DeliverySagaConsumer : IConsumer<DeliveryCommand>
+    public class DeliverySagaConsumer : IConsumer<DeliveryProcessCommand>
     {
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly IConfiguration _configuration;
@@ -26,14 +26,14 @@ namespace DeliveryService.Application.Consumers
             _configuration = configuration;
         }
 
-        public async Task Consume(ConsumeContext<DeliveryCommand> context)
+        public async Task Consume(ConsumeContext<DeliveryProcessCommand> context)
         {
             var tenantId = context.Message.TenantId;
             var success = true;
 
 
             var deliveryRepository = new DeliveryRepository(new MultitenancyService(tenantId, _configuration));
-            var delivery = new Delivery(tenantId, context.Message.OrderId, context.Message.UserId, context.Message.Products, context.Message.Sets);
+            var delivery = new Delivery(tenantId, context.Message.CorrelationId, context.Message.UserId, context.Message.Products, context.Message.Sets);
 
             await deliveryRepository.AddAsync(delivery);
 
@@ -49,14 +49,14 @@ namespace DeliveryService.Application.Consumers
                 await deliveryRepository.PatchAsync(delivery);
                 Console.WriteLine($"{nameof(DeliverySagaConsumer)}:: delivery complete");
 
-                await _publishEndpoint.Publish(new DeliverySuccessSagaEvent(context.Message.CorrelationId, context.Message.OrderId, "success"));
+                await _publishEndpoint.Publish(new DeliverySuccessSagaEvent(context.Message.CorrelationId, "success"));
             }
             else
             {
                 delivery.ChangeDeliveryStatus(DeliveryStatus.Failed);
                 await deliveryRepository.PatchAsync(delivery);
                 Console.WriteLine($"{nameof(DeliverySagaConsumer)}:: delivery failed");
-                await _publishEndpoint.Publish(new DeliveryFailureSagaEvent(context.Message.CorrelationId, context.Message.OrderId, "failure"));
+                await _publishEndpoint.Publish(new DeliveryFailureSagaEvent(context.Message.CorrelationId, "failure"));
             }
         }
     }

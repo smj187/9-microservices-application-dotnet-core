@@ -24,8 +24,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("PaymentService.Application"));
 
-//builder.Services.AddPostgresDatabase<PaymentContext>(builder.Configuration)
-//    .AddTransient<IPaymentRepository<Payment>, PaymentRepository<Payment>>();
 
 builder.Services.AddPostgresMultitenancy<PaymentContext>(builder.Configuration)
     .AddScoped<IUnitOfWork, UnitOfWork<PaymentContext>>()
