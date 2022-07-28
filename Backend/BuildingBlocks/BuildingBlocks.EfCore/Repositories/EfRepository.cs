@@ -26,6 +26,11 @@ namespace BuildingBlocks.EfCore.Repositories
             return await _commandRepository.AddAsync(entity);
         }
 
+        public Task<IReadOnlyCollection<T>> AddManyAsync(IReadOnlyCollection<T> entities)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<T?> FindAsync(Guid id)
         {
             return await _queryRepository.FindAsync(id);

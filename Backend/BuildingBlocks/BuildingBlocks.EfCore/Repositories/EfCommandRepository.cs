@@ -31,6 +31,11 @@ namespace BuildingBlocks.EfCore.Repositories
             return entity;
         }
 
+        public Task<IReadOnlyCollection<T>> AddManyAsync(IReadOnlyCollection<T> entities)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<T> PatchAsync(T entity)
         {
             if (entity == null)

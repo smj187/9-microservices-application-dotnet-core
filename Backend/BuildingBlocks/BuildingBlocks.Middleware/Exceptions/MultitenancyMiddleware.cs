@@ -18,7 +18,6 @@ namespace BuildingBlocks.Middleware.Exceptions
         public MultitenancyMiddleware(RequestDelegate next, IConfiguration config)
         {
             _next = next;
-
             _tenants = config.GetSection("tenants").Get<IEnumerable<TenantConfiguration>>().ToList();
         }
 

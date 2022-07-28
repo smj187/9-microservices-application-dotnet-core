@@ -16,6 +16,15 @@ namespace BuildingBlocks.Mongo.Repositories
         private readonly IMongoCommandRepository<T> _commandRepository;
         private readonly IMongoQueryRepository<T> _queryRepository;
 
+        public MongoRepository(IConfiguration configuration)
+        {
+            var connectionString = configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
+            var databaseName = configuration.GetValue<string>("ConnectionStrings:Database");
+
+            _commandRepository = new MongoCommandRepository<T>(connectionString, databaseName);
+            _queryRepository = new MongoQueryRepository<T>(connectionString, databaseName);
+        }
+
         public MongoRepository(string connectionString, string databaseName)
         {
             _commandRepository = new MongoCommandRepository<T>(connectionString, databaseName);
@@ -25,6 +34,11 @@ namespace BuildingBlocks.Mongo.Repositories
         public async Task<T> AddAsync(T entity)
         {
             return await _commandRepository.AddAsync(entity);
+        }
+
+        public async Task<IReadOnlyCollection<T>> AddManyAsync(IReadOnlyCollection<T> entities)
+        {
+            return await _commandRepository.AddManyAsync(entities);
         }
 
         public async Task<T?> FindAsync(Guid id)
@@ -42,6 +56,11 @@ namespace BuildingBlocks.Mongo.Repositories
             return await _queryRepository.FindAsync(expression);
         }
 
+        public async Task<T> FindAsync(FilterDefinition<T> filter)
+        {
+            return await _queryRepository.FindAsync(filter);
+        }
+
         public async Task<IReadOnlyCollection<T>> ListAsync()
         {
             return await _queryRepository.ListAsync();
@@ -55,6 +74,11 @@ namespace BuildingBlocks.Mongo.Repositories
         public async Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression)
         {
             return await _queryRepository.ListAsync(expression);
+        }
+
+        public async Task<IReadOnlyCollection<T>> ListAsync(FilterDefinition<T> filter)
+        {
+            return await _queryRepository.ListAsync(filter);
         }
 
         public async Task<T> PatchAsync(T entity)

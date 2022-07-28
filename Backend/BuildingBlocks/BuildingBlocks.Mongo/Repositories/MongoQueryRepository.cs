@@ -44,6 +44,11 @@ namespace BuildingBlocks.Mongo.Repositories
             return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
         }
 
+        public async Task<T> FindAsync(FilterDefinition<T> filter)
+        {
+            return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
         public async Task<IReadOnlyCollection<T>> ListAsync()
         {
             return await _mongoCollection.Find(_filterBuilder.Empty).ToListAsync();
@@ -58,6 +63,11 @@ namespace BuildingBlocks.Mongo.Repositories
         public async Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression)
         {
             return await _mongoCollection.Find(expression).ToListAsync();
+        }
+
+        public async Task<IReadOnlyCollection<T>> ListAsync(FilterDefinition<T> filter)
+        {
+            return await _mongoCollection.Find(filter).ToListAsync();
         }
     }
 }

@@ -24,6 +24,11 @@ namespace BuildingBlocks.Domain
             return await _commandRepository.AddAsync(entity);
         }
 
+        public async Task<IReadOnlyCollection<T>> AddManyAsync(IReadOnlyCollection<T> entities)
+        {
+            return await _commandRepository.AddManyAsync(entities);
+        }
+
         public async Task<T?> FindAsync(Guid id)
         {
             return await _queryRepository.FindAsync(id);

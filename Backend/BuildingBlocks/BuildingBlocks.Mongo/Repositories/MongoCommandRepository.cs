@@ -38,6 +38,12 @@ namespace BuildingBlocks.Mongo.Repositories
             return entity;
         }
 
+        public async Task<IReadOnlyCollection<T>> AddManyAsync(IReadOnlyCollection<T> entities)
+        {
+            await _mongoCollection.InsertManyAsync(entities);
+            return entities;
+        }
+
         public async Task<T> PatchAsync(T entity)
         {
             if (entity == null)
