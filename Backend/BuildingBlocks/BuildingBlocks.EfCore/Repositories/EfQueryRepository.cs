@@ -21,6 +21,11 @@ namespace BuildingBlocks.EfCore.Repositories
             _database = _context.Set<T>();
         }
 
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _database.AnyAsync(expression);
+        }
+
         public async Task<T?> FindAsync(Guid id)
         {
             // https://stackoverflow.com/questions/41025338/why-use-attach-for-update-entity-framework-6

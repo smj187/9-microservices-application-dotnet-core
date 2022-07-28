@@ -16,8 +16,59 @@ namespace TenantService.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("TenantService.Core.Domain.Aggregates.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTimeOffset?>("ModifiedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("modified_at");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("order_id");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("price");
+
+                    b.Property<string>("Products")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("products");
+
+                    b.Property<string>("Sets")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("sets");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("order", (string)null);
+                });
 
             modelBuilder.Entity("TenantService.Core.Domain.Aggregates.Tenant", b =>
                 {
@@ -89,6 +140,10 @@ namespace TenantService.Infrastructure.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("phone");
 
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<Guid?>("VideoAssetId")
                         .HasColumnType("char(36)")
                         .HasColumnName("asset_video");
@@ -100,6 +155,34 @@ namespace TenantService.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tenant", (string)null);
+                });
+
+            modelBuilder.Entity("TenantService.Core.Domain.Aggregates.Order", b =>
+                {
+                    b.OwnsOne("TenantService.Core.Domain.Enumerations.OrderStatus", "OrderStatus", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasColumnType("longtext")
+                                .HasColumnName("order_status_description");
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("int")
+                                .HasColumnName("order_status_value");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("order");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.Navigation("OrderStatus")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TenantService.Core.Domain.Aggregates.Tenant", b =>

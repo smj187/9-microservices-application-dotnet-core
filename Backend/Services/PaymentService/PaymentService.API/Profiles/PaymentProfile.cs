@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using PaymentService.Contracts.v1.Requests;
-using PaymentService.Contracts.v1.Responses;
-using PaymentService.Core.Entities;
+using PaymentService.Core.Domain.Aggregates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +12,7 @@ namespace PaymentService.API.Profiles
     {
         public PaymentProfile()
         {
-            CreateMap<CreatePaymentRequest, Payment>();
-            CreateMap<Payment, PaymentResponse>();
+            
         }
     }
 }

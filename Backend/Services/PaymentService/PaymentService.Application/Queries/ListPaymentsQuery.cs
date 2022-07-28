@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using PaymentService.Core.Entities;
+using PaymentService.Core.Domain.Aggregates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PaymentService.Application.Queries
 {
-    public class ListPaymentsQuery : IRequest<IEnumerable<Payment>>
+    public class ListPaymentsQuery : IRequest<IReadOnlyCollection<Payment>>
     {
 
     }

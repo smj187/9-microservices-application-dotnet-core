@@ -9,6 +9,8 @@ namespace BuildingBlocks.Domain.Repositories
 {
     public interface IQueryRepository<T> where T : IAggregateBase
     {
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> expression);
+
         Task<IReadOnlyCollection<T>> ListAsync();
         Task<IReadOnlyCollection<T>> ListAsync(List<Guid> includes);
         Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression);

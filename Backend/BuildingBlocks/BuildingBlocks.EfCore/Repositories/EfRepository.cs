@@ -30,6 +30,11 @@ namespace BuildingBlocks.EfCore.Repositories
         {
             throw new NotImplementedException();
         }
+        
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _queryRepository.ExistsAsync(expression);
+        }
 
         public async Task<T?> FindAsync(Guid id)
         {

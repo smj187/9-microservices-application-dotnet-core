@@ -1,8 +1,11 @@
-﻿using CatalogService.Contracts.v1.Commands;
+﻿using BuildingBlocks.Multitenancy.Services;
+using CatalogService.Contracts.v1.Commands;
 using CatalogService.Contracts.v1.Events;
 using CatalogService.Core.Domain.Products;
 using CatalogService.Core.Domain.Sets;
+using CatalogService.Infrastructure.Repositories;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -12,24 +15,27 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.Consumers
 {
-    public class CatalogSagaConsumer : IConsumer<CatalogAllocationCommand>
+    public class CatalogSagaConsumer : IConsumer<CatalogProductsAndSetsAllocationCommand>
     {
-        private readonly IProductRepository _productRepository;
         private readonly IPublishEndpoint _publishEndpoint;
-        private readonly ISetRepository _setRepository;
+        private readonly IConfiguration _configuration;
 
-        public CatalogSagaConsumer(IProductRepository productRepository, IPublishEndpoint publishEndpoint, ISetRepository setRepository)
+        public CatalogSagaConsumer(IPublishEndpoint publishEndpoint, IConfiguration configuration)
         {
-            _productRepository = productRepository;
             _publishEndpoint = publishEndpoint;
-            _setRepository = setRepository;
+            _configuration = configuration;
         }
 
 
-        public async Task Consume(ConsumeContext<CatalogAllocationCommand> context)
+        public async Task Consume(ConsumeContext<CatalogProductsAndSetsAllocationCommand> context)
         {
-            var products = await _productRepository.ListAsync(context.Message.Products);
-            var sets = await _setRepository.ListAsync(context.Message.Sets);
+            var tenantId = context.Message.TenantId;
+
+            var setRepository = new SetRepository(new MultitenancyService(tenantId, _configuration));
+            var productRepository = new ProductRepository(new MultitenancyService(tenantId, _configuration));
+
+            var products = await productRepository.ListAsync(context.Message.Products);
+            var sets = await setRepository.ListAsync(context.Message.Sets);
 
             var availableProducts = new List<ItemAllocationInformation>();
             var outOfStockProducts = new List<ItemAllocationInformation>();
@@ -76,22 +82,27 @@ namespace CatalogService.Application.Consumers
                 }
             }
 
+            await Task.Delay(1000);
+
             if (unavailableProducts.Any() || unavailableSets.Any())
             {
-                var command = new CatalogAllocationUnavailableErrorSagaEvent(context.Message.CorrelationId, context.Message.OrderId, unavailableProducts, unavailableSets, "available");
+                var command = new CatalogProductsAndSetsUnavailableSagaErrorEvent(context.Message.CorrelationId, unavailableProducts, unavailableSets, "available");
+                Console.WriteLine("unavailable products or sets");
                 await _publishEndpoint.Publish(command);
             }
             else if (outOfStockProducts.Any() || outOfStockSets.Any())
             {
-                var command = new CatalogAllocationOutOfStockErrorSagaEvent(context.Message.CorrelationId, context.Message.OrderId, outOfStockProducts, outOfStockSets, "out of stock");
+                var command = new CatalogProductsAndSetsOutOfStockSagaErrorEvent(context.Message.CorrelationId, outOfStockProducts, outOfStockSets, "out of stock");
+                Console.WriteLine("out of stock products or sets");
                 await _publishEndpoint.Publish(command);
             }
             else
             {
-                await _setRepository.PatchMultipleAsync(GetSetBulk(sets));
-                await _productRepository.PatchMultipleAsync(GetProductBulk(products));
+                await setRepository.PatchMultipleAsync(GetSetBulk(sets));
+                await productRepository.PatchMultipleAsync(GetProductBulk(products));
 
-                var command = new CatalogAllocationSuccessSagaEvent(context.Message.CorrelationId, context.Message.OrderId, availableProducts, availableSets);
+                var command = new CatalogProductsAndSetsAllocationSagaSuccessEvent(context.Message.CorrelationId, availableProducts, availableSets);
+                Console.WriteLine("all good for products and sets");
                 await _publishEndpoint.Publish(command);
             }
         }

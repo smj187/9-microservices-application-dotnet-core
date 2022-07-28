@@ -6,5 +6,12 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Contracts.v1.Commands
 {
-    public record CatalogAllocationCommand(Guid CorrelationId, Guid OrderId, List<Guid> Products, List<Guid> Sets);
+    public class CatalogProductsAndSetsAllocationCommand
+    {
+        public Guid CorrelationId { get; set; }
+        public string TenantId { get; set; } = default!;
+        public List<Guid> Products { get; set; } = new();
+        public List<Guid> Sets { get; set; } = new();
+    }
+
 }

@@ -18,7 +18,7 @@ namespace TenantService.Contracts.v1.Contracts
 
 
     // responses
-    public record TenantResponse(Guid Id, string Name, string? Description, string Email, string Phone, TenantAddressResponse Address, List<TenantWorkingDayResponse> Workingdays, decimal MinimunOrderAmount, bool IsFreeDelivery, decimal? DeliveryCost, string? WebsiteUrl, string? Imprint, string? Payments, Guid? BrandImageAssetId, Guid? LogoAssetId, Guid? VideoAssetId, Guid? BannerAssetId, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
+    public record TenantResponse(Guid Id, string TenantId, string Name, string? Description, string Email, string Phone, TenantAddressResponse Address, List<TenantWorkingDayResponse> Workingdays, decimal MinimunOrderAmount, bool IsFreeDelivery, decimal? DeliveryCost, string? WebsiteUrl, string? Imprint, string? Payments, Guid? BrandImageAssetId, Guid? LogoAssetId, Guid? VideoAssetId, Guid? BannerAssetId, DateTimeOffset CreatedAt, DateTimeOffset? ModifiedAt);
     public record TenantAddressResponse(string Street, string City, string State, string Country, string Zip);
     public record TenantWorkingDayResponse(string? Opening, string? Closing, string WeekdayValue, string WeekdayDescription, string? Message, bool IsClosedToday);
 }

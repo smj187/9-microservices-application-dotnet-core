@@ -22,9 +22,9 @@ namespace FileService.Contracts.v1.Events
 
 
 
-    public record TenantBrandImageUploadResponseEvent(string TenantId, Guid ExternalEntityId, Guid ImageId);
-    public record TenantLogoUploadResponseEvent(string TenantId, Guid ExternalEntityId, Guid ImageId);
-    public record TenantVideoUploadResponseEvent(string TenantId, Guid ExternalEntityId, Guid VideoId);
-    public record TenantBannerUploadResponseEvent(string TenantId, Guid ExternalEntityId, Guid ImageId);
+    public record TenantBrandImageUploadResponseEvent(string TenantId, Guid ImageId);
+    public record TenantLogoUploadResponseEvent(string TenantId, Guid ImageId);
+    public record TenantVideoUploadResponseEvent(string TenantId, Guid VideoId);
+    public record TenantBannerUploadResponseEvent(string TenantId, Guid ImageId);
 
 }

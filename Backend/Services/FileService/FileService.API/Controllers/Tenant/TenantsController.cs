@@ -33,7 +33,7 @@ namespace FileService.API.Controllers.Tenant
                 Image = request.Image
             });
 
-            await PublishEndpoint.Publish(new TenantBrandImageUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new TenantBrandImageUploadResponseEvent(data.TenantId, data.Id));
             return Ok(Mapper.Map<TenantResponse>(data));
         }
 
@@ -52,7 +52,7 @@ namespace FileService.API.Controllers.Tenant
                 Image = request.Image
             });
 
-            await PublishEndpoint.Publish(new TenantLogoUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new TenantLogoUploadResponseEvent(data.TenantId, data.Id));
             return Ok(Mapper.Map<TenantResponse>(data));
         }
 
@@ -71,7 +71,7 @@ namespace FileService.API.Controllers.Tenant
                 Video = request.Video
             });
 
-            await PublishEndpoint.Publish(new TenantVideoUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new TenantVideoUploadResponseEvent(data.TenantId, data.Id));
             return Ok(Mapper.Map<TenantResponse>(data));
         }
 
@@ -90,7 +90,7 @@ namespace FileService.API.Controllers.Tenant
                 Image = request.Image
             });
 
-            await PublishEndpoint.Publish(new TenantBannerUploadResponseEvent(data.TenantId, data.ExternalEntityId, data.Id));
+            await PublishEndpoint.Publish(new TenantBannerUploadResponseEvent(data.TenantId, data.Id));
             return Ok(Mapper.Map<TenantResponse>(data));
         }
 

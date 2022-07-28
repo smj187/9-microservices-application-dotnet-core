@@ -40,6 +40,11 @@ namespace BuildingBlocks.Mongo.Repositories
         {
             return await _commandRepository.AddManyAsync(entities);
         }
+        
+        public Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<T?> FindAsync(Guid id)
         {

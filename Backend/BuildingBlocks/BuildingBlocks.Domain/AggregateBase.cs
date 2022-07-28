@@ -15,7 +15,13 @@ namespace BuildingBlocks.Domain
         protected AggregateBase()
         {
             _id = Guid.NewGuid();
-            CreatedAt = DateTimeOffset.Now;
+            CreatedAt = DateTimeOffset.UtcNow;
+        }
+
+        protected AggregateBase(Guid id)
+            : base(id)
+        {
+            CreatedAt = DateTimeOffset.UtcNow;
         }
 
         public override Guid Id

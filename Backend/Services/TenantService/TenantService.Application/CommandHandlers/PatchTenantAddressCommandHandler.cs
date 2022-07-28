@@ -34,7 +34,7 @@ namespace TenantService.Application.CommandHandlers
 
             tenant.PatchAddress(new Address(request.Street, request.City, request.State, request.Country, request.Zip));
 
-            var patched = await _tenantRepository.PatchAsync(request.TenantId, tenant);
+            var patched = await _tenantRepository.PatchAsync(tenant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return patched;

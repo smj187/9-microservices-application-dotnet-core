@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.EfCore\BuildingBlocks.EfCore.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Extensions\BuildingBlocks.Extensions.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Masstransit\BuildingBlocks.Masstransit.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Middleware\BuildingBlocks.Middleware.csproj" />
     <ProjectReference Include="..\TenantService.Application\TenantService.Application.csproj" />

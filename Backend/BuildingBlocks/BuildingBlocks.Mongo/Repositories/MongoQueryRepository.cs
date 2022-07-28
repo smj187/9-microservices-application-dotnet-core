@@ -27,6 +27,11 @@ namespace BuildingBlocks.Mongo.Repositories
             _mongoCollection = database.GetCollection<T>(collectionName);
         }
 
+        public Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<T?> FindAsync(Guid id)
         {
             var filter = _filterBuilder.Eq(x => x.Id, id);

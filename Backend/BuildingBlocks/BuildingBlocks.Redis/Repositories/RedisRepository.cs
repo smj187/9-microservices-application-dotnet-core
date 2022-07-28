@@ -30,6 +30,11 @@ namespace BuildingBlocks.Redis.Repositories
         {
             throw new NotImplementedException();
         }
+        
+        public Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<T?> FindAsync(Guid id)
         {

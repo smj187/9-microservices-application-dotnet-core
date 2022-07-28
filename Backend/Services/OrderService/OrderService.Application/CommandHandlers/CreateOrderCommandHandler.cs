@@ -1,6 +1,9 @@
-﻿using MediatR;
+﻿using BuildingBlocks.Multitenancy.Services;
+using MediatR;
+using Microsoft.Extensions.Configuration;
 using OrderService.Application.Commands;
-using OrderService.Core.Entities;
+using OrderService.Core.Entities.Aggregates;
+using OrderService.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +12,24 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.CommandHandlers
 {
-    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Order>
+    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand>
     {
-        public CreateOrderCommandHandler()
-        {
+        private readonly IConfiguration _configuration;
 
+        public CreateOrderCommandHandler(IConfiguration configuration)
+        {
+            _configuration = configuration;
         }
 
-        public Task<Order> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var orderRepository = new OrderRepository(new MultitenancyService(request.TenantId, _configuration));
+
+            var order = new Order(request.TenantId, request.OrderId, request.UserId, request.Products, request.Sets);
+
+            await orderRepository.AddAsync(order);
+
+            return Unit.Value;
         }
     }
 }
