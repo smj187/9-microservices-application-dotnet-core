@@ -29,7 +29,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Middleware",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Mongo", "..\..\BuildingBlocks\BuildingBlocks.Mongo\BuildingBlocks.Mongo.csproj", "{6A9D08C6-3FA5-4300-929A-F705098D3380}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Redis", "..\..\BuildingBlocks\BuildingBlocks.Redis\BuildingBlocks.Redis.csproj", "{6CC280A2-113F-4342-BFEF-DE21B5A46C19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Redis", "..\..\BuildingBlocks\BuildingBlocks.Redis\BuildingBlocks.Redis.csproj", "{6CC280A2-113F-4342-BFEF-DE21B5A46C19}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Cache", "..\..\BuildingBlocks\BuildingBlocks.Cache\BuildingBlocks.Cache.csproj", "{48419978-253F-4566-ACB8-9A13110F1423}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Multitenancy", "..\..\BuildingBlocks\BuildingBlocks.Multitenancy\BuildingBlocks.Multitenancy.csproj", "{8A2A5388-A2F4-4443-908F-84FB28012FD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +93,14 @@ Global
 		{6CC280A2-113F-4342-BFEF-DE21B5A46C19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CC280A2-113F-4342-BFEF-DE21B5A46C19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CC280A2-113F-4342-BFEF-DE21B5A46C19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48419978-253F-4566-ACB8-9A13110F1423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48419978-253F-4566-ACB8-9A13110F1423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48419978-253F-4566-ACB8-9A13110F1423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48419978-253F-4566-ACB8-9A13110F1423}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A2A5388-A2F4-4443-908F-84FB28012FD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A2A5388-A2F4-4443-908F-84FB28012FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A2A5388-A2F4-4443-908F-84FB28012FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A2A5388-A2F4-4443-908F-84FB28012FD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +114,8 @@ Global
 		{6889E7FA-780F-438C-96F2-2D739DEBECD5} = {18B8E5F2-B3C0-486B-8621-9EC9D313B718}
 		{6A9D08C6-3FA5-4300-929A-F705098D3380} = {18B8E5F2-B3C0-486B-8621-9EC9D313B718}
 		{6CC280A2-113F-4342-BFEF-DE21B5A46C19} = {18B8E5F2-B3C0-486B-8621-9EC9D313B718}
+		{48419978-253F-4566-ACB8-9A13110F1423} = {18B8E5F2-B3C0-486B-8621-9EC9D313B718}
+		{8A2A5388-A2F4-4443-908F-84FB28012FD0} = {18B8E5F2-B3C0-486B-8621-9EC9D313B718}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {170ABAB4-D9F7-4528-A5A2-646D8776DCC4}

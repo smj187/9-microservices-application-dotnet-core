@@ -2,12 +2,16 @@ using BasketService.Core.Domain;
 using BasketService.Infrastructure.Repositories;
 using BuildingBlocks.Masstransit;
 using BuildingBlocks.Middleware.Exceptions;
+using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Services;
 using MassTransit;
 using MediatR;
 using StackExchange.Redis;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IMultitenancyService, MultitenancyService>();
 builder.Services.Configure<RouteOptions>(opts => { opts.LowercaseUrls = true; });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -21,23 +25,21 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(opt => ConnectionMultiplex
 builder.Services.AddSingleton<IBasketRepository, BasketRepository>();
 
 
-
 builder.Services.AddMassTransit(x =>
 {
-    x.SetSnakeCaseEndpointNameFormatter();
-    x.AddConsumers(Assembly.Load("BasketService.Application"));
+   x.SetSnakeCaseEndpointNameFormatter();
+   x.AddConsumers(Assembly.Load("BasketService.Application"));
 
-    x.UsingRabbitMq((context, rabbit) =>
-    {
-        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
-        {
-            host.Username(RabbitMqSettings.Username);
-            host.Password(RabbitMqSettings.Password);
-        });
-    });
+   x.UsingRabbitMq((context, rabbit) =>
+   {
+       rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
+       {
+           host.Username(RabbitMqSettings.Username);
+           host.Password(RabbitMqSettings.Password);
+       });
+   });
 
 });
-
 
 
 var app = builder.Build();
@@ -49,6 +51,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<MultitenancyMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CommandHandlers\**" />
+    <Compile Remove="Commands\**" />
+    <EmbeddedResource Remove="CommandHandlers\**" />
+    <EmbeddedResource Remove="Commands\**" />
+    <None Remove="CommandHandlers\**" />
+    <None Remove="Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="10.0.1" />
   </ItemGroup>
 
@@ -16,11 +25,6 @@
     <ProjectReference Include="..\DeliveryService.Contracts\DeliveryService.Contracts.csproj" />
     <ProjectReference Include="..\DeliveryService.Core\DeliveryService.Core.csproj" />
     <ProjectReference Include="..\DeliveryService.Infrastructure\DeliveryService.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="CommandHandlers\" />
-    <Folder Include="Commands\" />
   </ItemGroup>
 
 </Project>

@@ -1,46 +1,39 @@
 version: "3.8"
 
 services:
-  redis:
+  basketdatabase:
     image: redis/redis-stack
+    container_name: basket_database
     ports:
-      - 6379:6379
-      - 8001:8001
-  # redisstack:
-  #   container_name: redis_stack
-  #   image: redis/redis-stack
-  #   ports:
-  #     - 8001:8001
+      - 5703:6379
+      - 5704:8001
+    volumes:
+      - basket_data:/data
 
-  # basketdatabase:
-  #   container_name: basket_database
-  #   image: redis
-  #   restart: always
-  #   ports:
-  #     - 6379:6379
-  #   command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-  #   volumes:
-  #     - basket-database:/data
-
-  # basketservice:
-  #   image: ${DOCKER_REGISTRY-}basketservice
-  #   container_name: basket_service
-  #   build:
-  #     context: .
-  #     dockerfile: Services/BasketService/BasketService.API/Dockerfile
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_URLS=https://+:443;http://+:80
-  #   ports:
-  #     - "5701:80"
-  #     - "5700:443"
-  #   volumes:
-  #     - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
-  #   depends_on:
-  #     - basketdatabase
+  basketservice:
+    image: ${DOCKER_REGISTRY-}basketservice
+    container_name: basket_service
+    build:
+      context: .
+      dockerfile: Services/BasketService/BasketService.API/Dockerfile.Development
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/BasketService.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ConnectionStrings__DefaultConnection=host.docker.internal:5703
+      - Tenants__0__Name=Tenant A
+      - Tenants__0__TenantId=tenant-a
+      - Tenants__1__Name=Tenant B
+      - Tenants__1__TenantId=tenant-b
+    ports:
+      - "5701:80"
+      - "5700:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${USERPROFILE}\.aspnet\Https:/https/:ro
+    depends_on:
+      - basketdatabase
 
 volumes:
-  basket-database:
-    driver: local
+  basket_data:

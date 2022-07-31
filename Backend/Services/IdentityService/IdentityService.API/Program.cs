@@ -28,7 +28,7 @@ builder.Services.AddMediatR(Assembly.Load("IdentityService.Application"));
 
 builder.Services.ConfigureIdentityServer();
 
-builder.Services.AddPostgresMultitenancy<IdentityContext>(builder.Configuration)
+builder.Services.AddMySqlMultitenancy<IdentityContext>(builder.Configuration)
     .AddScoped<IUnitOfWork, UnitOfWork<IdentityContext>>()
     .ConfigureIdentity(builder.Configuration)
     .AddTransient<IUserService, UserService>()

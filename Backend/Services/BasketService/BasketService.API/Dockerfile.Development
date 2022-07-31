@@ -1,5 +1,3 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -7,10 +5,20 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
+
+COPY ["BuildingBlocks/BuildingBlocks.Cache/BuildingBlocks.Cache.csproj", "BuildingBlocks/BuildingBlocks.Cache/"]
+COPY ["BuildingBlocks/BuildingBlocks.Domain/BuildingBlocks.Domain.csproj", "BuildingBlocks/BuildingBlocks.Domain/"]
+COPY ["BuildingBlocks/BuildingBlocks.EfCore/BuildingBlocks.EfCore.csproj", "BuildingBlocks/BuildingBlocks.EfCore/"]
+COPY ["BuildingBlocks/BuildingBlocks.Exceptions/BuildingBlocks.Exceptions.csproj", "BuildingBlocks/BuildingBlocks.Exceptions/"]
+COPY ["BuildingBlocks/BuildingBlocks.Extensions/BuildingBlocks.Extensions.csproj", "BuildingBlocks/BuildingBlocks.Extensions/"]
+COPY ["BuildingBlocks/BuildingBlocks.Masstransit/BuildingBlocks.Masstransit.csproj", "BuildingBlocks/BuildingBlocks.Masstransit/"]
+COPY ["BuildingBlocks/BuildingBlocks.Middleware/BuildingBlocks.Middleware.csproj", "BuildingBlocks/BuildingBlocks.Middleware/"]
+COPY ["BuildingBlocks/BuildingBlocks.Multitenancy/BuildingBlocks.Multitenancy.csproj", "BuildingBlocks/BuildingBlocks.Multitenancy/"]
+COPY ["BuildingBlocks/BuildingBlocks.Redis/BuildingBlocks.Redis.csproj", "BuildingBlocks/BuildingBlocks.Redis/"]
+
 COPY ["Services/BasketService/BasketService.API/BasketService.API.csproj", "Services/BasketService/BasketService.API/"]
 COPY ["Services/BasketService/BasketService.Application/BasketService.Application.csproj", "Services/BasketService/BasketService.Application/"]
 COPY ["Services/BasketService/BasketService.Core/BasketService.Core.csproj", "Services/BasketService/BasketService.Core/"]
-COPY ["BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/"]
 COPY ["Services/BasketService/BasketService.Infrastructure/BasketService.Infrastructure.csproj", "Services/BasketService/BasketService.Infrastructure/"]
 COPY ["Services/BasketService/BasketService.Contracts/BasketService.Contracts.csproj", "Services/BasketService/BasketService.Contracts/"]
 RUN dotnet restore "Services/BasketService/BasketService.API/BasketService.API.csproj"

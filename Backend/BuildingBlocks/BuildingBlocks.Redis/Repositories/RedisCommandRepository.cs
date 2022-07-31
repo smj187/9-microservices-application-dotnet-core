@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain;
 using BuildingBlocks.Redis.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -14,9 +15,11 @@ namespace BuildingBlocks.Redis.Repositories
     {
         private readonly IConnectionMultiplexer _redis;
         private readonly IDatabase _database;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RedisCommandRepository(IConnectionMultiplexer redis)
+        public RedisCommandRepository(IConnectionMultiplexer redis, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _redis = redis;
             _database = _redis.GetDatabase();
         }
@@ -25,7 +28,15 @@ namespace BuildingBlocks.Redis.Repositories
         {
             var data = JsonConvert.SerializeObject(entity);
 
-            await _database.StringSetAsync($"{typeof(T).Name.ToLower()}:{entity.Id}", data);
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                throw new NullReferenceException($"http context accessor is not defined");
+            }
+
+            var tenant = context.Request.Headers["tenant-id"].ToString().ToLower();
+
+            await _database.StringSetAsync($"{tenant}_{typeof(T).Name.ToLower()}:{entity.Id}", data);
             return entity;
         }
 
@@ -38,7 +49,15 @@ namespace BuildingBlocks.Redis.Repositories
         {
             var data = JsonConvert.SerializeObject(entity);
 
-            await _database.StringSetAsync($"{typeof(T).Name.ToLower()}:{entity.Id}", data);
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                throw new NullReferenceException($"http context accessor is not defined");
+            }
+
+            var tenant = context.Request.Headers["tenant-id"].ToString().ToLower();
+
+            await _database.StringSetAsync($"{tenant}_{typeof(T).Name.ToLower()}:{entity.Id}", data);
             return entity;
         }
 
@@ -46,13 +65,29 @@ namespace BuildingBlocks.Redis.Repositories
         {
             var data = JsonConvert.SerializeObject(entity);
 
-            await _database.StringSetAsync($"{typeof(T).Name.ToLower()}:{id}", data);
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                throw new NullReferenceException($"http context accessor is not defined");
+            }
+
+            var tenant = context.Request.Headers["tenant-id"].ToString().ToLower();
+
+            await _database.StringSetAsync($"{tenant}_{typeof(T).Name.ToLower()}:{id}", data);
             return entity;
         }
 
         public async Task RemoveAsync(T entity)
         {
-            await _database.KeyDeleteAsync($"{typeof(T).Name.ToLower()}:{entity.Id}");
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                throw new NullReferenceException($"http context accessor is not defined");
+            }
+
+            var tenant = context.Request.Headers["tenant-id"].ToString().ToLower();
+
+            await _database.KeyDeleteAsync($"{tenant}_{typeof(T).Name.ToLower()}:{entity.Id}");
         }
     }
 }

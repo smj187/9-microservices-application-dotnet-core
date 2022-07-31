@@ -1,0 +1,32 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+
+
+COPY ["BuildingBlocks/BuildingBlocks.Multitenancy/BuildingBlocks.Multitenancy.csproj", "BuildingBlocks.Multitenancy/"]
+COPY ["BuildingBlocks/BuildingBlocks.Middleware/BuildingBlocks.Middleware.csproj", "BuildingBlocks.Middleware/"]
+COPY ["BuildingBlocks/BuildingBlocks.Exceptions/BuildingBlocks.Exceptions.csproj", "BuildingBlocks.Exceptions/"]
+COPY ["BuildingBlocks/BuildingBlocks.Domain/BuildingBlocks.Domain.csproj", "BuildingBlocks.Domain/"]
+COPY ["BuildingBlocks/BuildingBlocks.Mongo/BuildingBlocks.Mongo.csproj", "BuildingBlocks.Mongo/"]
+
+COPY ["Services/TranslationService/TranslationService.API/TranslationService.API.csproj", "Services/TranslationService/TranslationService.API/"]
+COPY ["Services/TranslationService/TranslationService.Application/TranslationService.Application.csproj", "Services/TranslationService/TranslationService.Application/"]
+COPY ["Services/TranslationService/TranslationService.Core/TranslationService.Core.csproj", "Services/TranslationService/TranslationService.Core/"]
+COPY ["Services/TranslationService/TranslationService.Infrastructure/TranslationService.Infrastructure.csproj", "Services/TranslationService/TranslationService.Infrastructure/"]
+COPY ["Services/TranslationService/TranslationService.Contracts/TranslationService.Contracts.csproj", "Services/TranslationService/TranslationService.Contracts/"]
+RUN dotnet restore "Services/TranslationService/TranslationService.API/TranslationService.API.csproj"
+COPY . .
+WORKDIR "/src/Services/TranslationService/TranslationService.API"
+RUN dotnet build "TranslationService.API.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "TranslationService.API.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "TranslationService.API.dll"]

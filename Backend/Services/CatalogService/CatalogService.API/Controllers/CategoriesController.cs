@@ -30,8 +30,8 @@ namespace CatalogService.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ListCategoriesAsync()
         {
-            var key = nameof(ListCategoriesAsync).ToSnakeCase();
-
+            var tenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower();
+            var key = $"{tenantId}_{nameof(ListCategoriesAsync).ToSnakeCase()}";
             var cache = _cache.StringGet(key);
 
             IReadOnlyCollection<Category>? response = null;
@@ -43,7 +43,7 @@ namespace CatalogService.API.Controllers
             else
             {
                 response = await Mediator.Send(new ListCategoryQuery());
-                //_cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
+                _cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
             }
 
             return Ok(Mapper.Map<IReadOnlyCollection<CategoryResponse>>(response));

@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Multitenancy.DependencyResolver;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace IdentityService.Infrastructure.Data
             var config = resolver.GetConfiguration();
 
             var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
+            var str = config.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseMySql(str, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(str));
 
             return new IdentityContext(optionsBuilder.Options, config, resolver.GetTenantService());
         }

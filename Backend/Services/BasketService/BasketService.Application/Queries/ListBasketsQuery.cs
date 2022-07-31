@@ -10,6 +10,6 @@ namespace BasketService.Application.Queries
 {
     public class ListBasketsQuery : IRequest<IReadOnlyCollection<Basket>>
     {
-
+        public string TenantId { get; set; } = default!;
     }
 }

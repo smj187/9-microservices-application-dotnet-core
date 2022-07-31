@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using BuildingBlocks.Domain;
+using BuildingBlocks.Multitenancy.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,21 +9,30 @@ using System.Threading.Tasks;
 
 namespace BasketService.Core.Domain
 {
-    public class Basket : AggregateBase
+    public class Basket : AggregateBase, IMultitenantAggregate
     {
         private List<Item> _products;
         private List<Item> _sets;
         private Guid _userId;
+        private string _tenantId;
 
-        public Basket(Guid id, Guid userId)
+        public Basket(string tenantId, Guid id, Guid userId)
         {
+            Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             Guard.Against.Null(id, nameof(id));
             Guard.Against.Null(userId, nameof(userId));
 
+            _tenantId = tenantId;
             _userId = userId;
             Id = id;
             _products = new();
             _sets = new();
+        }
+
+        public string TenantId
+        {
+            get => _tenantId;
+            set => _tenantId = Guard.Against.NullOrWhiteSpace(value, nameof(value));
         }
 
         public Guid UserId
@@ -100,7 +110,5 @@ namespace BasketService.Core.Domain
                 Modify();
             }
         }
-
-
     }
 }

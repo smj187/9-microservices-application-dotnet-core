@@ -11,5 +11,6 @@ namespace BasketService.Application.Commands
     public class ClearBasketCommand : IRequest<Basket>
     {
         public Guid BasketId { get; set; }
+        public string TenantId { get; set; } = default!;
     }
 }

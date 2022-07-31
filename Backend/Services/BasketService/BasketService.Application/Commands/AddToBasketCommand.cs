@@ -18,6 +18,6 @@ namespace BasketService.Application.Commands
         public string Image { get; set; } = null!;
 
         public decimal Price { get; set; }
-
+        public string TenantId { get; set; } = default!;
     }
 }

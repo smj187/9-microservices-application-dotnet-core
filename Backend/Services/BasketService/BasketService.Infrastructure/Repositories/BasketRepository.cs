@@ -1,5 +1,6 @@
 ﻿using BasketService.Core.Domain;
 using BuildingBlocks.Redis.Repositories;
+using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,8 @@ namespace BasketService.Infrastructure.Repositories
 {
     public class BasketRepository : RedisRepository<Basket>, IBasketRepository
     {
-        public BasketRepository(IConnectionMultiplexer redis) 
-            : base(redis)
+        public BasketRepository(IConnectionMultiplexer redis, IHttpContextAccessor httpContextAccessor) 
+            : base(redis, httpContextAccessor)
         {
 
         }

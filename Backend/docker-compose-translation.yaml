@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  translationdatabase:
+    image: mongo
+    container_name: translation_database
+    restart: unless-stopped
+    ports:
+      - 5802:27017
+    volumes:
+      - translation-database:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=passwd
+
+  translationservice:
+    image: ${DOCKER_REGISTRY-}translationservice
+    container_name: translation_service
+    build:
+      context: .
+      dockerfile: Services/TranslationService/TranslationService.API/Dockerfile.Development
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/TranslationService.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ConnectionStrings:DefaultConnection=mongodb://admin:passwd@host.docker.internal:5802
+      - ConnectionStrings:Database=translations
+    ports:
+      - "5801:80"
+      - "5800:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${USERPROFILE}\.aspnet\Https:/https/:ro
+    depends_on:
+      - translationdatabase
+
+volumes:
+  translation-database:

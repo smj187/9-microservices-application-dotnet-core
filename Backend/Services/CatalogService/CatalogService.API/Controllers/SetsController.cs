@@ -1,8 +1,12 @@
 ﻿using BuildingBlocks.Extensions.Controllers;
+using BuildingBlocks.Extensions.Strings;
 using CatalogService.Application.Commands.Sets;
 using CatalogService.Application.Queries.Sets;
 using CatalogService.Contracts.v1.Contracts;
+using CatalogService.Core.Domain.Sets;
+using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Linq.Expressions;
 
 namespace CatalogService.API.Controllers
@@ -10,9 +14,34 @@ namespace CatalogService.API.Controllers
     [Route("api/v1/[controller]")]
     public class SetsController : ApiBaseController<SetsController>
     {
+        private readonly IRedisCachingProvider _cache;
+
+        public SetsController(IEasyCachingProviderFactory factory, IConfiguration configuration)
+        {
+            _cache = factory.GetRedisProvider(configuration.GetValue<string>("Cache:Database"));
+        }
+
         [HttpGet]
         public async Task<IActionResult> ListSetsAsync()
-            =>  Ok(Mapper.Map<IReadOnlyCollection<SetResponse>>(await Mediator.Send(new ListSetsQuery())));
+        {
+            var tenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower();
+            var key = $"{tenantId}_{nameof(ListSetsAsync).ToSnakeCase()}";
+            var cache = _cache.StringGet(key);
+
+            IReadOnlyCollection<Set>? response = null;
+
+            if (cache != null)
+            {
+                response = JsonConvert.DeserializeObject<List<Set>>(cache);
+            }
+            else
+            {
+                response = await Mediator.Send(new ListSetsQuery());
+                _cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
+            }
+
+            return Ok(Mapper.Map<IReadOnlyCollection<SetResponse>>(response));
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateSetAsync([FromBody] CreateSetRequest request)
@@ -27,6 +56,8 @@ namespace CatalogService.API.Controllers
                 Quantity = request.Quantity,
                 Tags = request.Tags
             });
+
+            _cache.KeyDel(nameof(ListSetsAsync).ToSnakeCase());
 
             return Ok(Mapper.Map<SetResponse>(data));
         }

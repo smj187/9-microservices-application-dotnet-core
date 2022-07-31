@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain;
 using BuildingBlocks.Redis.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,10 @@ namespace BuildingBlocks.Redis.Repositories
         private readonly IRedisCommandRepository<T> _commandRepository;
         private readonly IRedisQueryRepository<T> _queryRepository;
 
-        public RedisRepository(IConnectionMultiplexer redis)
+        public RedisRepository(IConnectionMultiplexer redis, IHttpContextAccessor httpContextAccessor)
         {
-            _commandRepository = new RedisCommandRepository<T>(redis);
-            _queryRepository = new RedisQueryRepository<T>(redis);
+            _commandRepository = new RedisCommandRepository<T>(redis, httpContextAccessor);
+            _queryRepository = new RedisQueryRepository<T>(redis, httpContextAccessor);
         }
 
         public async Task<T> AddAsync(T entity)

@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain;
 using BuildingBlocks.Redis.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -14,11 +15,13 @@ namespace BuildingBlocks.Redis.Repositories
     public class RedisQueryRepository<T> : IRedisQueryRepository<T> where T : AggregateBase
     {
         private readonly IConnectionMultiplexer _redis;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IDatabase _database;
 
-        public RedisQueryRepository(IConnectionMultiplexer redis)
+        public RedisQueryRepository(IConnectionMultiplexer redis, IHttpContextAccessor httpContextAccessor)
         {
             _redis = redis;
+            _httpContextAccessor = httpContextAccessor;
             _database = _redis.GetDatabase();
         }
 
@@ -29,13 +32,29 @@ namespace BuildingBlocks.Redis.Repositories
 
         public async Task<T?> FindAsync(Guid id)
         {
-            var response = await _database.StringGetAsync($"{typeof(T).Name.ToLower()}:{id}");
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                throw new NullReferenceException($"http context accessor is not defined");
+            }
+
+            var tenant = context.Request.Headers["tenant-id"].ToString().ToLower();
+
+            var response = await _database.StringGetAsync($"{tenant}_{typeof(T).Name.ToLower()}:{id}");
             return JsonConvert.DeserializeObject<T>(response);
         }
 
         public async Task<T?> FindAsync(string id)
         {
-            var response = await _database.StringGetAsync($"{typeof(T).Name.ToLower()}:{id}");
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                throw new NullReferenceException($"http context accessor is not defined");
+            }
+
+            var tenant = context.Request.Headers["tenant-id"].ToString().ToLower();
+
+            var response = await _database.StringGetAsync($"{tenant}_{typeof(T).Name.ToLower()}:{id}");
             return JsonConvert.DeserializeObject<T>(response);
         }
 
@@ -48,7 +67,21 @@ namespace BuildingBlocks.Redis.Repositories
         {
             var endpoint = _redis.GetEndPoints();
             var server = _redis.GetServer(endpoint.First());
-            var keys = server.Keys().Select(x => x.ToString()).Where(x => x.Contains(typeof(T).Name.ToLower()));
+
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null)
+            {
+                throw new NullReferenceException($"http context accessor is not defined");
+            }
+
+            var tenant = context.Request.Headers["tenant-id"].ToString().ToLower();
+
+            var a = server.Keys();
+            var b = a.Select(x => x.ToString());
+            var c = b.Where(x => x.StartsWith(tenant)).ToList();
+
+            var name = typeof(T).Name.ToLower();
+            var keys = server.Keys().Select(x => x.ToString()).Where(x => x.StartsWith(tenant)).Where(x => x.Contains(name));
 
 
             var list = new List<T>();

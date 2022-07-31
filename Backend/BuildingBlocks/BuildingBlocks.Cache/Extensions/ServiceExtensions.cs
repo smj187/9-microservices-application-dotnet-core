@@ -14,7 +14,7 @@ namespace BuildingBlocks.Cache.Extensions
         public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration)
         {
             var connection = configuration.GetValue<string>("Cache:DefaultConnection");
-            var port = configuration.GetValue<int>("Cache:Port");
+            var port = configuration.GetValue<int>("Cache:DefaultPort");
             var database = configuration.GetValue<string>("Cache:Database");
 
             services.AddEasyCaching(opts =>

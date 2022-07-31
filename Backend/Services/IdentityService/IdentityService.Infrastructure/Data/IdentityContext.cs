@@ -46,7 +46,7 @@ namespace IdentityService.Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(_connectionString);
+            optionsBuilder.UseMySql(_connectionString, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(_connectionString));
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

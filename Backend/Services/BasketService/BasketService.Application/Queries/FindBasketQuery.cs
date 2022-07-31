@@ -11,5 +11,6 @@ namespace BasketService.Application.Queries
     public class FindBasketQuery : IRequest<Basket>
     {
         public Guid BasketId { get; set; }
+        public string TenantId { get; set; } = default!;
     }
 }

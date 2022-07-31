@@ -1,9 +1,12 @@
 ﻿using BuildingBlocks.Extensions.Controllers;
+using BuildingBlocks.Extensions.Strings;
 using CatalogService.Application.Commands.Products;
 using CatalogService.Application.Queries.Products;
 using CatalogService.Contracts.v1.Contracts;
 using CatalogService.Core.Domain.Products;
+using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +20,35 @@ namespace CatalogService.API.Controllers
     [Route("api/v1/[controller]")]
     public class ProductsController : ApiBaseController<ProductsController>
     {
+        private readonly IRedisCachingProvider _cache;
+
+        public ProductsController(IEasyCachingProviderFactory factory, IConfiguration configuration)
+        {
+            _cache = factory.GetRedisProvider(configuration.GetValue<string>("Cache:Database"));
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> ListProductsAsync()
-            => Ok(Mapper.Map<IReadOnlyCollection<ProductResponse>>(await Mediator.Send(new ListProductsQuery())));
+        {
+            var tenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower();
+            var key = $"{tenantId}_{nameof(ListProductsAsync).ToSnakeCase()}";
+            var cache = _cache.StringGet(key);
+
+            IReadOnlyCollection<Product>? response = null;
+
+            if (cache != null)
+            {
+                response = JsonConvert.DeserializeObject<List<Product>>(cache);
+            }
+            else
+            {
+                response = await Mediator.Send(new ListProductsQuery());
+                _cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
+            }
+
+            return Ok(Mapper.Map<IReadOnlyCollection<ProductResponse>>(response));
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductRequest request)
@@ -28,6 +57,9 @@ namespace CatalogService.API.Controllers
             {
                 NewProduct = Mapper.Map<Product>(request)
             });
+
+            _cache.KeyDel(nameof(ListProductsAsync).ToSnakeCase());
+
             return Ok(Mapper.Map<ProductResponse>(data));
         }
 

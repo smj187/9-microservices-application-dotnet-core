@@ -20,7 +20,7 @@ namespace BasketService.Application.CommandHandlers
 
         public async Task<Basket> Handle(CreateBasketCommand request, CancellationToken cancellationToken)
         {
-            var basket = new Basket(Guid.NewGuid(), request.UserId);
+            var basket = new Basket(request.TenantId, Guid.NewGuid(), request.UserId);
 
             await _basketRepository.AddAsync(basket);
 
