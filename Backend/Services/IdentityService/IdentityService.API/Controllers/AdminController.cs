@@ -25,9 +25,11 @@ namespace IdentityService.API.Controllers
             _mediator = mediator;
         }
 
-
         [HttpGet]
         [Route("find/{userid:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AdminUserResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> FindUserAsync([FromRoute] Guid userId)
         {
             var query = new FindUserQuery
@@ -41,6 +43,8 @@ namespace IdentityService.API.Controllers
 
         [HttpGet]
         [Route("list")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<AdminUserResponse>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListUsersAsync()
         {
             var query = new ListUsersQuery();
@@ -51,6 +55,9 @@ namespace IdentityService.API.Controllers
 
         [HttpPatch]
         [Route("{userid:guid}/roles/add")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AdminUserResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddRolesToUserAsync([FromRoute] Guid userId, [FromBody] AddRoleToUserRequest request)
         {
             var command = new AddRoleToUserCommand
@@ -65,6 +72,9 @@ namespace IdentityService.API.Controllers
 
         [HttpPatch]
         [Route("{userid:guid}/roles/remove")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AdminUserResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RemoveRolesFromUser([FromRoute] Guid userId, [FromBody] RemoveRoleFromUserRequest request)
         {
             var command = new RemoveRoleFromUserCommand
@@ -80,6 +90,9 @@ namespace IdentityService.API.Controllers
 
         [HttpPatch]
         [Route("{userid:guid}/lock")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AdminUserResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> LockUserAccountAsync([FromRoute] Guid userId)
         {
             var command = new LockUserAccountCommand
@@ -93,6 +106,9 @@ namespace IdentityService.API.Controllers
 
         [HttpPatch]
         [Route("{userid:guid}/unlock")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AdminUserResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UnlockUserAccountAsync([FromRoute] Guid userId)
         {
             var command = new UnlockUserAccountCommand
@@ -103,7 +119,6 @@ namespace IdentityService.API.Controllers
             var data = await _mediator.Send(command);
             return Ok(_mapper.Map<AdminUserResponse>(data));
         }
-
 
     }
 }

@@ -89,8 +89,9 @@ namespace IdentityService.API.Extensions
 
                 serviceCollection.AddTransient(serviceProvider =>
                 {
-                    var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
-                    optionsBuilder.UseNpgsql(tenant.ConnectionString);
+                var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
+                    var str = tenant.ConnectionString;
+                    optionsBuilder.UseMySql(str, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(str));
                     var tenantService = new MultitenancyService(tenant.TenantId, config);
                     return new IdentityContext(optionsBuilder.Options, config, tenantService);
                 });

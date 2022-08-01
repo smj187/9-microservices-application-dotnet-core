@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  public_gateway:
+    container_name: public_gateway
+    build:
+      context: ./Gateways/Public
+      dockerfile: Dockerfile
+    ports:
+      - "9902:9902"
+      - "10000:10000"
