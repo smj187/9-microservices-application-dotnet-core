@@ -20,7 +20,7 @@ namespace CatalogService.Application.CommandHandlers.Categories
 
         public async Task<Category> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = new Category(request.TenantId, request.Name, request.Description, request.Products, request.Sets);
+            var category = new Category(request.TenantId, Guid.NewGuid(), request.Name, request.Description, request.Products, request.Sets);
 
             await _categoryRepository.AddAsync(category);
 

@@ -34,6 +34,8 @@ namespace IdentityService.Contracts.v1.Contracts
         public string Email { get; set; }
 
         public string Token { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTimeOffset ExpiresAt { get; set; }
     }
 
     public class UserProfileResponse
@@ -72,6 +74,12 @@ namespace IdentityService.Contracts.v1.Contracts
 
     // responses
 
+    public record TokenResponse
+    {
+        public string Token { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTimeOffset ExpiresAt { get; set; }
+    }
 
     public record AdminRefreshTokenResponse(string Token, DateTimeOffset ExpiresAt, bool IsExpired, DateTimeOffset CreatedAt, DateTimeOffset RevokedAt, bool IsActive);
 

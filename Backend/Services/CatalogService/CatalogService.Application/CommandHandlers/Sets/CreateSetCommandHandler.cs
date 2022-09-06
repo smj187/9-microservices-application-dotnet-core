@@ -20,7 +20,7 @@ namespace CatalogService.Application.CommandHandlers.Sets
 
         public async Task<Set> Handle(CreateSetCommand request, CancellationToken cancellationToken)
         {
-            var set = new Set(request.TenantId, request.Name, request.Price, request.Description, request.PriceDescription, request.Tags, request.Quantity);
+            var set = new Set(request.TenantId, Guid.NewGuid(), request.Name, request.Price, request.Description, request.PriceDescription, request.Tags, request.Quantity);
 
             await _setRepository.AddAsync(set);
 

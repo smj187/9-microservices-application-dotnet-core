@@ -27,6 +27,9 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
       - ConnectionStrings:DefaultConnection=server=host.docker.internal;user=root;database=identity;password=passwd;port=3306;
       - JsonWebToken:Issuer=https://localhost:5000
+      - RabbitMq:Host=host.docker.internal
+      - RabbitMq:Username=guest
+      - RabbitMq:Password=guest
       - Tenants__0__Name=Tenant A
       - Tenants__0__TenantId=tenant-a
       - Tenants__0__ConnectionString=server=host.docker.internal;user=root;database=identity-tenant-a;password=passwd;port=3306;
