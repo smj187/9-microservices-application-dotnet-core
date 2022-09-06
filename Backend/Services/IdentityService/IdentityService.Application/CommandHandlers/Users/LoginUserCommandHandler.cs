@@ -36,13 +36,34 @@ namespace IdentityService.Application.CommandHandlers.Users
 
             var token = await _tokenService.CreateJsonWebToken(request.Email);
 
-            //var refresh = await _userService.CreateRefreshTokenAsync(user);
+
+            DateTimeOffset expiresAt;
+            string refreshToken;
+
+            var activeRefreshToken = applicationUser.GetActiveRefreshToken();
+            if (activeRefreshToken != null)
+            {
+                expiresAt = activeRefreshToken.ExpiresAt;
+                refreshToken = activeRefreshToken.Token;
+            }
+            else
+            {
+                var newRefreshToken = _tokenService.CreateRefreshToken();
+                expiresAt = newRefreshToken.ExpiresAt;
+                refreshToken = newRefreshToken.Token;
+
+                applicationUser.AddRefreshToken(newRefreshToken);
+                await _applicationUserRepository.PatchAsync(applicationUser);
+            }
+
 
             return new InternalUserModel
             {
                 ApplicationUser = applicationUser,
                 InternalIdentityUser = identityUser,
-                Token = token
+                Token = token,
+                ExpiresAt = expiresAt,
+                RefreshToken = refreshToken
             };
         }
     }

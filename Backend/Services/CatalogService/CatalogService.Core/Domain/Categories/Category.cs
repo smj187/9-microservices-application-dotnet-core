@@ -11,6 +11,8 @@ namespace CatalogService.Core.Domain.Categories
 {
     public class Category : AggregateBase, IMultitenantAggregate
     {
+        private Guid _id;
+
         private string _name;
         private string? _description;
         private List<Guid> _products;
@@ -19,10 +21,13 @@ namespace CatalogService.Core.Domain.Categories
         private List<Guid> _assets;
         private string _tenantId;
 
-        public Category(string tenantId, string name, string? descripion = null, List<Guid>? products = null, List<Guid>? sets = null)
+        public Category(string tenantId, Guid id, string name, string? descripion = null, List<Guid>? products = null, List<Guid>? sets = null)
         {
+            Guard.Against.Null(id, nameof(id));
             Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
+
+            _id = id;
             _tenantId = tenantId;
             _name = name;
             _description = descripion;
@@ -31,6 +36,12 @@ namespace CatalogService.Core.Domain.Categories
             _sets = sets ?? new List<Guid>();
 
             _assets = new();
+        }
+
+        public override Guid Id
+        {
+            get => _id;
+            protected set => _id = value;
         }
 
         public string TenantId

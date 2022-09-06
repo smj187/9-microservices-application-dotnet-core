@@ -45,8 +45,6 @@ namespace BuildingBlocks.Masstransit
         public const string FileUploadAddVideoToTenantConsumerEndpointName = "tenant_service_add_video_consumer";
 
 
-        public const string RabbitMqUri = "rabbitmq://localhost";
-        public const string MediaCatalogQueue = "queue:media-catalog-queue";
 
     }
 }

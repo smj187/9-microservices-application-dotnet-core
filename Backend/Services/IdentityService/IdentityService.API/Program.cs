@@ -32,8 +32,8 @@ builder.Services.AddMySqlMultitenancy<IdentityContext>(builder.Configuration)
     .AddScoped<IUnitOfWork, UnitOfWork<IdentityContext>>()
     .ConfigureIdentity(builder.Configuration)
     .AddTransient<IUserService, UserService>()
-    .AddTransient<IAdminService, AdminService>()
     .AddTransient<ITokenService, TokenService>()
+    .AddTransient<IAdminService, AdminService>()
     .AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
 
 builder.Services.AddMassTransit(x =>
@@ -43,10 +43,14 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, rabbit) =>
     {
-        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
+        var host = builder.Configuration.GetValue<string>("RabbitMq:Host");
+        var username = builder.Configuration.GetValue<string>("RabbitMq:Username");
+        var password = builder.Configuration.GetValue<string>("RabbitMq:Password");
+
+        rabbit.Host(new Uri(host), host =>
         {
-            host.Username(RabbitMqSettings.Username);
-            host.Password(RabbitMqSettings.Password);
+            host.Username(username);
+            host.Password(password);
         });
 
         rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadAvatarImageConsumerEndpointName, e =>

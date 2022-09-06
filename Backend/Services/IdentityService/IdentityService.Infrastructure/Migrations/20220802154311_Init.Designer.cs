@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityService.Infrastructure.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20220801130248_Init")]
+    [Migration("20220802154311_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -285,7 +285,39 @@ namespace IdentityService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsMany("IdentityService.Core.Identities.RefreshToken", "RefreshTokens", b1 =>
+                        {
+                            b1.Property<Guid>("ApplicationUserId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<DateTimeOffset>("CreatedAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<DateTimeOffset>("ExpiresAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<DateTimeOffset?>("RevokedAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<string>("Token")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("ApplicationUserId", "Id");
+
+                            b1.ToTable("RefreshToken");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ApplicationUserId");
+                        });
+
                     b.Navigation("InternalIdentityUser");
+
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

@@ -38,63 +38,68 @@ builder.Services.AddMongoDatabase(builder.Configuration)
 builder.Services.AddCaching(builder.Configuration);
 
 
-builder.Services.AddMassTransit(x =>
-{
-    x.SetSnakeCaseEndpointNameFormatter();
-    x.AddConsumers(Assembly.Load("CatalogService.Application"));
+//builder.Services.AddMassTransit(x =>
+//{
+//    x.SetSnakeCaseEndpointNameFormatter();
+//    x.AddConsumers(Assembly.Load("CatalogService.Application"));
 
-    x.UsingRabbitMq((context, rabbit) =>
-    {
-        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
-        {
-            host.Username(RabbitMqSettings.Username);
-            host.Password(RabbitMqSettings.Password);
-        });
+//    x.UsingRabbitMq((context, rabbit) =>
+//    {
+//        var host = builder.Configuration.GetValue<string>("RabbitMq:Host");
+//        var username = builder.Configuration.GetValue<string>("RabbitMq:Username");
+//        var password = builder.Configuration.GetValue<string>("RabbitMq:Password");
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaCatalogConsumerEndpointName, e =>
-        {
-            e.ConfigureConsumer<CatalogSagaConsumer>(context);
-        });
+//        rabbit.Host(new Uri(host), host =>
+//        {
+//            host.Username(username);
+//            host.Password(password);
+//        });
 
-        // category
-        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadCategoryImageConsumerEndpointName, e =>
-        {
-            e.ConfigureConsumer<AddImageToCategoryConsumer>(context);
-        });
+//        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaCatalogConsumerEndpointName, e =>
+//        {
+//            e.ConfigureConsumer<CatalogSagaConsumer>(context);
+//        });
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadCategoryVideoConsumerEndpointName, e =>
-        {
-            e.ConfigureConsumer<AddVideoToCategoryConsumer>(context);
-        });
+//        // category
+//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadCategoryImageConsumerEndpointName, e =>
+//        {
+//            e.ConfigureConsumer<AddImageToCategoryConsumer>(context);
+//        });
 
-        // product
-        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadProductImageConsumerEndpointName, e =>
-        {
-            e.ConfigureConsumer<AddImageToProductConsumer>(context);
-        });
+//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadCategoryVideoConsumerEndpointName, e =>
+//        {
+//            e.ConfigureConsumer<AddVideoToCategoryConsumer>(context);
+//        });
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadProductVideoConsumerEndpointName, e =>
-        {
-            e.ConfigureConsumer<AddVideoToProductConsumer>(context);
-        });
+//        // product
+//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadProductImageConsumerEndpointName, e =>
+//        {
+//            e.ConfigureConsumer<AddImageToProductConsumer>(context);
+//        });
 
-        // set
-        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadSetImageConsumerEndpointName, e =>
-        {
-            e.ConfigureConsumer<AddImageToSetConsumer>(context);
-        });
+//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadProductVideoConsumerEndpointName, e =>
+//        {
+//            e.ConfigureConsumer<AddVideoToProductConsumer>(context);
+//        });
 
-        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadSetVideoConsumerEndpointName, e =>
-        {
-            e.ConfigureConsumer<AddVideoToSetConsumer>(context);
-        });
-    });
-});
+//        // set
+//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadSetImageConsumerEndpointName, e =>
+//        {
+//            e.ConfigureConsumer<AddImageToSetConsumer>(context);
+//        });
+
+//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadSetVideoConsumerEndpointName, e =>
+//        {
+//            e.ConfigureConsumer<AddVideoToSetConsumer>(context);
+//        });
+//    });
+//});
 
 
 
 var app = builder.Build();
 app.UsePathBase(new PathString("/catalog-service"));
+app.UsePathBase(new PathString("/ca"));
 app.UseRouting();
 if (app.Environment.IsDevelopment())
 {

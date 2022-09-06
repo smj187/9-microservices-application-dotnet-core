@@ -25,15 +25,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("FileService.Application"));
 
-builder.Services.AddCaching(builder.Configuration);
-
-
-
 builder.Services.AddMySqlMultitenancy<FileContext>(builder.Configuration)
     .AddScoped<IUnitOfWork, UnitOfWork<FileContext>>()
     .AddTransient<IAssetRepository, AssetRepository>()
     .AddTransient<ICloudService, CloudService>();
-
 
 // make sure these values are set using dotnet user-secrets
 var cloudName = builder.Configuration.GetValue<string>("Cloudinary:CloudName");
@@ -48,8 +43,6 @@ if (new[] { cloudName, apiKey, apiSecret }.Any(string.IsNullOrWhiteSpace))
 builder.Services.AddSingleton(new Cloudinary(new Account(cloudName, apiKey, apiSecret)));
 
 
-
-
 builder.Services.AddMassTransit(x =>
 {
     x.SetSnakeCaseEndpointNameFormatter();
@@ -57,10 +50,14 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, rabbit) =>
     {
-        rabbit.Host(RabbitMqSettings.Host, RabbitMqSettings.VirtualHost, host =>
+        var host = builder.Configuration.GetValue<string>("RabbitMq:Host");
+        var username = builder.Configuration.GetValue<string>("RabbitMq:Username");
+        var password = builder.Configuration.GetValue<string>("RabbitMq:Password");
+
+        rabbit.Host(new Uri(host), host =>
         {
-            host.Username(RabbitMqSettings.Username);
-            host.Password(RabbitMqSettings.Password);
+            host.Username(username);
+            host.Password(password);
         });
     });
 });

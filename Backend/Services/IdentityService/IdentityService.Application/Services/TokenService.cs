@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -82,10 +83,21 @@ namespace IdentityService.Application.Services
             return tokenHandler.WriteToken(token);
         }
 
-
         private static long ToUnixEpochDate(DateTimeOffset date)
             => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
 
 
+        public RefreshToken CreateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using var generator = RandomNumberGenerator.Create();
+            generator.GetBytes(randomNumber);
+            return new RefreshToken
+            {
+                Token = Convert.ToBase64String(randomNumber),
+                ExpiresAt = DateTimeOffset.UtcNow.AddDays(10),
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+        }
     }
 }

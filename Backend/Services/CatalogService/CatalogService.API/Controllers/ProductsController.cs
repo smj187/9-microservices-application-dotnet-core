@@ -37,15 +37,15 @@ namespace CatalogService.API.Controllers
 
             IReadOnlyCollection<Product>? response = null;
 
-            if (cache != null)
-            {
-                response = JsonConvert.DeserializeObject<List<Product>>(cache);
-            }
-            else
-            {
+            //if (cache != null)
+            //{
+            //    response = JsonConvert.DeserializeObject<List<Product>>(cache);
+            //}
+            //else
+            //{
                 response = await Mediator.Send(new ListProductsQuery());
-                _cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
-            }
+                //_cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
+            //}
 
             return Ok(Mapper.Map<IReadOnlyCollection<ProductResponse>>(response));
         }

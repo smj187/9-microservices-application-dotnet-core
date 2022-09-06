@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace IdentityService.Application.Commands.Users
 {
-    //public class RevokeTokenCommand : IRequest<AuthenticatedUser>
-    //{
-    //    public Guid UserId { get; set; }
-    //    public string Token { get; set; } = default!;
-    //}
+    public class RevokeTokenCommand : IRequest
+    {
+        public Guid UserId { get; set; }
+        public string Token { get; set; } = default!;
+    }
 }

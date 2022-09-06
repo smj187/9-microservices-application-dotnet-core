@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileService.Contracts", "..\FileService\FileService.Contracts\FileService.Contracts.csproj", "{E022505E-013B-431D-9B9F-35983CDBB0B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Attributes", "..\..\BuildingBlocks\BuildingBlocks.Attributes\BuildingBlocks.Attributes.csproj", "{93A56F59-ED36-4F25-9BAA-2D8F339C48B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,10 @@ Global
 		{E022505E-013B-431D-9B9F-35983CDBB0B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E022505E-013B-431D-9B9F-35983CDBB0B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E022505E-013B-431D-9B9F-35983CDBB0B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93A56F59-ED36-4F25-9BAA-2D8F339C48B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93A56F59-ED36-4F25-9BAA-2D8F339C48B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93A56F59-ED36-4F25-9BAA-2D8F339C48B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93A56F59-ED36-4F25-9BAA-2D8F339C48B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +131,7 @@ Global
 		{719B897B-F017-4914-9F99-4DC910DDE043} = {BB9503EE-5D8D-4E8A-8DBC-50C78DE9BAA2}
 		{BB45AAD3-3269-4DF6-B3A8-ABFFF3771D9B} = {BB9503EE-5D8D-4E8A-8DBC-50C78DE9BAA2}
 		{E022505E-013B-431D-9B9F-35983CDBB0B8} = {78D19E08-26F9-4953-BA16-498D3643D80C}
+		{93A56F59-ED36-4F25-9BAA-2D8F339C48B0} = {BB9503EE-5D8D-4E8A-8DBC-50C78DE9BAA2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {81B2CC86-9495-4FF1-B22A-09448B7FFA1B}

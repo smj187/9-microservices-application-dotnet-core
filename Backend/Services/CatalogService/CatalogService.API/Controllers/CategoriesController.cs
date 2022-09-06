@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Extensions.Controllers;
+﻿using BuildingBlocks.Attributes;
+using BuildingBlocks.Extensions.Controllers;
 using BuildingBlocks.Extensions.Strings;
 using CatalogService.Application.Commands.Categories;
 using CatalogService.Application.Queries.Categories;
@@ -28,6 +29,10 @@ namespace CatalogService.API.Controllers
         }
 
         [HttpGet]
+        [Route("list")]
+        [Public("Returns a list of all categories")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<CategoryResponse>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ListCategoriesAsync()
         {
             var tenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower();
@@ -36,7 +41,8 @@ namespace CatalogService.API.Controllers
 
             IReadOnlyCollection<Category>? response = null;
 
-            if (cache != null)
+
+            if (cache != null && cache.Count() > 0)
             {
                 response = JsonConvert.DeserializeObject<List<Category>>(cache);
             }
@@ -50,6 +56,11 @@ namespace CatalogService.API.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
+        [Restricted("Creates a new category")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateCategoryAsync([FromBody] CreateCategoryRequest request)
         {
             var data = await Mediator.Send(new CreateCategoryCommand
@@ -63,12 +74,15 @@ namespace CatalogService.API.Controllers
 
             _cache.KeyDel(nameof(ListCategoriesAsync).ToSnakeCase());
 
-
             return Ok(Mapper.Map<CategoryResponse>(data));
         }
 
         [HttpGet]
         [Route("{categoryid:guid}/find")]
+        [Public("Returns a single category based on a query parameter")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> FindCategoryAsync([FromRoute] Guid categoryId)
         {
             var data = await Mediator.Send(new FindCategoryQuery
@@ -81,6 +95,10 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{categoryid:guid}/visibility")]
+        [Restricted("Changes the category's visibility flag")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeCategoryVisibilityAsync([FromRoute, Required] Guid categoryId, [FromBody, Required] PatchCategoryVisibilityRequest request)
         {
             var data = await Mediator.Send(new PatchCategoryVisibilityCommand
@@ -94,6 +112,10 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{categoryid:guid}/add-product/{productid:guid}")]
+        [Restricted("Adds a product to the category")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddProductToCategoryAsync([FromRoute] Guid categoryId, [FromRoute] Guid productId)
         {
             var data = await Mediator.Send(new AddProductToCategoryCommand
@@ -107,6 +129,10 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{categoryid:guid}/remove-product/{productid:guid}")]
+        [Restricted("Removes a product from the category")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RemoveProductFromCategoryAsync([FromRoute] Guid categoryId, [FromRoute] Guid productId)
         {
             var data = await Mediator.Send(new RemoveProductFromCategoryCommand
@@ -120,6 +146,10 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{categoryid:guid}/description")]
+        [Restricted("Changes the category's description")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeCategoryDescriptionAsync([FromRoute] Guid categoryId, [FromBody] PatchCategoryDescriptionRequest request)
         {
             var data = await Mediator.Send(new PatchCategoryDescriptionCommand
@@ -134,6 +164,10 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{categoryid:guid}/add-set/{setid:guid}")]
+        [Restricted("Adds a set to the category")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddSetToCategory([FromRoute] Guid categoryId, [FromRoute] Guid setId)
         {
             var data = await Mediator.Send(new AddSetToCategoryCommand
@@ -147,6 +181,10 @@ namespace CatalogService.API.Controllers
 
         [HttpPatch]
         [Route("{categoryid:guid}/remove-set/{setid:guid}")]
+        [Restricted("Removes a set from the category")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RemoveSetFromCategory([FromRoute] Guid categoryId, [FromRoute] Guid setId)
         {
             var data = await Mediator.Send(new RemoveSetFromCategoryCommand

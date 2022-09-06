@@ -10,6 +10,8 @@ namespace CatalogService.Core.Domain.Products
 {
     public class Product : AggregateBase
     {
+        private Guid _id;
+
         private List<Ingredient> _ingredients;
         private List<Allergen> _allergens;
         private List<Nutrition> _nutritions;
@@ -26,13 +28,15 @@ namespace CatalogService.Core.Domain.Products
         private int? _quantity;
         private string _tenantId;
 
-        public Product(string tenantId, string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null, int? quantity = null)
+        public Product(string tenantId, Guid id, string name, decimal price, IEnumerable<Ingredient>? ingredients = null, IEnumerable<Allergen>? allergens = null, IEnumerable<Nutrition>? nutritions = null, IEnumerable<string>? tags = null, string? description = null, string? priceDescription = null, int? quantity = null)
         {
+            Guard.Against.Null(id, nameof(id));
             Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.NegativeOrZero(price, nameof(price));
 
             _tenantId = tenantId;
+            _id = id;
             _name = name;
             _description = description;
             _priceDescription = priceDescription;
@@ -50,6 +54,12 @@ namespace CatalogService.Core.Domain.Products
             _isAvailable = false;
 
             _assets = new();
+        }
+
+        public override Guid Id
+        {
+            get => _id;
+            protected set => _id = value;
         }
 
         public string TenantId

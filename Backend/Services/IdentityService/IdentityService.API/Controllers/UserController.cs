@@ -78,33 +78,33 @@ namespace IdentityService.API.Controllers
             return Ok(_mapper.Map<UserResponse>(data));
         }
 
-        //[HttpPost]
-        //[Route("{userid:guid}/token-refresh")]
-        //public async Task<IActionResult> RefreshTokenAsync([FromRoute] Guid userId, [FromBody] RefreshTokenRequest request)
-        //{
-        //    var command = new RefreshTokenCommand
-        //    {
-        //        Token = request.Token,
-        //        UserId = userId
-        //    };
+        [HttpPost]
+        [Route("{userid:guid}/token-refresh")]
+        public async Task<IActionResult> RefreshTokenAsync([FromRoute] Guid userId, [FromBody] RefreshTokenRequest request)
+        {
+            var command = new RefreshTokenCommand
+            {
+                Token = request.Token,
+                UserId = userId
+            };
 
-        //    var data = await _mediator.Send(command);
-        //    return Ok(_mapper.Map<LoginUserResponse>(data));
-        //}
+            var data = await _mediator.Send(command);
+            return Ok(_mapper.Map<TokenResponse>(data));
+        }
 
-        //[HttpPost]
-        //[Route("{userid:guid}/token-revoke")]
-        //public async Task<IActionResult> RevokeTokenAsync([FromRoute] Guid userId, [FromBody] RevokeTokenRequest request)
-        //{
-        //    var command = new RevokeTokenCommand
-        //    {
-        //        Token = request.Token,
-        //        UserId = userId
-        //    };
+        [HttpPost]
+        [Route("{userid:guid}/token-revoke")]
+        public async Task<IActionResult> RevokeTokenAsync([FromRoute] Guid userId, [FromBody] RevokeTokenRequest request)
+        {
+            var command = new RevokeTokenCommand
+            {
+                Token = request.Token,
+                UserId = userId
+            };
 
-        //    var data = await _mediator.Send(command);
-        //    return Ok(_mapper.Map<LoginUserResponse>(data));
-        //}
+            await _mediator.Send(command);
+            return Ok();
+        }
 
 
         [HttpGet]

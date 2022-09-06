@@ -10,6 +10,7 @@ namespace CatalogService.Core.Domain.Sets
 {
     public class Set : AggregateBase
     {
+        private Guid _id;
 
         private string _name;
         private decimal _price;
@@ -23,12 +24,14 @@ namespace CatalogService.Core.Domain.Sets
         private int? _quantity;
         private string _tenantId;
 
-        public Set(string tenantId, string name, decimal price, string? description = null, string? priceDescription = null, IEnumerable<string>? tags = null, int? quantity = null)
+        public Set(string tenantId, Guid id, string name, decimal price, string? description = null, string? priceDescription = null, IEnumerable<string>? tags = null, int? quantity = null)
         {
+            Guard.Against.Null(id, nameof(id));
             Guard.Against.NullOrWhiteSpace(tenantId, nameof(tenantId));
             Guard.Against.NullOrWhiteSpace(name, nameof(name));
             Guard.Against.NegativeOrZero(price, nameof(price));
 
+            _id = id;
             _tenantId = tenantId;
             _name = name;
             _price = price;
@@ -40,6 +43,12 @@ namespace CatalogService.Core.Domain.Sets
 
             _products = new List<Guid>();
             _assets = new();
+        }
+
+        public override Guid Id
+        {
+            get => _id;
+            protected set => _id = value;
         }
 
         public string TenantId

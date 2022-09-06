@@ -22,12 +22,14 @@ namespace IdentityService.Core.Aggregates
         private string? _lastname = null;
         private string? _avatarUrl = null;
         private string _tenantId;
+        private List<RefreshToken> _refreshTokens = new();
 
         // ef required (never called)
         public ApplicationUser() 
         {
             _internalIdentityUser = default!;
             _tenantId = default!;
+            _refreshTokens = default!;
         }
 
         public ApplicationUser(string tenantId, Guid id, InternalIdentityUser identityUser, string? firstname = null, string? lastname = null)
@@ -43,7 +45,48 @@ namespace IdentityService.Core.Aggregates
             _avatarUrl = null;
 
             CreatedAt = DateTimeOffset.UtcNow;
+            _refreshTokens = new();
         }
+
+        public List<RefreshToken> RefreshTokens
+        {
+            get => _refreshTokens;
+            private set => _refreshTokens = value;
+        }
+
+        public RefreshToken? GetActiveRefreshToken()
+        {
+            var active = _refreshTokens.Where(r => r.IsActive).FirstOrDefault();
+            if (active != null)
+            {
+                return active;
+            }
+
+            return null;
+        }
+
+        public RefreshToken? RevokeRefreshToken(string token)
+        {
+            var refreshToken = _refreshTokens.FirstOrDefault(r => r.Token == token);
+            if (refreshToken == null)
+            {
+                return null;
+            }
+
+            refreshToken.RevokedAt = DateTimeOffset.UtcNow;
+
+            return refreshToken;
+        }
+
+        public void AddRefreshToken(RefreshToken refreshToken)
+        {
+            Guard.Against.Null(refreshToken, nameof(refreshToken));
+
+            _refreshTokens.Add(refreshToken);
+
+            Modify();
+        }
+
 
         public string TenantId
         {
@@ -81,14 +124,14 @@ namespace IdentityService.Core.Aggregates
             _firstname = firstname;
             _lastname = lastname;
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
 
         public void SetAvatar(string? url = null)
         {
             _avatarUrl = url;
 
-            ModifiedAt = DateTimeOffset.UtcNow;
+            Modify();
         }
     }
 }
