@@ -1,4 +1,5 @@
-﻿using CatalogService.Application.Queries.Sets;
+﻿using CatalogService.Application.DTOs;
+using CatalogService.Application.Queries.Sets;
 using CatalogService.Core.Domain.Sets;
 using MediatR;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.QueryHandlers.Sets
 {
-    public class ListSetsQueryHandler : IRequestHandler<ListSetsQuery, IReadOnlyCollection<Set>>
+    public class ListSetsQueryHandler : IRequestHandler<ListSetsQuery, PaginatedSetResponseDTO>
     {
         private readonly ISetRepository _setRepository;
 
@@ -18,9 +19,10 @@ namespace CatalogService.Application.QueryHandlers.Sets
             _setRepository = setRepository;
         }
 
-        public async Task<IReadOnlyCollection<Set>> Handle(ListSetsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedSetResponseDTO> Handle(ListSetsQuery request, CancellationToken cancellationToken)
         {
-            return await _setRepository.ListAsync();
+            var result = await _setRepository.ListAsync(request.Page, request.PageSize);
+             return new PaginatedSetResponseDTO(result.Item2.ToList(), result.mongoPaginationResult);
         }
     }
 }

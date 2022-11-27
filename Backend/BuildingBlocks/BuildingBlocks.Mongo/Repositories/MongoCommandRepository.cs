@@ -1,11 +1,10 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Mongo.Repositories.Interfaces;
+using BuildingBlocks.Mongo.Interfaces;
 using MongoDB.Driver;
+using PluralizeService.Core;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure.Pluralization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,8 +20,7 @@ namespace BuildingBlocks.Mongo.Repositories
             var client = new MongoClient(connectionString);
             var database = client.GetDatabase(databaseName);
 
-            var pl = new EnglishPluralizationService();
-            var collectionName = pl.Pluralize(typeof(T).Name.ToLower());
+            var collectionName = PluralizationProvider.Pluralize(typeof(T).Name.ToLower());
 
             _mongoCollection = database.GetCollection<T>(collectionName);
         }
@@ -42,6 +40,20 @@ namespace BuildingBlocks.Mongo.Repositories
         {
             await _mongoCollection.InsertManyAsync(entities);
             return entities;
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var filter = _filterBuilder.Eq(x => x.Id, id);
+            var res = await _mongoCollection.DeleteOneAsync(filter);
+            return res.IsAcknowledged;
+        }
+
+        public async Task<bool> DeleteManyAsync(IEnumerable<Guid> ids)
+        {
+            var filter = _filterBuilder.In(x => x.Id, ids);
+            var result = await _mongoCollection.DeleteManyAsync(filter);
+            return result.IsAcknowledged;
         }
 
         public async Task<T> PatchAsync(T entity)

@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Multitenancy.Interfaces.Services;
+﻿using BuildingBlocks.Multitenancy.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

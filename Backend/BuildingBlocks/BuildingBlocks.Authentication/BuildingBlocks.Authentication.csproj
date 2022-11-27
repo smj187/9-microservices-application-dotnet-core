@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetDevPack.Security.Jwt.AspNetCore" Version="7.0.1" />
+    <PackageReference Include="NetDevPack.Security.JwtExtensions" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.Attributes\BuildingBlocks.Attributes.csproj" />
+    <ProjectReference Include="..\BuildingBlocks.Extensions\BuildingBlocks.Extensions.csproj" />
+  </ItemGroup>
+
+</Project>

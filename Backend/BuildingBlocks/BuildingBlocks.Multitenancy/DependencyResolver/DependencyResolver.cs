@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Multitenancy.Interfaces.Services;
+﻿using BuildingBlocks.Multitenancy.Interfaces;
 using BuildingBlocks.Multitenancy.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -37,10 +37,10 @@ namespace BuildingBlocks.Multitenancy.DependencyResolver
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        public IMultitenancyService GetTenantService() 
+        public IMultitenancyService GetTenantService()
             => ServiceProvider.GetRequiredService<IMultitenancyService>();
 
-        public IConfiguration GetConfiguration() 
+        public IConfiguration GetConfiguration()
             => ServiceProvider.GetRequiredService<IConfigurationService>().GetConfiguration();
     }
 }

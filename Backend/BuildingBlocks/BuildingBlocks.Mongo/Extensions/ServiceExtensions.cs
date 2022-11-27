@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Driver;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;

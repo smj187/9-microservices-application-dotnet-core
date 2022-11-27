@@ -1,0 +1,15 @@
+version: "3.8"
+
+#https://github.com/antfu/vitesse/discussions/295
+
+services:
+  vueapp:
+    container_name: vueapp
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - "8080:8080"
+    command: ["pnpm", "prod"]

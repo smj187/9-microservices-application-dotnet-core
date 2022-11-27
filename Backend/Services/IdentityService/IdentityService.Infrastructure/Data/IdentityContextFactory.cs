@@ -1,12 +1,13 @@
 ﻿using BuildingBlocks.Multitenancy.DependencyResolver;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.Infrastructure.Data
 {

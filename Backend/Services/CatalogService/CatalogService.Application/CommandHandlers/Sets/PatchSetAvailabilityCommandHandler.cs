@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.CommandHandlers.Sets
 {
-    public class PatchSetAvailabilityCommandHandler : IRequestHandler<PatchProductAvailabilityCommand, Set>
+    public class PatchSetAvailabilityCommandHandler : IRequestHandler<PatchSetAvailabilityCommand, Set>
     {
         private readonly ISetRepository _setRepository;
 
@@ -19,7 +19,7 @@ namespace CatalogService.Application.CommandHandlers.Sets
             _setRepository = setRepository;
         }
 
-        public async Task<Set> Handle(PatchProductAvailabilityCommand request, CancellationToken cancellationToken)
+        public async Task<Set> Handle(PatchSetAvailabilityCommand request, CancellationToken cancellationToken)
         {
             var set = await _setRepository.FindAsync(request.SetId);
 

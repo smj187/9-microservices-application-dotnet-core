@@ -10,11 +10,11 @@ namespace IdentityService.Core.Models
 {
     public class InternalUserModel
     {
-        public ApplicationUser ApplicationUser { get; set; }
-        public InternalIdentityUser InternalIdentityUser { get; set; }
-        public List<string> Roles { get; set; }
-        public string Token { get; set; } = default!;
-        public string RefreshToken { get; set; } = default!;
-        public DateTimeOffset ExpiresAt { get; set; }
+        public required ApplicationUser ApplicationUser { get; set; }
+        public InternalIdentityUser? InternalIdentityUser { get; set; }
+        public List<string>? Roles { get; set; }
+        public string? Token { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTimeOffset? ExpiresAt { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.Commands.Sets
 {
-    public class PatchProductAvailabilityCommand : IRequest<Set>
+    public class PatchSetAvailabilityCommand : IRequest<Set>
     {
         public Guid SetId { get; set; }
 

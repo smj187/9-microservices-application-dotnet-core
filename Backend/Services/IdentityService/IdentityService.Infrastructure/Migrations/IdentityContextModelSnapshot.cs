@@ -16,7 +16,7 @@ namespace IdentityService.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.6")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("IdentityService.Core.Aggregates.ApplicationUser", b =>
@@ -150,32 +150,6 @@ namespace IdentityService.Infrastructure.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Jwks.Manager.SecurityKeyWithPrivate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Algorithm")
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("KeyId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Parameters")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SecurityKeys");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -273,6 +247,35 @@ namespace IdentityService.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("NetDevPack.Security.Jwt.Core.Model.KeyMaterial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ExpiredAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("KeyId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Parameters")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityKeys");
                 });
 
             modelBuilder.Entity("IdentityService.Core.Aggregates.ApplicationUser", b =>

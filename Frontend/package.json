@@ -1,5 +1,5 @@
 {
-  "name": "next-vue-monorepo",
+  "name": "frontend",
   "version": "0.0.0",
   "private": true,
   "workspaces": [
@@ -10,37 +10,16 @@
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
-    "prepare": "cd .. && husky install",
-    "check-types": "tsc --pretty --noEmit",
-    "check-format": "prettier --check .",
-    "check-lint": "eslint . --ext ts --ext tsx --ext js",
-    "format": "prettier --write .",
-    "check": "pnpm check-format && pnpm check-lint"
-  },
-  "lint-staged": {
-    "apps/**/*.{ts,js,jsx,tsx,vue}": [
-      "eslint --ignore-path .gitignore --fix",
-      "prettier --ignore-path .gitignore --write"
-    ],
-    "packages/ui/**/*.{ts,js,jsx,tsx,vue}": [
-      "eslint --ignore-path .gitignore --fix",
-      "prettier --ignore-path .gitignore --write"
-    ]
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "eslint": "^8.23.0",
     "eslint-config-custom": "workspace:*",
-    "eslint-config-prettier": "^8.5.0",
-    "husky": "^8.0.0",
-    "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1",
-    "turbo": "latest",
-    "typescript": "*",
-    "tsconfig": "workspace:*"
+    "prettier": "latest",
+    "turbo": "latest"
   },
   "engines": {
-    "npm": ">=7.0.0",
     "node": ">=14.0.0"
   },
+  "dependencies": {},
   "packageManager": "pnpm@7.1.0"
 }

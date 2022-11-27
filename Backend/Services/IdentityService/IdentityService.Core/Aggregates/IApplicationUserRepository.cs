@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.EfCore.Repositories.Interfaces;
+﻿using BuildingBlocks.EfCore.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

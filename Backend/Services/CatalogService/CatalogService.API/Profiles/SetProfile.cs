@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using CatalogService.Contracts.v1.Contracts;
+using CatalogService.API.Profiles.Actions;
+using CatalogService.Application.DTOs;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Domain.Sets;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,11 @@ namespace CatalogService.API.Profiles
     {
         public SetProfile()
         {
+            CreateMap<Set, SetDetailsResponse>();
             CreateMap<Set, SetResponse>();
+
+            CreateMap<PaginatedSetResponseDTO, PaginatedSetResponse>()
+                .AfterMap<AddPaginatedSetsMappingAction>();
         }
     }
 }

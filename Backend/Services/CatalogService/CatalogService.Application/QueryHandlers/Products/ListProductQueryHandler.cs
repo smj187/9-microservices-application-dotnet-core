@@ -1,4 +1,6 @@
-﻿using CatalogService.Application.Queries.Products;
+﻿using BuildingBlocks.Mongo.Helpers;
+using CatalogService.Application.DTOs;
+using CatalogService.Application.Queries.Products;
 using CatalogService.Core.Domain.Products;
 using MediatR;
 using System;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.QueryHandlers.Products
 {
-    public class ListProductQueryHandler : IRequestHandler<ListProductsQuery, IReadOnlyCollection<Product>>
+    public class ListProductQueryHandler : IRequestHandler<ListProductsQuery, PaginatedProductResponseDTO>
     {
         private readonly IProductRepository _productRepository;
 
@@ -18,9 +20,11 @@ namespace CatalogService.Application.QueryHandlers.Products
             _productRepository = productRepository;
         }
 
-        public async Task<IReadOnlyCollection<Product>> Handle(ListProductsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedProductResponseDTO> Handle(ListProductsQuery request, CancellationToken cancellationToken)
         {
-            return await _productRepository.ListAsync();
+            var result = await _productRepository.ListAsync(request.Page, request.PageSize);
+            return new PaginatedProductResponseDTO(result.Item2.ToList(), result.mongoPaginationResult);
+         
         }
     }
 }

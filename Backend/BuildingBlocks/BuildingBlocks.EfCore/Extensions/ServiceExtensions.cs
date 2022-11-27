@@ -1,5 +1,5 @@
-﻿using BuildingBlocks.EfCore.Repositories;
-using BuildingBlocks.EfCore.Repositories.Interfaces;
+﻿using BuildingBlocks.EfCore.Interfaces;
+using BuildingBlocks.EfCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

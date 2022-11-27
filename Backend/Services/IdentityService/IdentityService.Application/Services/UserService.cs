@@ -1,15 +1,11 @@
-﻿using BuildingBlocks.Exceptions;
-using BuildingBlocks.Exceptions.Authentication;
+﻿using BuildingBlocks.Exceptions.Authentication;
 using BuildingBlocks.Exceptions.Domain;
-using IdentityService.Core.Aggregates;
+using IdentityService.Application.Services.Interfaces;
 using IdentityService.Core.Identities;
-using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +22,7 @@ namespace IdentityService.Application.Services
             _signInManager = signInManager;
         }
 
-        public async Task<InternalIdentityUser> FindIdentityUser(Guid id)
+        public async Task<InternalIdentityUser?> FindIdentityUser(Guid id)
         {
             return await _userManager.FindByIdAsync(id.ToString());
         }
@@ -36,13 +32,13 @@ namespace IdentityService.Application.Services
             var identityUser = await _userManager.FindByEmailAsync(email);
             if (identityUser == null)
             {
-                throw new AggregateNotFoundException($"the address '{email}' is not registerd");
+                throw new AuthenticationException($"the address '{email}' is not registerd");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(identityUser, password, true);
             if (result.IsLockedOut)
             {
-                throw new AuthenticationException("this account is banned");
+                throw new AuthenticationException("this account is locked");
             }
 
             if (!result.Succeeded)
@@ -58,7 +54,7 @@ namespace IdentityService.Application.Services
             var existing = await _userManager.FindByEmailAsync(email);
             if (existing != null)
             {
-                throw new DomainViolationException($"the address '{email}' is not available");
+                throw new DuplicateEntryException($"the address '{email}' is not available");
             }
 
             var identityUser = new InternalIdentityUser(id, email, username);
@@ -68,10 +64,10 @@ namespace IdentityService.Application.Services
             {
                 await _userManager.AddToRoleAsync(identityUser, Role.User.ToString());
             }
-
-            if (result.Errors.Any())
+            else
             {
-                throw new DomainViolationException($"failed to create new user {result.Errors.Select(e => $"{e.Description},")}");
+                var errors = string.Join("\n", result.Errors.Select(e => e.Description));
+                throw new AuthenticationException($"failed to create new user: {errors}");
             }
 
             return identityUser;

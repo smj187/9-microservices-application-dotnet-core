@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Redis.Repositories.Interfaces;
+using BuildingBlocks.Redis.Interfaces;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
 using System;
@@ -31,7 +31,7 @@ namespace BuildingBlocks.Redis.Repositories
         {
             throw new NotImplementedException();
         }
-        
+
         public Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
         {
             throw new NotImplementedException();

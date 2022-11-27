@@ -1,6 +1,6 @@
 resources:
   - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
-    name: listener_0
+    name: listener_0_https
     address:
       socket_address:
         address: 0.0.0.0
@@ -11,141 +11,138 @@ resources:
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
               codec_type: AUTO
-              stat_prefix: hello_service
-
+              stat_prefix: ingress_http
+              access_log:
+                - name: envoy.access_loggers.stdout
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
               route_config:
                 name: local_route
                 virtual_hosts:
-                  - name: local_service
+                  - name: www
                     domains:
                       - "*"
+                    # cors:
+                    #   allow_origin_string_match:
+                    #     - safe_regex:
+                    #         google_re2: {}
+                    #         regex: "https://localhost"
+                    #   allow_methods: "GET"
+                    #   filter_enabled:
+                    #     default_value:
+                    #       numerator: 100
+                    #       denominator: HUNDRED
+                    #     runtime_key: cors.www.enabled
+                    #   shadow_enabled:
+                    #     default_value:
+                    #       numerator: 0
+                    #       denominator: HUNDRED
+                    #     runtime_key: cors.www.shadow_enabled
                     routes:
                       - match:
-                          prefix: /z
+                          prefix: "/health"
                         direct_response:
                           status: 200
                           body:
-                            inline_string: "its working"
+                            inline_string:
+                              '{ "message" : "gateway service is running" }'
+                        response_headers_to_add:
+                          - header:
+                              key: content-type
+                              value: application/json
+                            append_action: OVERWRITE_IF_EXISTS_OR_ADD
+                        typed_per_filter_config:
+                          envoy.filters.http.ext_authz:
+                            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+                            disabled: true
 
-                      - match:
-                          prefix: /ca
-                        route:
-                          auto_host_rewrite: true
-                          prefix_rewrite: /catalog-service
-                          cluster: catalogservice
-
-                      - match:
-                          prefix: /de
-                        route:
-                          auto_host_rewrite: true
-                          prefix_rewrite: /delivery-service
-                          cluster: deliveryservice
-
-                      - match:
-                          prefix: /id
-                        route:
-                          auto_host_rewrite: true
-                          prefix_rewrite: /identity-service
-                          cluster: identityservice
-
-                      - match:
-                          prefix: /me
-                        route:
-                          auto_host_rewrite: true
-                          prefix_rewrite: /media-service
-                          cluster: mediaservice
-
-                      - match:
-                          prefix: /or
-                        route:
-                          auto_host_rewrite: true
-                          prefix_rewrite: /order-service
-                          cluster: orderservice
-
-                      - match:
-                          prefix: /pa
-                        route:
-                          auto_host_rewrite: true
-                          prefix_rewrite: /payment-service
-                          cluster: paymentservice
-
-                      - match:
-                          prefix: /te
-                        route:
-                          auto_host_rewrite: true
-                          prefix_rewrite: /tenant-service
-                          cluster: tenantservice
-
-              http_filters:
-                - name: envoy.filters.http.jwt_authn
-                  typed_config:
-                    "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
-                    providers:
-                      envoy-jwt-checker:
-                        issuer: https://localhost:5000
-                        audiences:
-                          - TestAudience
-                        remote_jwks:
-                          http_uri:
-                            uri: https://localhost:5000/jwks
-                            cluster: identityservice
-                            timeout: 1s
-                          cache_duration:
-                            seconds: 300
-                        from_headers:
-                          - name: Authorization
-                            value_prefix: "Bearer "
-                        forward: true
-                        forward_payload_header: x-jwt-payload
-
-                    rules:
+                      #
+                      #
+                      # Catalog Endpoints
                       - match:
                           safe_regex:
-                            google_re2: {}
-                            regex: ^/(ca|de|id|me|or|pa|te)\/api\/v\d+\/\w+\/(create|delete)
-                        requires:
-                          provider_and_audiences:
-                            provider_name: envoy-jwt-checker
-                            audiences: TestAudience
+                            regex: \/ca\/api\/v\d\/(sets|products|categories)\/(list(?:\?page=\d+&pageSize=\d+)?|[0-9a-fA-F-]{36}\/find)
+                        route:
+                          cluster: catalog_service
+                        typed_per_filter_config:
+                          envoy.filters.http.ext_authz:
+                            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+                            disabled: true
 
-                - name: envoy.filters.http.local_ratelimit
+                      # auth required endpoints
+                      - match:
+                          safe_regex:
+                            regex: \/ca\/api\/v\d\/(sets|products|categories)\/(create|[0-9a-fA-F-]{36}\/(price|description|visibility|availability|quantity|ingredient\/add|ingredient\/remove)|[0-9a-fA-F-]{36}\/(add-product|remove-product|add-set|remove-set)\/[0-9a-fA-F-]{36})
+                        route:
+                          cluster: catalog_service
+
+                      #
+                      #
+                      # Identity Endpoints
+                      - match:
+                          safe_regex:
+                            regex: \/id\/api\/v\d\/auth\/(register|login|[0-9a-fA-F-]{36}\/(refresh|revoke))
+                        route:
+                          cluster: identity_service
+                        typed_per_filter_config:
+                          envoy.filters.http.ext_authz:
+                            "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+                            disabled: true
+
+                      # auth required endpoints
+                      - match:
+                          safe_regex:
+                            regex: \/id\/api\/v\d\/users\/(list(?:\?page=\d+&pageSize=\d+)?|find\/[0-9a-fA-F-]{36}|[0-9a-fA-F-]{36}\/(lock|profile|unlock|roles\/add|roles\/remove))
+                        route:
+                          cluster: identity_service
+
+                    cors:
+                      allow_origin:
+                        - "https://localhost"
+                      allow_methods: GET, PUT, DELETE, POST, OPTIONS
+                      allow_headers: keep-alive,user-agent,cache-control,content-type,contenttransfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,tenant-id
+                      max_age: "1728000"
+                      expose_headers: custom-header-1,grpc-status,grpc-message,user-agent,tenant-id,content-type
+                      filter_enabled:
+                        default_value:
+                          numerator: 100
+                          denominator: HUNDRED
+                        runtime_key: cors.www.enabled
+              # https://github.com/envoyproxy/envoy/issues/23473
+              http_filters:
+                - name: envoy.filters.http.ext_authz
                   typed_config:
-                    "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
-                    stat_prefix: http_local_rate_limiter
-                    token_bucket:
-                      max_tokens: 2
-                      tokens_per_fill: 2
-                      fill_interval: 5s
-                    filter_enabled:
-                      runtime_key: local_rate_limit_enabled
-                      default_value:
-                        numerator: 100
-                        denominator: HUNDRED
-                    filter_enforced:
-                      runtime_key: local_rate_limit_enforced
-                      default_value:
-                        numerator: 100
-                        denominator: HUNDRED
-                    response_headers_to_add:
-                      - append: false
-                        header:
-                          key: x-local-rate-limit
-                          value: "true"
-                    local_rate_limit_per_downstream_connection: false
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
+                    transport_api_version: V3
 
+                    http_service:
+                      server_uri:
+                        uri: identity_service
+                        cluster: identity_service
+                        timeout: 30s
+
+                      authorization_request:
+                        allowed_headers:
+                          patterns:
+                            - exact: tenant-id
+                            - exact: content-type
+                        headers_to_add:
+                          - key: x-authz-header
+                            value: "%REQ(x-request-id)%"
+                          - key: x-request-resource
+                            value: "%REQ(:path)%"
+
+                      authorization_response:
+                        allowed_upstream_headers:
+                          patterns:
+                            - exact: x-auth-user-roles
+                - name: envoy.filters.http.cors
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
                 - name: envoy.filters.http.router
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-            transport_socket:
-              name: envoy.transport_sockets.tls
-              typed_config:
-                "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
-                common_tls_context:
-                  tls_certificates:
-                    certificate_chain:
-                      filename: /var/lib/envoy/https/cacert.pem
-                    private_key:
-                      filename: /var/lib/envoy/https/cakey.pem
+
         transport_socket:
           name: envoy.transport_sockets.tls
           typed_config:
@@ -153,9 +150,9 @@ resources:
             common_tls_context:
               tls_certificates:
                 certificate_chain:
-                  filename: /var/lib/envoy/https/cert.pem
+                  filename: "/etc/server.crt"
                 private_key:
-                  filename: /var/lib/envoy/https/key.pem
+                  filename: "/etc/server.key"
               alpn_protocols: ["h2,http/1.1"]
               tls_params:
                 tls_minimum_protocol_version: "TLSv1_2"

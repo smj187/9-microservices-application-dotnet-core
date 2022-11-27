@@ -1,18 +1,17 @@
+using BuildingBlocks.Authentication.Middleware;
+using BuildingBlocks.EfCore.Interfaces;
 using BuildingBlocks.EfCore.Repositories;
-using BuildingBlocks.EfCore.Repositories.Interfaces;
-using BuildingBlocks.Masstransit;
+using BuildingBlocks.Middleware.Authentication;
 using BuildingBlocks.Middleware.Exceptions;
 using BuildingBlocks.Multitenancy.Extensions;
-using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Interfaces;
 using BuildingBlocks.Multitenancy.Services;
 using IdentityService.API.Extensions;
-using IdentityService.API.Middleware;
-using IdentityService.Application.Consumers;
 using IdentityService.Application.Services;
+using IdentityService.Application.Services.Interfaces;
 using IdentityService.Core.Aggregates;
 using IdentityService.Infrastructure.Data;
 using IdentityService.Infrastructure.Repositories;
-using MassTransit;
 using MediatR;
 using System.Reflection;
 
@@ -25,58 +24,46 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("IdentityService.Application"));
+builder.Services.AddCors();
+builder.Services.AddLogging();
 
-builder.Services.ConfigureIdentityServer();
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddTransient<JwtValidationMiddleware>();
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
+builder.Services.AddTransient<RoleBaseAuthenticationMiddleware>();
 
 builder.Services.AddMySqlMultitenancy<IdentityContext>(builder.Configuration)
     .AddScoped<IUnitOfWork, UnitOfWork<IdentityContext>>()
-    .ConfigureIdentity(builder.Configuration)
+    .AddIdentity()
     .AddTransient<IUserService, UserService>()
     .AddTransient<ITokenService, TokenService>()
     .AddTransient<IAdminService, AdminService>()
     .AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
 
-builder.Services.AddMassTransit(x =>
-{
-    x.SetSnakeCaseEndpointNameFormatter();
-    x.AddConsumers(Assembly.Load("IdentityService.Application"));
 
-    x.UsingRabbitMq((context, rabbit) =>
-    {
-        var host = builder.Configuration.GetValue<string>("RabbitMq:Host");
-        var username = builder.Configuration.GetValue<string>("RabbitMq:Username");
-        var password = builder.Configuration.GetValue<string>("RabbitMq:Password");
-
-        rabbit.Host(new Uri(host), host =>
-        {
-            host.Username(username);
-            host.Password(password);
-        });
-
-        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadAvatarImageConsumerEndpointName, e =>
-        {
-            e.ConfigureConsumer<AddAvatarToUserConsumer>(context);
-        });
-    });
-
-});
 
 var app = builder.Build();
 app.UsePathBase(new PathString("/identity-service"));
+app.UsePathBase(new PathString("/id"));
 app.UseRouting();
-app.UseJwksDiscovery();
+app.UseCors(x => x.AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .WithOrigins("https://localhost:4000")
+                  .WithOrigins("https://localhost:4001"));
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<MultitenancyMiddleware>();
-app.UseMiddleware<AuthenticationMiddleware>();
-app.UseIdentitySeeding(builder.Configuration);
-app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseIdentityServer();
+app.UseHttpsRedirection();
+app.UseMiddleware<JwtValidationMiddleware>();
+app.UseMiddleware<RoleBaseAuthenticationMiddleware>();
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+app.UseJwksDiscovery();
+app.UseIdentitySeeding(builder.Configuration);
 app.MapControllers();
 app.Run();

@@ -1,0 +1,102 @@
+version: "3.8"
+
+services:
+  catalog_cache:
+    image: redis/redis-stack
+    container_name: catalog_cache
+    ports:
+      - 5103:6379
+      - 5104:8001
+
+  catalog_database:
+    image: mongo
+    container_name: catalog_database
+    restart: unless-stopped
+    ports:
+      - 5102:27017
+    volumes:
+      - catalog-database:/data/db
+
+  catalog_service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+;http://+
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/CatalogService.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - Cache__Server=host.docker.internal
+      - Cache__Port=5103
+      - RabbitMq:Host=rabbitmq://host.docker.internal
+      - RabbitMq:Username=guest
+      - RabbitMq:Password=guest
+      - JsonWebToken__Key=mangle_unsheathe_everyday_hence
+      - JsonWebToken__Issuer=Identity-Service
+      - JsonWebToken__Audience=Backend-Services
+      - JsonWebToken__DurationInMinutes=1440
+      - JsonWebToken__JwkUrl=https://host.docker.internal:5000/jwks
+      - Tenants__0__Name=Restaurant
+      - Tenants__0__TenantId=tenant-a
+      - Tenants__0__ConnectionString=mongodb://host.docker.internal:5102/
+      - Tenants__1__Name=Bakery
+      - Tenants__1__TenantId=tenant-b
+      - Tenants__1__ConnectionString=mongodb://host.docker.internal:5102/
+    ports:
+      - "5101:80"
+      - "5100:443"
+    image: catalog_service
+    build:
+      context: .
+      dockerfile: backend/Services/CatalogService/CatalogService.API/Dockerfile
+    depends_on:
+      - catalog_cache
+      - catalog_database
+
+  identity_database:
+    image: mysql
+    container_name: identity_database
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      - MYSQL_USER=admin
+      - MYSQL_ROOT_PASSWORD=passwd
+      - MYSQL_PASSWORD=passwd
+      - MYSQL_DATABASE=identity
+      - MYSQL_TCP_PORT=5002
+    volumes:
+      - identity-database:/var/lib/mysql
+    ports:
+      - 5002:5002
+
+  identity_service:
+    image: ${DOCKER_REGISTRY-}identity_service
+    container_name: identity_service
+    build:
+      context: .
+      dockerfile: backend/Services/IdentityService/IdentityService.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/IdentityService.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ConnectionStrings__DefaultConnection=server=host.docker.internal;user=root;database=identity;password=passwd;port=5002;
+      - JsonWebToken__Key=mangle_unsheathe_everyday_hence
+      - JsonWebToken__Issuer=https://localhost:5000
+      - JsonWebToken__Audience=TestAudience
+      - JsonWebToken__DurationInMinutes=1440
+      - RabbitMq__Host=host.docker.internal
+      - RabbitMq__Username=guest
+      - RabbitMq__Password=guest
+      - Tenants__0__Name=Tenant A
+      - Tenants__0__TenantId=tenant-a
+      - Tenants__0__ConnectionString=server=host.docker.internal;user=root;database=identity-tenant-a;password=passwd;port=5002;
+      - Tenants__1__Name=Tenant B
+      - Tenants__1__TenantId=tenant-b
+      - Tenants__1__ConnectionString=server=host.docker.internal;user=root;database=identity-tenant-b;password=passwd;port=5002;
+    ports:
+      - "5001:80"
+      - "5000:443"
+    depends_on:
+      - identity_database
+
+volumes:
+  catalog-database:
+  identity-database:

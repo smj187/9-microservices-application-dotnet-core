@@ -1,19 +1,18 @@
 ﻿using BuildingBlocks.Multitenancy.Interfaces;
-using BuildingBlocks.Multitenancy.Interfaces.Services;
 using IdentityService.Core.Aggregates;
 using IdentityService.Core.Identities;
 using IdentityService.Infrastructure.EntityTypeConfigurations;
-using Jwks.Manager;
-using Jwks.Manager.Store.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NetDevPack.Security.Jwt.Store.EntityFrameworkCore;
+using NetDevPack.Security.Jwt.Core.Model;
 
 namespace IdentityService.Infrastructure.Data
 {
@@ -40,9 +39,9 @@ namespace IdentityService.Infrastructure.Data
         }
 
 
-        public DbSet<SecurityKeyWithPrivate> SecurityKeys { get; set; } = default!;
+        //public DbSet<SecurityKeyWithPrivate> SecurityKeys { get; set; } = default!;
         public DbSet<ApplicationUser> ApplicationUsers { get; set; } = default!;
-
+        public DbSet<KeyMaterial> SecurityKeys { get; set; } = default!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

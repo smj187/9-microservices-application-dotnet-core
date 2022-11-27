@@ -1,9 +1,11 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Mongo.Repositories.Interfaces;
+using BuildingBlocks.Mongo.Helpers;
+using BuildingBlocks.Mongo.Interfaces;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using PluralizeService.Core;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure.Pluralization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -21,15 +23,19 @@ namespace BuildingBlocks.Mongo.Repositories
             var client = new MongoClient(connectionString);
             var database = client.GetDatabase(databaseName);
 
-            var pl = new EnglishPluralizationService();
-            var collectionName = pl.Pluralize(typeof(T).Name.ToLower());
+            var collectionName = PluralizationProvider.Pluralize(typeof(T).Name.ToLower());
 
             _mongoCollection = database.GetCollection<T>(collectionName);
         }
 
-        public Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        public async Task<long> CountAsync()
         {
-            throw new NotImplementedException();
+            return await _mongoCollection.CountDocumentsAsync(new BsonDocument());
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _mongoCollection.Find(expression).FirstOrDefaultAsync() != null;
         }
 
         public async Task<T?> FindAsync(Guid id)
@@ -73,6 +79,35 @@ namespace BuildingBlocks.Mongo.Repositories
         public async Task<IReadOnlyCollection<T>> ListAsync(FilterDefinition<T> filter)
         {
             return await _mongoCollection.Find(filter).ToListAsync();
+        }
+
+        public async Task<(MongoPaginationResult mongoPaginationResult, IReadOnlyCollection<T>)> ListAsync(int page, int pageSize)
+        {
+            var pagination = new MongoPaginationResult((int)await CountAsync(), page, pageSize);
+
+
+            var countFacet = AggregateFacet.Create("count",
+                PipelineDefinition<T, AggregateCountResult>.Create(new[]
+                {
+                    PipelineStageDefinitionBuilder.Count<T>()
+                }));
+
+            var dataFacet = AggregateFacet.Create("data",
+                PipelineDefinition<T, T>.Create(new[]
+                {
+                    PipelineStageDefinitionBuilder.Skip<T>((page - 1) * pageSize),
+                    PipelineStageDefinitionBuilder.Limit<T>(pageSize),
+                }));
+
+            var aggregation = await _mongoCollection.Aggregate()
+                .Match(Builders<T>.Filter.Empty)
+                .Facet(countFacet, dataFacet)
+                .ToListAsync();
+
+
+            var data = aggregation.First().Facets.First(x => x.Name == "data").Output<T>();
+
+            return (pagination, data);
         }
     }
 }

@@ -4,14 +4,34 @@ node:
 
 dynamic_resources:
   cds_config:
+    resource_api_version: V3
     path_config_source:
       path: /var/lib/envoy/cds.yaml
   lds_config:
+    resource_api_version: V3
     path_config_source:
       path: /var/lib/envoy/lds.yaml
 
+layered_runtime:
+  layers:
+    - name: static_layer_0
+      static_layer:
+        re2:
+          max_program_size:
+            error_level: 10000
+        envoy:
+          resource_limits:
+            listener:
+              example_listener_name:
+                connection_limit: 10000
+        overload:
+          global_downstream_max_connections: 50000
 admin:
-  access_log_path: "/dev/null"
+  access_log:
+    - name: envoy.access_loggers.file
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog
+        path: "/dev/null"
   address:
     socket_address:
       address: 0.0.0.0

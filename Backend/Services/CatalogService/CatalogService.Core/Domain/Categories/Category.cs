@@ -111,7 +111,7 @@ namespace CatalogService.Core.Domain.Categories
             private set => _sets = new List<Guid>(value);
         }
 
-        
+
 
         public void AddSet(Guid setId)
         {

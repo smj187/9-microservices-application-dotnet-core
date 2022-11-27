@@ -1,10 +1,10 @@
 ﻿using BuildingBlocks.Exceptions.Domain;
+using IdentityService.Application.Services.Interfaces;
 using IdentityService.Core.Identities;
 using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,20 +24,19 @@ namespace IdentityService.Application.Services
             _roleManager = roleManager;
         }
 
-
         public async Task<InternalIdentityUser> AddRoleToUser(Guid userId, List<string> roles)
         {
             var identityUser = await _userManager.FindByIdAsync(userId.ToString());
             if (identityUser == null)
             {
-                throw new AggregateNotFoundException($"no such user with id'{userId}'");
+                throw new AggregateNotFoundException(nameof(InternalIdentityUser), userId);
             }
 
             foreach (var role in roles)
             {
                 if (!Enum.IsDefined(typeof(Role), role))
                 {
-                    throw new DomainViolationException($"{role} is not a valid user role");
+                    throw new InvalidUserRoleException($"{role} is not a valid user role");
                 }
 
                 var r = await _roleManager.GetRoleNameAsync(new InternalRole(role));
@@ -52,14 +51,14 @@ namespace IdentityService.Application.Services
             var identityUser = await _userManager.FindByIdAsync(userId.ToString());
             if (identityUser == null)
             {
-                throw new AggregateNotFoundException($"no such user with id'{userId}'");
+                throw new AggregateNotFoundException(nameof(InternalIdentityUser), userId);
             }
 
             foreach (var role in roles)
             {
                 if (!Enum.IsDefined(typeof(Role), role))
                 {
-                    throw new DomainViolationException($"{role} is not a valid user role");
+                    throw new InvalidUserRoleException($"{role} is not a valid user role");
                 }
 
                 var r = await _roleManager.GetRoleNameAsync(new InternalRole(role));
@@ -74,7 +73,7 @@ namespace IdentityService.Application.Services
             var identityUser = await _userManager.FindByIdAsync(userId.ToString());
             if (identityUser == null)
             {
-                throw new AggregateNotFoundException($"no user with '{userId}' registerd");
+                throw new AggregateNotFoundException(nameof(InternalIdentityUser), userId);
             }
 
             return identityUser;
@@ -85,7 +84,7 @@ namespace IdentityService.Application.Services
             var identityUser = await _userManager.FindByIdAsync(userId.ToString());
             if (identityUser == null)
             {
-                throw new AggregateNotFoundException($"no such user with id'{userId}'");
+                throw new AggregateNotFoundException(nameof(InternalIdentityUser), userId);
             }
 
             await _userManager.SetLockoutEndDateAsync(identityUser, DateTimeOffset.UtcNow.AddYears(99));
@@ -100,7 +99,7 @@ namespace IdentityService.Application.Services
             var identityUser = await _userManager.FindByIdAsync(userId.ToString());
             if (identityUser == null)
             {
-                throw new AggregateNotFoundException($"no such user with id'{userId}'");
+                throw new AggregateNotFoundException(nameof(InternalIdentityUser), userId);
             }
 
             await _userManager.SetLockoutEndDateAsync(identityUser, null);

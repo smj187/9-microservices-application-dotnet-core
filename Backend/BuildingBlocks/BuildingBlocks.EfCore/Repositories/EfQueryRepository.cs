@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.EfCore.Repositories.Interfaces;
+using BuildingBlocks.EfCore.Helpers;
+using BuildingBlocks.EfCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BuildingBlocks.EfCore.Repositories
 {
@@ -19,6 +21,11 @@ namespace BuildingBlocks.EfCore.Repositories
         {
             _context = context;
             _database = _context.Set<T>();
+        }
+
+        public async Task<long> CountAsync()
+        {
+            return await _database.CountAsync();
         }
 
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
@@ -55,6 +62,24 @@ namespace BuildingBlocks.EfCore.Repositories
         public async Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression)
         {
             return await _database.AsNoTracking().Where(expression).ToListAsync();
+        }
+
+        public async Task<PagedResult<T>> ListAsync(int page, int pageSize)
+        {
+            var result = new PagedResult<T>
+            {
+                CurrentPage = page,
+                PageSize = pageSize,
+                RowCount = await _database.CountAsync()
+            };
+
+            var pageCount = (double)result.RowCount / pageSize;
+            result.PageCount = (int)Math.Ceiling(pageCount);
+
+            var skip = (page - 1) * pageSize;
+            result.Results = _database.AsNoTracking().Skip(skip).Take(pageSize).ToList();
+
+            return result;
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using CatalogService.Contracts.v1.Contracts;
+using CatalogService.Application.DTOs;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Domain.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 
 namespace CatalogService.API.Profiles
 {
@@ -38,7 +38,14 @@ namespace CatalogService.API.Profiles
 
 
             // responses
+            CreateMap<Product, ProductDetailsResponse>();
             CreateMap<Product, ProductResponse>();
+
+
+            CreateMap<PaginatedProductResponseDTO, PaginatedProductResponse>()
+                .AfterMap<AddPaginatedProductsMappingAction>();
+
+
             CreateMap<Allergen, AllergensResponse>();
             CreateMap<Nutrition, NutritionsResponse>();
             CreateMap<Ingredient, IngredientsResponse>();

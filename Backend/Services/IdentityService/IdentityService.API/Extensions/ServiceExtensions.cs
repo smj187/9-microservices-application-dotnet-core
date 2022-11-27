@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Multitenancy.Configurations;
-using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Interfaces;
 using BuildingBlocks.Multitenancy.Services;
 using IdentityService.Core.Aggregates;
 using IdentityService.Core.Identities;
@@ -7,10 +7,8 @@ using IdentityService.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using NetDevPack.Security.Jwt.Core.Jwa;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,33 +19,7 @@ namespace IdentityService.API.Extensions
 {
     public static class ServiceExtensions
     {
-        public static IServiceCollection ConfigureIdentityServer(this IServiceCollection services)
-        {
-            services.AddIdentityServer()
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApis())
-                .AddInMemoryApiScopes(Config.GetApiScope())
-                .AddInMemoryClients(Config.GetClients());
-
-            services.AddJwksManager(opts =>
-            {
-                opts.Jws = Algorithm.Create(AlgorithmType.RSA, JwtType.Jws);
-                opts.Jwe = Algorithm.Create(AlgorithmType.RSA, JwtType.Jwe);
-            })
-                .IdentityServer4AutoJwksManager();
-
-            services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory()));
-
-            services.AddIdentity<InternalIdentityUser, InternalRole>()
-                .AddRoles<InternalRole>()
-                .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultTokenProviders();
-
-            return services;
-        }
-
-        public static IServiceCollection ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<IdentityOptions>(options =>
             {
@@ -69,8 +41,42 @@ namespace IdentityService.API.Extensions
                 options.User.RequireUniqueEmail = true;
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                var audience = configuration.GetValue<string>("JsonWebToken:Audience");
+                var expires =configuration.GetValue<string>("JsonWebToken:DurationInMinutes");
+                var issuer = configuration.GetValue<string>("JsonWebToken:Issuer");
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = issuer,
+                    ValidAudience = audience
+                };
+            });
+
+            services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory()));
+            services.AddAuthorization();
+            services.AddJwksManager().UseJwtValidation();
+            services.AddMemoryCache();
+            services.AddHttpContextAccessor();
+
             return services;
         }
+
+        public static IServiceCollection AddIdentity(this IServiceCollection services)
+        {
+            services.AddIdentity<InternalIdentityUser, InternalRole>()
+                .AddRoles<InternalRole>()
+                .AddEntityFrameworkStores<IdentityContext>()
+                .AddDefaultTokenProviders();
+
+            return services;
+        }
+
 
         public static void UseIdentitySeeding(this WebApplication app, IConfiguration config)
         {
@@ -89,14 +95,13 @@ namespace IdentityService.API.Extensions
 
                 serviceCollection.AddTransient(serviceProvider =>
                 {
-                var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
+                    var optionsBuilder = new DbContextOptionsBuilder<IdentityContext>();
                     var str = tenant.ConnectionString;
                     optionsBuilder.UseMySql(str, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(str));
                     var tenantService = new MultitenancyService(tenant.TenantId, config);
                     return new IdentityContext(optionsBuilder.Options, config, tenantService);
                 });
-
-                serviceCollection.ConfigureIdentity(config);
+                serviceCollection.AddJwtAuthentication(config);
                 serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
                 serviceCollection.AddTransient<IMultitenancyService>(serviceProvider =>
                 {
@@ -129,8 +134,8 @@ namespace IdentityService.API.Extensions
 
                     if (!userManager.Users.Any())
                     {
-                        var admin = new InternalIdentityUser(Guid.Parse("11111111-2222-3333-4444-000000000000"), "admin@mail.com", "admin");
-                        var appAdmin = new ApplicationUser(tenant.TenantId, Guid.Parse("11111111-2222-3333-4444-000000000000"), admin);
+                        var admin = new InternalIdentityUser(Guid.Parse("00000000-0000-0000-0000-000000000001"), "admin@mail.com", "admin");
+                        var appAdmin = new ApplicationUser(tenant.TenantId, Guid.Parse("00000000-0000-0000-0000-000000000001"), admin);
 
                         await userManager.CreateAsync(admin, "passwd");
                         await userManager.AddToRoleAsync(admin, Role.Administrator.ToString());
@@ -140,9 +145,8 @@ namespace IdentityService.API.Extensions
                         context.Entry(admin).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                         await context.SaveChangesAsync();
 
-
-                        var mod = new InternalIdentityUser(Guid.Parse("11111111-2222-3333-4444-000000000001"), "mod@mail.com", "mod");
-                        var appMod = new ApplicationUser(tenant.TenantId, Guid.Parse("11111111-2222-3333-86bd-000000000001"), mod);
+                        var mod = new InternalIdentityUser(Guid.Parse("00000000-0000-0000-0000-000000000002"), "mod@mail.com", "mod");
+                        var appMod = new ApplicationUser(tenant.TenantId, Guid.Parse("00000000-0000-0000-0000-000000000002"), mod);
 
                         await userManager.CreateAsync(mod, "passwd");
                         await userManager.AddToRoleAsync(mod, Role.Moderator.ToString());
@@ -151,8 +155,8 @@ namespace IdentityService.API.Extensions
                         context.Entry(mod).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                         await context.SaveChangesAsync();
 
-                        var user = new InternalIdentityUser(Guid.Parse("11111111-2222-3333-4444-000000000002"), "user@mail.com", "user");
-                        var appUser = new ApplicationUser(tenant.TenantId, Guid.Parse("11111111-2222-3333-86bd-000000000002"), user);
+                        var user = new InternalIdentityUser(Guid.Parse("00000000-0000-0000-0000-000000000003"), "user@mail.com", "user");
+                        var appUser = new ApplicationUser(tenant.TenantId, Guid.Parse("00000000-0000-0000-0000-000000000003"), user);
 
                         await userManager.CreateAsync(user, "passwd");
                         await userManager.AddToRoleAsync(user, Role.User.ToString());

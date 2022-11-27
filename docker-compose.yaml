@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  catalog_cache:
+    image: redis/redis-stack
+    container_name: catalog_cache
+    ports:
+      - 5103:6379
+      - 5104:8001
+
+  catalog_database:
+    image: mongo
+    container_name: catalog_database
+    restart: unless-stopped
+    ports:
+      - 5102:27017
+    volumes:
+      - catalog-database:/data/db
+
+  catalog_service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+;http://+
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/CatalogService.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - Cache__Server=host.docker.internal
+      - Cache__Port=5103
+      - RabbitMq:Host=rabbitmq://host.docker.internal
+      - RabbitMq:Username=guest
+      - RabbitMq:Password=guest
+      - Tenants__0__Name=Restaurant
+      - Tenants__0__TenantId=tenant-a
+      - Tenants__0__ConnectionString=mongodb://host.docker.internal:5102/
+      - Tenants__1__Name=Bakery
+      - Tenants__1__TenantId=tenant-b
+      - Tenants__1__ConnectionString=mongodb://host.docker.internal:5102/
+    ports:
+      - "5101:80"
+      - "5100:443"
+    image: catalog_service
+    build:
+      context: .
+      dockerfile: backend/Services/CatalogService/CatalogService.API/Dockerfile
+    depends_on:
+      - catalog_cache
+      - catalog_database
+
+  envoy:
+    container_name: gateway
+    build:
+      context: .
+      dockerfile: backend/Gateways/Public/Dockerfile
+    ports:
+      - "9902:9902"
+      - "10000:10000"
+      - "10001:10001"
+
+volumes:
+  catalog-database:

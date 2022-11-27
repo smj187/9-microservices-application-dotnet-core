@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.EfCore.Repositories.Interfaces;
+using BuildingBlocks.EfCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

@@ -2,10 +2,9 @@
 using BuildingBlocks.Domain;
 using BuildingBlocks.Multitenancy.Interfaces;
 using IdentityService.Core.Identities;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +24,7 @@ namespace IdentityService.Core.Aggregates
         private List<RefreshToken> _refreshTokens = new();
 
         // ef required (never called)
-        public ApplicationUser() 
+        public ApplicationUser()
         {
             _internalIdentityUser = default!;
             _tenantId = default!;

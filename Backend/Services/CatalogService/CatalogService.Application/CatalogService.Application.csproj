@@ -1,19 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Exceptions\BuildingBlocks.Exceptions.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks.Masstransit\BuildingBlocks.Masstransit.csproj" />
-    <ProjectReference Include="..\..\FileService\FileService.Contracts\FileService.Contracts.csproj" />
     <ProjectReference Include="..\CatalogService.Contracts\CatalogService.Contracts.csproj" />
     <ProjectReference Include="..\CatalogService.Core\CatalogService.Core.csproj" />
     <ProjectReference Include="..\CatalogService.Infrastructure\CatalogService.Infrastructure.csproj" />

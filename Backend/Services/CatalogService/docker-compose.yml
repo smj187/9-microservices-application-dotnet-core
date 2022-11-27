@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  dev_catalog_cache:
+    image: redis/redis-stack
+    container_name: dev_catalog_cache
+    ports:
+      - 5103:6379
+      - 5104:8001
+
+  dev_catalog_database:
+    image: mongo
+    container_name: dev_catalog_database
+    restart: unless-stopped
+    ports:
+      - 5102:27017
+    volumes:
+      - catalog-database:/data/db
+
+volumes:
+  catalog-database:

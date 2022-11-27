@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Redis.Repositories.Interfaces;
+using BuildingBlocks.Redis.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using StackExchange.Redis;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingBlocks.Extensions.Strings
+namespace BuildingBlocks.Extensions.strings
 {
     public static class StringExtensions
     {

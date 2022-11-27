@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Exceptions.Domain
 {
-    public class AggregateNotFoundException : Exception
+    public sealed class AggregateNotFoundException : DomainViolationException
     {
-        public AggregateNotFoundException(string entity, Guid id)
-            : base($"Aggreate '{entity.ToLower()}' [{id}] was not found.")
-        {
+        private readonly Guid _id;
 
+        public AggregateNotFoundException(string message, Guid id) : base(message)
+        {
+            _id = id;
         }
 
-        public AggregateNotFoundException(string message)
-            : base(message)
-        {
-
-        }
+        public Guid Id => _id;
     }
 }

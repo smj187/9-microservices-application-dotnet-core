@@ -1,11 +1,12 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Redis.Repositories.Interfaces;
+using BuildingBlocks.Redis.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 

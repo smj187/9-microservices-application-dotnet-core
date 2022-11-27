@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Exceptions.Domain
 {
-    public class DomainViolationException : Exception
+    public abstract class DomainViolationException : Exception
     {
         public DomainViolationException(string message)
             : base(message)

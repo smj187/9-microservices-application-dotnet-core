@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Mongo.Repositories;
-using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Interfaces;
 using CatalogService.Core.Domain.Products;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;

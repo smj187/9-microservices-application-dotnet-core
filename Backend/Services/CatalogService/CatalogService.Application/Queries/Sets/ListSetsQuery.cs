@@ -1,4 +1,5 @@
-﻿using CatalogService.Core.Domain.Sets;
+﻿using CatalogService.Application.DTOs;
+using CatalogService.Core.Domain.Sets;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace CatalogService.Application.Queries.Sets
 {
-    public class ListSetsQuery : IRequest<IReadOnlyCollection<Set>>
+    public class ListSetsQuery : IRequest<PaginatedSetResponseDTO>
     {
-
+        public required int Page { get; set; }
+        public required int PageSize { get; set; }
     }
 }

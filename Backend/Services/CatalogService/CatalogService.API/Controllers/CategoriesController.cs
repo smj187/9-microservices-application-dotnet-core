@@ -1,13 +1,17 @@
 ﻿using BuildingBlocks.Attributes;
+using BuildingBlocks.Cache;
 using BuildingBlocks.Extensions.Controllers;
-using BuildingBlocks.Extensions.Strings;
+using BuildingBlocks.Extensions.strings;
 using CatalogService.Application.Commands.Categories;
+using CatalogService.Application.DTOs;
 using CatalogService.Application.Queries.Categories;
-using CatalogService.Contracts.v1.Contracts;
+using CatalogService.Application.Queries.Sets;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Domain.Categories;
 using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,48 +25,59 @@ namespace CatalogService.API.Controllers
     [Route("api/v1/[controller]")]
     public class CategoriesController : ApiBaseController<CategoriesController>
     {
-        private readonly IRedisCachingProvider _cache;
-
-        public CategoriesController(IEasyCachingProviderFactory factory, IConfiguration configuration)
-        {
-            _cache = factory.GetRedisProvider(configuration.GetValue<string>("Cache:Database"));
-        }
-
+        /// <summary>
+        /// Returns a list of all categories
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("list")]
-        [Public("Returns a list of all categories")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<CategoryResponse>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ListCategoriesAsync()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<PaginatedCategoryResponse>))]
+        public async Task<IActionResult> ListCategoriesAsync([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             var tenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower();
-            var key = $"{tenantId}_{nameof(ListCategoriesAsync).ToSnakeCase()}";
-            var cache = _cache.StringGet(key);
+            var key = $"{tenantId}_list_categories_{page}_{pageSize}";
 
-            IReadOnlyCollection<Category>? response = null;
+            string? cache = await DistributedCache.GetStringAsync(key);
 
-
-            if (cache != null && cache.Count() > 0)
+            PaginatedCategoryResponseDTO? response;
+            if (string.IsNullOrEmpty(cache))
             {
-                response = JsonConvert.DeserializeObject<List<Category>>(cache);
+                response = await Mediator.Send(new ListCategoryQuery
+                {
+                    Page = page,
+                    PageSize = pageSize
+                });
+
+                await DistributedCache.SetStringAsync(key, JsonSerializer.Serialize(response), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60 * 10)
+                });
             }
             else
             {
-                response = await Mediator.Send(new ListCategoryQuery());
-                _cache.StringSet(key, JsonConvert.SerializeObject(response), TimeSpan.FromSeconds(60 * 15));
+                response = JsonSerializer.Deserialize<PaginatedCategoryResponseDTO>(cache);
             }
 
-            return Ok(Mapper.Map<IReadOnlyCollection<CategoryResponse>>(response));
+            return Ok(Mapper.Map<PaginatedCategoryResponse>(response));
         }
 
+        /// <summary>
+        /// Creates a new category
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [GatewayAuthentication("Requires at least moderator-based authentication", RequiredUserRole = "Moderator")]
         [HttpPost]
         [Route("create")]
-        [Restricted("Creates a new category")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDetailsResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateCategoryAsync([FromBody] CreateCategoryRequest request)
         {
+            var tenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower();
+            DistributedCache.ClearCacheByPattern(Configuration, $"{tenantId}_list_categories_*");
+
             var data = await Mediator.Send(new CreateCategoryCommand
             {
                 TenantId = HttpContext.Request.Headers["tenant-id"].ToString().ToLower(),
@@ -72,14 +87,17 @@ namespace CatalogService.API.Controllers
                 Sets = request.Sets
             });
 
-            _cache.KeyDel(nameof(ListCategoriesAsync).ToSnakeCase());
 
-            return Ok(Mapper.Map<CategoryResponse>(data));
+            return Ok(Mapper.Map<CategoryDetailsResponse>(data));
         }
 
+        /// <summary>
+        /// Returns a single category based on a query parameter
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{categoryid:guid}/find")]
-        [Public("Returns a single category based on a query parameter")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -90,13 +108,19 @@ namespace CatalogService.API.Controllers
                 CategoryId = categoryId
             });
 
-            return Ok(Mapper.Map<CategoryResponse>(data));
+            return Ok(Mapper.Map<CategoryDetailsResponse>(data));
         }
 
+        /// <summary>
+        /// Changes the category's visibility flag
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [GatewayAuthentication("Requires at least moderator-based authentication", RequiredUserRole = "Moderator")]
         [HttpPatch]
         [Route("{categoryid:guid}/visibility")]
-        [Restricted("Changes the category's visibility flag")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDetailsResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeCategoryVisibilityAsync([FromRoute, Required] Guid categoryId, [FromBody, Required] PatchCategoryVisibilityRequest request)
@@ -107,13 +131,19 @@ namespace CatalogService.API.Controllers
                 IsVisible = request.IsVisible
             });
 
-            return Ok(Mapper.Map<CategoryResponse>(data));
+            return Ok(Mapper.Map<CategoryDetailsResponse>(data));
         }
 
+        /// <summary>
+        /// Adds a product to the category
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        [GatewayAuthentication("Requires at least moderator-based authentication", RequiredUserRole = "Moderator")]
         [HttpPatch]
         [Route("{categoryid:guid}/add-product/{productid:guid}")]
-        [Restricted("Adds a product to the category")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDetailsResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddProductToCategoryAsync([FromRoute] Guid categoryId, [FromRoute] Guid productId)
@@ -124,13 +154,19 @@ namespace CatalogService.API.Controllers
                 ProductId = productId
             });
 
-            return Ok(Mapper.Map<CategoryResponse>(data));
+            return Ok(Mapper.Map<CategoryDetailsResponse>(data));
         }
 
+        /// <summary>
+        /// Removes a product from the category
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        [GatewayAuthentication("Requires at least moderator-based authentication", RequiredUserRole = "Moderator")]
         [HttpPatch]
         [Route("{categoryid:guid}/remove-product/{productid:guid}")]
-        [Restricted("Removes a product from the category")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDetailsResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RemoveProductFromCategoryAsync([FromRoute] Guid categoryId, [FromRoute] Guid productId)
@@ -141,13 +177,19 @@ namespace CatalogService.API.Controllers
                 ProductId = productId
             });
 
-            return Ok(Mapper.Map<CategoryResponse>(data));
+            return Ok(Mapper.Map<CategoryDetailsResponse>(data));
         }
 
+        /// <summary>
+        /// Changes the category's description
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [GatewayAuthentication("Requires at least moderator-based authentication", RequiredUserRole = "Moderator")]
         [HttpPatch]
         [Route("{categoryid:guid}/description")]
-        [Restricted("Changes the category's description")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDetailsResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ChangeCategoryDescriptionAsync([FromRoute] Guid categoryId, [FromBody] PatchCategoryDescriptionRequest request)
@@ -159,13 +201,19 @@ namespace CatalogService.API.Controllers
                 Description = request.Description,
             });
 
-            return Ok(Mapper.Map<CategoryResponse>(data));
+            return Ok(Mapper.Map<CategoryDetailsResponse>(data));
         }
 
+        /// <summary>
+        /// Adds a set to the category
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="setId"></param>
+        /// <returns></returns>
+        [GatewayAuthentication("Requires at least moderator-based authentication", RequiredUserRole = "Moderator")]
         [HttpPatch]
         [Route("{categoryid:guid}/add-set/{setid:guid}")]
-        [Restricted("Adds a set to the category")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDetailsResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddSetToCategory([FromRoute] Guid categoryId, [FromRoute] Guid setId)
@@ -176,13 +224,19 @@ namespace CatalogService.API.Controllers
                 SetId = setId
             });
 
-            return Ok(Mapper.Map<CategoryResponse>(data));
+            return Ok(Mapper.Map<CategoryDetailsResponse>(data));
         }
 
+        /// <summary>
+        /// Removes a set from the category
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="setId"></param>
+        /// <returns></returns>
+        [GatewayAuthentication("Requires at least moderator-based authentication", RequiredUserRole = "Moderator")]
         [HttpPatch]
         [Route("{categoryid:guid}/remove-set/{setid:guid}")]
-        [Restricted("Removes a set from the category")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDetailsResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RemoveSetFromCategory([FromRoute] Guid categoryId, [FromRoute] Guid setId)
@@ -193,7 +247,7 @@ namespace CatalogService.API.Controllers
                 SetId = setId
             });
 
-            return Ok(Mapper.Map<CategoryResponse>(data));
+            return Ok(Mapper.Map<CategoryDetailsResponse>(data));
         }
     }
 }

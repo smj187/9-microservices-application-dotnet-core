@@ -3,6 +3,8 @@ using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,6 +23,8 @@ namespace BuildingBlocks.Extensions.Controllers
         private IMapper? _mapper;
         private IPublishEndpoint? _publishEndpoint;
         private IHttpContextAccessor? _httpContextAccessor;
+        private IConfiguration? _configuration;
+        private IDistributedCache? _distributedCache;
 
         protected ILogger<T> Logger
             => _logger ??= HttpContext.RequestServices.GetRequiredService<ILogger<T>>();
@@ -36,5 +40,11 @@ namespace BuildingBlocks.Extensions.Controllers
 
         protected IHttpContextAccessor HttpContextAccessor
             => _httpContextAccessor ??= HttpContext.RequestServices.GetRequiredService<IHttpContextAccessor>();
+
+        protected IConfiguration Configuration
+            => _configuration ??= HttpContext.RequestServices.GetRequiredService<IConfiguration>();
+
+        protected IDistributedCache DistributedCache
+            => _distributedCache ??= HttpContext.RequestServices.GetRequiredService<IDistributedCache>();
     }
 }

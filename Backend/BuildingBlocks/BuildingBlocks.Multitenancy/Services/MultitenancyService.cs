@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Multitenancy.Configurations;
-using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -36,7 +36,7 @@ namespace BuildingBlocks.Multitenancy.Services
             if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)
             {
                 httpContextAccessor.HttpContext.Request.Headers.TryGetValue("tenant-id", out var tenantId);
-                Console.WriteLine($"found -> {tenantId}");
+                //Console.WriteLine($"found -> {tenantId}");
 
                 var tenants = configuration.GetSection("tenants").Get<IEnumerable<TenantConfiguration>>();
                 var tenant = tenants.FirstOrDefault(t => t.TenantId == tenantId);

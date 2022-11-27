@@ -1,7 +1,6 @@
-﻿using IdentityService.Core.Identities;
-using IdentityService.Infrastructure.Data;
+﻿using IdentityService.Application.Services.Interfaces;
+using IdentityService.Core.Identities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NetDevPack.Security.Jwt.Core.Interfaces;
@@ -98,6 +97,34 @@ namespace IdentityService.Application.Services
                 ExpiresAt = DateTimeOffset.UtcNow.AddDays(10),
                 CreatedAt = DateTimeOffset.UtcNow
             };
+        }
+
+        public async Task<bool> ValidateJsonWebToken(string token, string? requiredRoles = null)
+        {
+            var handler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
+            var audience = _configuration.GetValue<string>("JsonWebToken:Audience");
+            var issuer = _configuration.GetValue<string>("JsonWebToken:Issuer");
+
+            var result = handler.ValidateToken(token,
+                new TokenValidationParameters
+                {
+                    ValidIssuer = issuer,
+                    ValidAudience = audience,
+                    IssuerSigningKey = await _jwtService.GetCurrentSecurityKey(),
+                });
+
+            Console.WriteLine(result.IsValid);
+            if (!result.IsValid)
+            {
+                throw new Exception(result.Exception.Message);
+            }
+
+            var claims = result.ClaimsIdentity.Claims.Where(c => c.Type == "roles");
+            foreach(var claim in claims)
+            {
+                Console.WriteLine($"->{claim}");
+            }
+            return claims.FirstOrDefault(c => c.Value.ToLower() == requiredRoles) != null;
         }
     }
 }

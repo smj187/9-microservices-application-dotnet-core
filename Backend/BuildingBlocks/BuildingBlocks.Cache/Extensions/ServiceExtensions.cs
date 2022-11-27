@@ -13,21 +13,14 @@ namespace BuildingBlocks.Cache.Extensions
     {
         public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration)
         {
-            var connection = configuration.GetValue<string>("Cache:DefaultConnection");
-            var port = configuration.GetValue<int>("Cache:DefaultPort");
-            var database = configuration.GetValue<string>("Cache:Database");
+            var server = configuration.GetValue<string>("Cache:Server");
+            var port = configuration.GetValue<string>("Cache:Port");
 
-            services.AddEasyCaching(opts =>
+            services.AddStackExchangeRedisCache(opts =>
             {
-                opts.UseRedis(config =>
-                {
-                    config.DBConfig.Endpoints.Add(new ServerEndPoint(connection, port));
-                    config.DBConfig.SyncTimeout = 10000;
-                    config.DBConfig.AsyncTimeout = 10000;
-                    config.SerializerName = "jsonserializer";
-                }, database)
-                .WithMessagePack("jsonserializer");
+                opts.Configuration = $"{server}:{port}";
             });
+
             return services;
         }
     }

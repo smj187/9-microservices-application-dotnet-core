@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.EfCore.Repositories.Interfaces;
+using BuildingBlocks.EfCore.Helpers;
+using BuildingBlocks.EfCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,12 @@ namespace BuildingBlocks.EfCore.Repositories
         {
             throw new NotImplementedException();
         }
-        
+
+        public async Task<long> CountAsync()
+        {
+           return await _queryRepository.CountAsync();
+        }
+
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
         {
             return await _queryRepository.ExistsAsync(expression);
@@ -64,6 +70,11 @@ namespace BuildingBlocks.EfCore.Repositories
         public async Task<IReadOnlyCollection<T>> ListAsync(Expression<Func<T, bool>> expression)
         {
             return await _queryRepository.ListAsync(expression);
+        }
+
+        public async Task<PagedResult<T>> ListAsync(int page, int pageSize)
+        {
+            return await _queryRepository.ListAsync(page, pageSize);
         }
 
         public async Task<T> PatchAsync(T entity)

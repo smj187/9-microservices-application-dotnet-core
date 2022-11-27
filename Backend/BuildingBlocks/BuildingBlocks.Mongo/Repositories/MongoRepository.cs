@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Domain;
-using BuildingBlocks.Mongo.Repositories.Interfaces;
+using BuildingBlocks.Mongo.Helpers;
+using BuildingBlocks.Mongo.Interfaces;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System;
@@ -40,10 +41,25 @@ namespace BuildingBlocks.Mongo.Repositories
         {
             return await _commandRepository.AddManyAsync(entities);
         }
-        
-        public Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+
+        public async Task<long> CountAsync()
         {
-            throw new NotImplementedException();
+            return await _queryRepository.CountAsync();
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            return await _commandRepository.DeleteAsync(id);
+        }
+
+        public async Task<bool> DeleteManyAsync(IEnumerable<Guid> ids)
+        {
+            return await _commandRepository.DeleteManyAsync(ids);
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _queryRepository.ExistsAsync(expression);
         }
 
         public async Task<T?> FindAsync(Guid id)
@@ -84,6 +100,11 @@ namespace BuildingBlocks.Mongo.Repositories
         public async Task<IReadOnlyCollection<T>> ListAsync(FilterDefinition<T> filter)
         {
             return await _queryRepository.ListAsync(filter);
+        }
+
+        public async Task<(MongoPaginationResult mongoPaginationResult, IReadOnlyCollection<T>)> ListAsync(int page, int pageSize)
+        {
+            return await _queryRepository.ListAsync(page, pageSize);
         }
 
         public async Task<T> PatchAsync(T entity)

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using CatalogService.Contracts.v1.Contracts;
+using CatalogService.API.Profiles.Actions;
+using CatalogService.Application.DTOs;
+using CatalogService.Contracts.v1;
 using CatalogService.Core.Domain.Categories;
 using System;
 using System.Collections.Generic;
@@ -13,8 +15,11 @@ namespace CatalogService.API.Profiles
     {
         public CategoryProfile()
         {
-            CreateMap<Category, CategoryResponse>(MemberList.Destination);
-      
+            CreateMap<Category, CategoryDetailsResponse>();
+            CreateMap<Category, CategoryResponse>();
+
+            CreateMap<PaginatedCategoryResponseDTO, PaginatedCategoryResponse>()
+                .AfterMap<AddPaginatedCategoriesMappingAction>();
         }
     }
 }

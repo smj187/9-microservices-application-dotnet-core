@@ -1,22 +1,21 @@
+using BuildingBlocks.Authentication.Extensions;
+using BuildingBlocks.Authentication.Middleware;
 using BuildingBlocks.Cache.Extensions;
-using BuildingBlocks.Masstransit;
 using BuildingBlocks.Middleware.Exceptions;
-using BuildingBlocks.Mongo.Configurations;
+using BuildingBlocks.Mongo.Configuration;
 using BuildingBlocks.Mongo.Extensions;
-using BuildingBlocks.Multitenancy.Interfaces.Services;
+using BuildingBlocks.Multitenancy.Interfaces;
 using BuildingBlocks.Multitenancy.Services;
-using CatalogService.Application.Consumers;
 using CatalogService.Core.Domain.Categories;
 using CatalogService.Core.Domain.Products;
 using CatalogService.Core.Domain.Sets;
 using CatalogService.Infrastructure.BsonClassMapDefinitions;
 using CatalogService.Infrastructure.Repositories;
-using MassTransit;
 using MediatR;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using NetDevPack.Security.JwtExtensions;
 using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -27,6 +26,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMediatR(Assembly.Load("CatalogService.Application"));
+builder.Services.AddCors();
+builder.Services.AddLogging();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddTransient<RoleBaseAuthenticationMiddleware>();
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
+builder.Services.AddTransient<GlobalMultitenancyExceptionMiddleware>();
 
 builder.Services.AddMongoDatabase(builder.Configuration)
     .AddTransient<IProductRepository, ProductRepository>()
@@ -35,65 +41,8 @@ builder.Services.AddMongoDatabase(builder.Configuration)
     .AddEntityBaseMongoConfiguration()
     .AddBsonClassMappings();
 
+
 builder.Services.AddCaching(builder.Configuration);
-
-
-//builder.Services.AddMassTransit(x =>
-//{
-//    x.SetSnakeCaseEndpointNameFormatter();
-//    x.AddConsumers(Assembly.Load("CatalogService.Application"));
-
-//    x.UsingRabbitMq((context, rabbit) =>
-//    {
-//        var host = builder.Configuration.GetValue<string>("RabbitMq:Host");
-//        var username = builder.Configuration.GetValue<string>("RabbitMq:Username");
-//        var password = builder.Configuration.GetValue<string>("RabbitMq:Password");
-
-//        rabbit.Host(new Uri(host), host =>
-//        {
-//            host.Username(username);
-//            host.Password(password);
-//        });
-
-//        rabbit.ReceiveEndpoint(RabbitMqSettings.OrderSagaCatalogConsumerEndpointName, e =>
-//        {
-//            e.ConfigureConsumer<CatalogSagaConsumer>(context);
-//        });
-
-//        // category
-//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadCategoryImageConsumerEndpointName, e =>
-//        {
-//            e.ConfigureConsumer<AddImageToCategoryConsumer>(context);
-//        });
-
-//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadCategoryVideoConsumerEndpointName, e =>
-//        {
-//            e.ConfigureConsumer<AddVideoToCategoryConsumer>(context);
-//        });
-
-//        // product
-//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadProductImageConsumerEndpointName, e =>
-//        {
-//            e.ConfigureConsumer<AddImageToProductConsumer>(context);
-//        });
-
-//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadProductVideoConsumerEndpointName, e =>
-//        {
-//            e.ConfigureConsumer<AddVideoToProductConsumer>(context);
-//        });
-
-//        // set
-//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadSetImageConsumerEndpointName, e =>
-//        {
-//            e.ConfigureConsumer<AddImageToSetConsumer>(context);
-//        });
-
-//        rabbit.ReceiveEndpoint(RabbitMqSettings.FileUploadSetVideoConsumerEndpointName, e =>
-//        {
-//            e.ConfigureConsumer<AddVideoToSetConsumer>(context);
-//        });
-//    });
-//});
 
 
 
@@ -101,15 +50,21 @@ var app = builder.Build();
 app.UsePathBase(new PathString("/catalog-service"));
 app.UsePathBase(new PathString("/ca"));
 app.UseRouting();
+app.UseCors(x => x.AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .WithOrigins("https://localhost:4000")
+                  .WithOrigins("https://localhost:4001"));
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<MultitenancyMiddleware>();
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseHttpsRedirection();
+app.UseMiddleware<RoleBaseAuthenticationMiddleware>();
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+app.UseMiddleware<GlobalMultitenancyExceptionMiddleware>();
 app.MapControllers();
 app.Run();

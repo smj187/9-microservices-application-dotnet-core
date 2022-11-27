@@ -1,7 +1,7 @@
 ﻿using BuildingBlocks.EfCore.Repositories;
 using IdentityService.Core.Aggregates;
 using IdentityService.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace IdentityService.Infrastructure.Repositories
 {
     public class ApplicationUserRepository : EfRepository<ApplicationUser>, IApplicationUserRepository
     {
-        public ApplicationUserRepository(IdentityContext context) 
+        public ApplicationUserRepository(IdentityContext context)
             : base(context)
         {
 
